@@ -41,7 +41,6 @@ const conversationSchema = new mongoose.Schema(
       },
     ],
     model: String,
-    ip: String,
     address: String,
     challenge: { type: mongoose.Schema.Types.ObjectId, ref: "Challenge" },
     createdAt: { type: Date, default: Date.now },

@@ -116,14 +116,6 @@ app.get("/api/settings", async (req, res) => {
   res.send(response);
 });
 
-app.get("/api/headers", (req, res) => {
-  const clientIp = req.ip;
-  res.send({
-    ip: clientIp,
-    headers: req.headers,
-  });
-});
-
 catchErrors();
 
 app.listen(port, () => {
