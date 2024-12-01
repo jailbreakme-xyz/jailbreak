@@ -227,8 +227,8 @@ border: 0px;
       display: flex;
       flex-direction: column;
       overflow-y: auto;
-      height: calc(100vh - 60px);
-      padding-bottom: 60px;  
+      height: calc(100vh - 80px);
+      padding-bottom: 80px;  
     }
     .conversationSection {
       width: 100%;
@@ -259,7 +259,7 @@ border: 0px;
     }
 
     .chat-footer div form {
-      width: 95% !important;
+      width: 90% !important;
     }
     .poolDiv {
       display: none;

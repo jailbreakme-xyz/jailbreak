@@ -73,6 +73,7 @@ router.post("/submit/:id", verifyJWT, async (req, res) => {
   const id = req.params.id;
   const address = req.walletAddress;
   const chatLimit = 20;
+  const characterLimit = 1000;
 
   try {
     // Find the challenge
@@ -84,7 +85,7 @@ router.post("/submit/:id", verifyJWT, async (req, res) => {
     // Check prompt validity
     const prompt = req.body.prompt;
     if (!prompt) return res.status(400).send("Must include prompt");
-    if (prompt.length > 1000)
+    if (prompt.length > characterLimit)
       return res.status(400).send("Prompt length can't exceed 200 characters");
 
     // Add user message to the Chat collection
