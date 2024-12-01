@@ -9,6 +9,7 @@ import { FaKey } from "react-icons/fa";
 import Link from "next/link";
 import MobileMenu from "../components/MobileMenu";
 import "../../styles/APIDocumentation.css";
+import lightSlogen from "../../assets/lightSlogen.png";
 
 const APIDocs = (props) => {
   const [expanded, setExpanded] = useState(null);
@@ -39,15 +40,26 @@ const APIDocs = (props) => {
 
   return (
     <main className="apiDocsPage">
-      <div style={{ textAlign: "center" }}>
+      <div
+        style={{ textAlign: "center", display: "grid", placeItems: "center" }}
+      >
         <Image
           alt="logo"
           src={stoneLogo}
           width="80"
           style={{
             borderRadius: "0px 0px 150px 150px",
-            marginBottom: "0px",
+            marginBottom: "10px",
           }}
+        />
+        <Image
+          className="pointer"
+          onClick={() => {
+            window.location.href = "/";
+          }}
+          alt="logo"
+          src={lightSlogen}
+          width="120"
         />
         <h1 className="api-doc-title">JAILBREAK API</h1>
         <h2 style={{ margin: "5px 0px", color: "#ccc" }}>
@@ -59,7 +71,10 @@ const APIDocs = (props) => {
           target="_blank"
           className="pointer"
         >
-          <button className="styledBtn stoneBtn pointer applyButton">
+          <button
+            className="styledBtn stoneBtn pointer applyButton"
+            style={{ width: "100%" }}
+          >
             <FaKey size={20} /> APPLY FOR PRO ACCESS
           </button>
         </Link>

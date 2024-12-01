@@ -85,6 +85,24 @@ export default function Home() {
               </button>
             </Link>
           </div>
+          <div
+            style={{
+              marginTop: "10px",
+              display: "flex",
+              justifyContent: "center",
+              alignContent: "center",
+              columnGap: "20px",
+            }}
+            className="desktopOnly links"
+          >
+            <a className="pointer" href="/faq">
+              FAQ
+            </a>
+            <a className="pointer" href="/docs">
+              API
+            </a>
+            <a className="pointer">TERMS</a>
+          </div>
           <HowItWorks />
         </div>
         {/* <div className="section-2">

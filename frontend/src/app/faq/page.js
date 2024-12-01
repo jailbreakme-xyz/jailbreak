@@ -9,6 +9,7 @@ import { FaKey } from "react-icons/fa";
 import Link from "next/link";
 import MobileMenu from "../components/MobileMenu";
 import "../../styles/FAQ.css";
+import lightSlogen from "../../assets/lightSlogen.png";
 
 const FAQ = (props) => {
   const [faqData, setFaqData] = useState([]);
@@ -40,15 +41,26 @@ const FAQ = (props) => {
   return (
     <main>
       <MobileMenu absolute={true} />
-      <div style={{ textAlign: "center" }}>
+      <div
+        style={{ textAlign: "center", display: "grid", placeItems: "center" }}
+      >
         <Image
           alt="logo"
           src={stoneLogo}
           width="80"
           style={{
             borderRadius: "0px 0px 150px 150px",
-            marginBottom: "0px",
+            marginBottom: "10px",
           }}
+        />
+        <Image
+          className="pointer"
+          onClick={() => {
+            window.location.href = "/";
+          }}
+          alt="logo"
+          src={lightSlogen}
+          width="120"
         />
         <h2 className="faq-title">Frequently Asked Questions</h2>
       </div>

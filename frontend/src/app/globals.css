@@ -234,6 +234,7 @@ top: 12rem
   width: 75%;
   font-size: 22px;
   margin: 5px 0px;
+  border: 0px;
 }
 
 .styledBtn:hover {
@@ -832,6 +833,11 @@ background-color: #ccc;
   50% { border-color: orange }
 } */
 
+.links a {
+  text-decoration: underline;
+color: #ccc;
+font-size: 18px;
+}
 
 .circular-progress-container {
   position: relative;
@@ -1062,7 +1068,9 @@ margin-right: 5px;
       margin: 5px;
       line-height: 1.4;
     }
-
+.desktopOnly {
+  display: none !important;
+}
     .section-3 > div > ul {
       font-size: 22px;
       padding: 0px;

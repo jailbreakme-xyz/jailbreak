@@ -12,7 +12,7 @@ import {
   FaShieldVirus,
 } from "react-icons/fa";
 import { FaTelegramPlane } from "react-icons/fa";
-import { SiGitbook } from "react-icons/si";
+import { SiGitbook, SiGithub } from "react-icons/si";
 import { FaXTwitter } from "react-icons/fa6";
 import { GiPodium } from "react-icons/gi";
 import { TiThMenu } from "react-icons/ti";
@@ -88,6 +88,13 @@ const MobileMenu = (props) => {
               className="pointer"
             >
               <SiGitbook size={30} className="pointer" />
+            </a>
+            <a
+              href="https://github.com/probonodev/jailbreak"
+              target="_blank"
+              className="pointer"
+            >
+              <SiGithub size={30} className="pointer" />
             </a>
           </div>
         </div>

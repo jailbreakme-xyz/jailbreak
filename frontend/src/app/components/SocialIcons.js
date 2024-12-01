@@ -1,7 +1,7 @@
 import React from "react";
 import { FaTelegramPlane } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
-import { SiGitbook } from "react-icons/si";
+import { SiGitbook, SiGithub } from "react-icons/si";
 
 export default function SocialIcons() {
   return (
@@ -26,6 +26,13 @@ export default function SocialIcons() {
         className="pointer"
       >
         <SiGitbook size={30} className="pointer" />
+      </a>
+      <a
+        href="https://github.com/probonodev/jailbreak"
+        target="_blank"
+        className="pointer"
+      >
+        <SiGithub size={30} className="pointer" />
       </a>
     </div>
   );

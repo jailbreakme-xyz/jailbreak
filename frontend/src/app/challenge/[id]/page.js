@@ -467,15 +467,15 @@ export default function Challenge({ params }) {
                     }}
                   >
                     <div>
-                      <h2 style={{ margin: "0px" }}>{challenge.title}</h2>
-                      <span className={`${challenge.level} level`}>
-                        {challenge.level}
+                      <h2 style={{ margin: "0px" }}>{challenge?.title}</h2>
+                      <span className={`${challenge?.level} level`}>
+                        {challenge?.level}
                       </span>
                     </div>
                     <div>
                       <Image
                         alt="logo"
-                        src={challenge.pfp}
+                        src={challenge?.pfp}
                         width="30"
                         height="30"
                         className="pfp"
@@ -483,7 +483,7 @@ export default function Challenge({ params }) {
                     </div>
                   </div>
                   <hr />
-                  <span>{challenge.label}</span>
+                  <span>{challenge?.label}</span>
                 </div>
               )}
               <div style={{ textAlign: "left" }} className="statsWrapper">
@@ -516,10 +516,10 @@ export default function Challenge({ params }) {
             </div>
             <div className="conversationSection">
               <div className="chat-container">
-                {challenge.name && (
+                {challenge?.name && (
                   <div className="poolDiv">
                     <h3 style={{ textTransform: "uppercase" }}>
-                      {challenge.name} PRIZE POOL
+                      {challenge?.name} PRIZE POOL
                     </h3>
                     <CountUp
                       start={500}
@@ -544,13 +544,13 @@ export default function Challenge({ params }) {
                     <div>
                       <Image
                         alt="logo"
-                        src={challenge.pfp}
+                        src={challenge?.pfp}
                         width="30"
                         height="30"
                         className="pfp"
                       />
                     </div>
-                    <span> {challenge.label}</span>
+                    <span> {challenge?.label}</span>
                   </div>
                 </div>
                 <div
@@ -605,7 +605,7 @@ export default function Challenge({ params }) {
                               <div className="avatar">
                                 <Image
                                   alt="pfp"
-                                  src={challenge.pfp}
+                                  src={challenge?.pfp}
                                   width="30"
                                   height="30"
                                   className="avatar-image"

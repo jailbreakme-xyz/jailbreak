@@ -7,7 +7,7 @@ export const faqData = [
   {
     question: "How do I participate?",
     answer:
-      "To participate, select a challenge from the list or let the app assign one to you. Interact with the AI to solve the challenge by crafting prompts and responses creatively. *You must hold at least 10,000 $JAIL coins to participate in challenges.",
+      "To participate, select a challenge from the list. Interact with the AI to solve the challenge by crafting prompts and responses creatively.",
   },
   {
     question: "Do I need an account to play?",
@@ -17,7 +17,7 @@ export const faqData = [
   {
     question: "What are $JAIL coins?",
     answer:
-      "$JAIL coins are the platform's native tokens. You must hold at least 10,000 $JAIL coins to participate in challenges.",
+      "$JAIL coins are the platform's native tokens. You must pay using $JAIL in order to participate in challenges.",
   },
   {
     question: "How do I claim rewards?",

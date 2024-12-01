@@ -41,7 +41,7 @@ export default function Footer(props) {
       >
         <input
           minLength={1}
-          maxLength={200}
+          maxLength={1000}
           value={props.value}
           onChange={props.onChange}
           type="text"
@@ -72,9 +72,9 @@ export default function Footer(props) {
           </button>
         ) : (
           <button
-            style={{ display: "flex" }}
-            className="stoneBtn pointer"
-            type="submit"
+            style={{ display: "flex", cursor: "not-allowed" }}
+            className="disabled stoneBtn grayed"
+            type="button"
             // style={{
             //   height: "40px",
             //   boxSizing: "border-box",
@@ -89,7 +89,7 @@ export default function Footer(props) {
             //   color: "#FEC434",
             // }}
           >
-            Connect Wallet
+            Coming Soon
           </button>
         )}
       </form>

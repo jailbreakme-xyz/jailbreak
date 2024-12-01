@@ -12,8 +12,9 @@ import {
 
 import "../../styles/Chat.css";
 import Link from "next/link";
-import { SiGitbook } from "react-icons/si";
+import { SiGitbook, SiGithub } from "react-icons/si";
 import { FaXTwitter } from "react-icons/fa6";
+import { GiBreakingChain } from "react-icons/gi";
 
 const MainMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,13 +26,19 @@ const MainMenu = () => {
   return (
     <div className="mainMenu desktopMenu">
       <>
-        <Link href="/" target="_blank" className="chatMainMenuItem pointer">
+        <Link href="/" className="chatMainMenuItem pointer">
           <FaHome size={25} /> HOME
         </Link>
-        <Link href="/docs" target="_blank" className="chatMainMenuItem pointer">
+        <Link
+          href="/challenge/67464991a95c1b426ef3920d"
+          className="chatMainMenuItem pointer"
+        >
+          <GiBreakingChain size={25} /> BREAK
+        </Link>
+        <Link href="/docs" className="chatMainMenuItem pointer">
           <FaCode size={25} /> API
         </Link>
-        <Link href="/faq" target="_blank" className="chatMainMenuItem pointer">
+        <Link href="/faq" className="chatMainMenuItem pointer">
           <FaQuestionCircle size={25} /> FAQ
         </Link>
         <div className="chatMainMenuItem chatPageSocialMenu">
@@ -60,6 +67,13 @@ const MainMenu = () => {
               className="pointer"
             >
               <SiGitbook size={30} className="pointer" />
+            </a>
+            <a
+              href="https://github.com/probonodev/jailbreak"
+              target="_blank"
+              className="pointer"
+            >
+              <SiGithub size={30} className="pointer" />
             </a>
           </div>
         </div>
