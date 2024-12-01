@@ -36,10 +36,11 @@ export default function Footer(props) {
           display: "inline-flex",
           justifyContent: "center",
           alignItems: "center",
-          width: "90%",
+          width: "100%",
         }}
       >
         <input
+          style={{ fontSize: "16px" }}
           minLength={1}
           maxLength={1000}
           value={props.value}

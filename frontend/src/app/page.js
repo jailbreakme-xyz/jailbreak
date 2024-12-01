@@ -31,13 +31,16 @@ import HowItWorks from "./components/HowItWorks";
 import axios from "axios";
 import Carousel from "./components/Carousel";
 import Card from "./components/partials/Card";
+import BarLoader from "react-spinners/BarLoader";
 
 export default function Home() {
   const [endpoints, setEndpoints] = useState([]);
   const [threshold, setThreshold] = useState(null);
   const [challenges, setChallenges] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const getEndpoints = async () => {
+    setLoading(true);
     const data = await axios
       .get(`/api/settings`)
       .then((res) => res.data)
@@ -45,13 +48,20 @@ export default function Home() {
     setEndpoints(data.endpoints);
     setThreshold(data.settings.threshold);
     setChallenges(data.challenges);
+    setLoading(false);
   };
 
   useEffect(() => {
     getEndpoints();
   }, []);
 
-  return (
+  const override = {
+    display: "block",
+    margin: "0 auto",
+    width: "200px",
+  };
+
+  return !loading ? (
     <main className="main">
       <div className="homepage">
         <div className="hero">
@@ -62,18 +72,12 @@ export default function Home() {
           <Header />
 
           <div className="intro">
-            {/* <Image
-              src={Handcuffs}
-              alt="intro"
-              className="dynamic-glowing-image"
-            /> */}
             <SocialIcons />
             <p>
               JailBreak is a decentralized platform where users are challenged
               to try and jailbreak pre-existing LLMs in order to find weaknesses
               and be rewarded.
             </p>
-            {/* <button className="styledBtn purpleBtn">HOW TO BREAK?</button> */}
             <Link
               href="/challenge/67464991a95c1b426ef3920d"
               target="_blank"
@@ -445,11 +449,31 @@ export default function Home() {
         {/* <LottieAnimation animationData={Ball} /> */}
         {/* <div className="section-3" style={{ backgroundColor: "white" }}></div> */}
       </div>
-
       <div className="diagonal-bottom diagonal-bottom-1"></div>
       <div className="diagonal-bottom diagonal-bottom-2"></div>
       <div className="diagonal-bottom diagonal-bottom-3"></div>
       <div className="diagonal-bottom diagonal-bottom-4"></div>
     </main>
+  ) : (
+    <div>
+      <Header />
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+          height: "80vh",
+        }}
+      >
+        <div style={{ display: "block" }}>
+          <div className="page-loader" style={{ textAlign: "center" }}>
+            <BarLoader color="#ccc" size={150} cssOverride={override} />
+            <br />
+            <span style={{ color: "#ccc" }}>Loading...</span>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

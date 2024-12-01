@@ -1,6 +1,10 @@
 services:
   back-end:
     command: npm run dev
+    volumes:
+      - ./backend:/usr/src/app/backend
 
   front-end:
     command: npm run dev
+    volumes:
+      - ./frontend:/usr/src/app/frontend

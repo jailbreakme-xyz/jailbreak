@@ -222,16 +222,28 @@ border: 0px;
       padding: 0px;
     }
     .conversation {
-      overflow-y: scroll;
+      /* overflow-y: scroll;
+      max-height: 90vh; */
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      height: calc(100vh - 60px);
+      padding-bottom: 60px;  
     }
     .conversationSection {
       width: 100%;
     }
     .chat-container {
-      height: 70vh;
+      /* height: 75vh; */
+      /* overflow-y: hidden; */
+
       border: 0px;
-      overflow-y: hidden;
       border-radius: 0px;
+      /* display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      height: calc(100vh - 60px);
+      padding-bottom: 60px;   */
     }
     .chat-bubble.assistant, .chat-bubble.system {
       padding-left: 50px;
@@ -241,10 +253,14 @@ border: 0px;
     }
 
     .chat-footer {
+      padding: 10px 0px;
       position: fixed;
       width: 100%;
     }
 
+    .chat-footer div form {
+      width: 95% !important;
+    }
     .poolDiv {
       display: none;
     }
