@@ -259,8 +259,12 @@ border: 0px;
     }
 
     .chat-footer div form {
+      width: 95% !important;
+    }
+    .chat-footer div form input {
       width: 90% !important;
     }
+
     .poolDiv {
       display: none;
     }
