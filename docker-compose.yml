@@ -8,8 +8,8 @@ services:
     working_dir: /usr/src/app/backend
     networks:
       - node-network
-    volumes:
-      - ./backend:/usr/src/app/backend
+    # volumes:
+    #   - ./backend:/usr/src/app/backend
     tty: true
     ports:
       - "8001:8001"
@@ -22,8 +22,8 @@ services:
     working_dir: /usr/src/app/frontend
     networks:
       - node-network
-    volumes:
-      - ./frontend:/usr/src/app/frontend
+    # volumes:
+    #   - ./frontend:/usr/src/app/frontend
     tty: true
     ports:
       - "3000:3000"
