@@ -1,5 +1,8 @@
 import express from "express";
 import { Challenge, Settings, Chat } from "../models/Models.js";
+import BlockchainService from "../services/blockchain/index.js";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+
 // import { challenges } from "../data/challenges.js";
 
 const router = express.Router();
@@ -30,6 +33,7 @@ router.get("/get-challenge", async (req, res) => {
         pfp: 1,
         active: 1,
         name: 1,
+        deployed: 1,
       }
     );
 
@@ -37,12 +41,43 @@ router.get("/get-challenge", async (req, res) => {
       return res.status(404).send("Challenge not found");
     }
 
-    if (!challenge.active)
+    if (!challenge.active) {
       return res.status(404).send("Challenge is not active");
+    }
 
-    const message_price = 72.34;
+    // Check if challenge needs tournament deployment
+
+    // if (!challenge.deployed) {
+    //   try {
+    //     // Create new tournament with initial entry fee
+    //     const initialEntryFee = 0.1 * LAMPORTS_PER_SOL; // 0.1 SOL
+    //     const transaction = await BlockchainService.createTournament(
+    //       initialEntryFee
+    //     );
+
+    //     challenge.deployed = true;
+    //     await challenge.save();
+
+    //     const [tournamentPDA] = PublicKey.findProgramAddressSync(
+    //       [Buffer.from("tournament")],
+    //       BlockchainService.programId
+    //     );
+    //     challenge.tournamentAddress = tournamentPDA.toString();
+    //     await challenge.save();
+    //   } catch (error) {
+    //     console.error("Failed to deploy tournament:", error);
+    //     return res.status(500).send("Failed to deploy tournament");
+    //   }
+    // }
+
+    // Get current entry fee from blockchain
+    // const tournamentData = await BlockchainService.getTournamentData(
+    //   challenge.tournamentAddress
+    // );
+
+    // const message_price = Number(tournamentData.entryFee) / LAMPORTS_PER_SOL;
     const break_attempts = await Chat.countDocuments({ challenge: id });
-
+    const message_price = 14.83;
     const chatLimit = 20;
     const firstPrompt = challenge.system_message;
     // const address = req.walletAddress;
@@ -51,13 +86,16 @@ router.get("/get-challenge", async (req, res) => {
       challenge: id,
       role: { $ne: "system" },
     })
-      .sort({ date: 1 })
+      .sort({ date: -1 })
       .limit(chatLimit);
 
     if (chatHistory.length > 0) {
-      return res
-        .status(200)
-        .json({ challenge, break_attempts, message_price, chatHistory });
+      return res.status(200).json({
+        challenge,
+        break_attempts,
+        message_price,
+        chatHistory: chatHistory.reverse(),
+      });
     }
 
     const found = await Chat.findOne({
@@ -80,15 +118,15 @@ router.get("/get-challenge", async (req, res) => {
     //   _id: "67499aec7a5af63de4eb84fb",
     // });
 
-    return res.status(200).res.json({
-      challenge: challenge,
-      break_attempts: break_attempts,
-      message_price: message_price,
-      chatHistory: [{ role: "assistant", content: challenge.label }],
-      // settings: settings,
+    return res.status(200).json({
+      challenge,
+      break_attempts,
+      message_price: Number(tournamentData.entryFee) / LAMPORTS_PER_SOL,
+      chatHistory,
+      tournamentData,
     });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return res.status(400).send(err);
   }
 });

@@ -14,6 +14,8 @@ const ChallengeSchema = new mongoose.Schema(
     phrase: String,
     assistant_id: String,
     system_message: String,
+    deployed: Boolean,
+    tournamentAddress: String,
   },
   { collection: "challenges" }
 );
@@ -61,6 +63,7 @@ const chatSchema = new mongoose.Schema(
     model: String,
     role: { type: String, required: true },
     content: { type: String, required: true },
+    tool_calls: Object,
     address: { type: String, required: true },
     ip: String,
     avatar: Object,

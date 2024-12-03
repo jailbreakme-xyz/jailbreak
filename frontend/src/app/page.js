@@ -74,7 +74,7 @@ export default function Home() {
           <div className="intro">
             <SocialIcons />
             <p>
-              JailBreak is a decentralized platform where users are challenged
+              JailbreakMe is a decentralized platform where users are challenged
               to try and jailbreak pre-existing LLMs in order to find weaknesses
               and be rewarded.
             </p>
@@ -105,7 +105,9 @@ export default function Home() {
             <a className="pointer" href="/docs">
               API
             </a>
-            <a className="pointer">TERMS</a>
+            <a className="pointer" href="/terms">
+              TERMS
+            </a>
           </div>
           <HowItWorks />
         </div>

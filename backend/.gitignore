@@ -38,3 +38,4 @@ next-env.d.ts
 
 /bot
 /data/challenges.js
+/data/challenges_old.js

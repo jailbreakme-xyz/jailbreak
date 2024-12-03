@@ -1,37 +1,35 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, use } from "react";
 import axios from "axios";
-import {
-  FaUserSecret,
-  FaHome,
-  FaUsers,
-  FaTelegramPlane,
-  FaCode,
-  FaQuestionCircle,
-  FaFlagCheckered,
-  FaShieldVirus,
-  FaSadCry,
-} from "react-icons/fa";
+import { FaSadCry } from "react-icons/fa";
 import RingLoader from "react-spinners/RingLoader";
 import BarLoader from "react-spinners/BarLoader";
-import { GiPodium } from "react-icons/gi";
 
 import Image from "next/image";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import "../../../styles/Chat.css";
 import MainMenu from "../../components/MainMenu";
-import WalletConnect from "../../components/WalletConnect";
+import { PiPaperPlaneRightFill } from "react-icons/pi";
 
 import bs58 from "bs58";
 import TimeAgo from "react-timeago";
 import CountUp from "react-countup";
 import Jdenticon from "react-jdenticon";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import {
+  Connection,
+  PublicKey,
+  Transaction,
+  SystemProgram,
+  LAMPORTS_PER_SOL,
+} from "@solana/web3.js";
+
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export function ParsedText({ message }) {
-  // Function to process the message and return an array of text and code blocks
   const processMessage = (message) => {
-    // Splitting the message by lines
     const lines = message.split("\n");
     const processed = [];
     let codeBlock = null;
@@ -39,23 +37,18 @@ export function ParsedText({ message }) {
     lines.forEach((line) => {
       if (line.startsWith("```")) {
         if (codeBlock !== null) {
-          // End of a code block
           processed.push({ type: "code", content: codeBlock });
           codeBlock = null;
         } else {
-          // Start of a code block
           codeBlock = "";
         }
       } else if (codeBlock !== null) {
-        // Inside a code block, accumulate the line
         codeBlock += line + "\n";
       } else {
-        // Plain text line
         processed.push({ type: "text", content: line });
       }
     });
 
-    // If a code block is open when the message ends, push it as a code block
     if (codeBlock !== null) {
       processed.push({ type: "code", content: codeBlock });
     }
@@ -63,14 +56,12 @@ export function ParsedText({ message }) {
     return processed;
   };
 
-  // Process the message to separate text and code blocks
   const contentBlocks = processMessage(message);
 
   return (
     <div>
       {contentBlocks.map((block, index) => {
         if (block.type === "code") {
-          // Render code block with a styled <pre> element
           return (
             <pre key={index} className="code-block">
               {block.content}
@@ -94,6 +85,7 @@ function numberWithCommas(x) {
 }
 
 export default function Challenge({ params }) {
+  const id = use(params).id;
   const [pageLoading, setPageLoading] = useState(true);
   const [loadingMessage, setLoadingMessage] = useState("");
   const [error, setError] = useState(null);
@@ -102,6 +94,7 @@ export default function Challenge({ params }) {
   const [conversation, setConversation] = useState([]);
   const [challenge, setChallenge] = useState({});
   const [prompt, setPrompt] = useState("");
+  const [loadingPayment, setLoadingPayment] = useState(false);
   const [walletAddress, setWalletAddress] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [ca, setCa] = useState("");
@@ -109,169 +102,54 @@ export default function Challenge({ params }) {
   const [userAvatar, setUserAvatar] = useState(null);
   const [showTooltip, setShowTooltip] = useState(false);
   const [attempts, setAttempts] = useState(0);
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useState(0.1);
+
   const tooltipRef = useRef(null);
 
   const messagesEndRef = useRef(null);
   const chatRef = useRef(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({
-      behavior: "smooth",
-    });
-  };
+  const { publicKey, sendTransaction, connected } = useWallet();
+  const SOLANA_RPC =
+    "https://special-cold-shard.solana-devnet.quiknode.pro/2e94b18cb7833ffd1e49b6e452de98cfef68a753"; // Or your preferred RPC endpoint
 
-  // const getSettings = async () => {
-  //   try {
-  //     const data = await axios
-  //       .get(`/api/settings`)
-  //       .then((res) => res.data)
-  //       .catch((err) => err);
-  //     setThreshold(data.settings.threshold);
-  //     setCa(data.settings.address);
-  //   } catch (err) {
-  //     setError("Error fetching challenge settings");
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   // const _wallet = getWallet();
-  //   // if (_wallet) {
-  //   //   setWalletAddress(_wallet);
-  //   //   getChallenge(_wallet);
-  //   // }
-  //   getChallenge();
-  // }, []);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [conversation]);
-
-  useEffect(() => {
-    getChallenge(true);
-    const interval = setInterval(() => getChallenge(true), 3000);
-    return () => clearInterval(interval);
-  }, [params.id]);
-
-  const saveWalletAddress = (address) => {
-    localStorage.setItem("wallet", address);
-  };
-
-  const getWallet = () => {
-    return localStorage.getItem("wallet");
-  };
-
-  const connectWallet = async (provider) => {
-    setError("");
-    setLoadingMessage("Connecting...");
+  const processPayment = async () => {
+    if (!connected || !publicKey) {
+      setError("Please connect your wallet first");
+      return false;
+    }
 
     try {
-      // Connect the wallet
-      await provider.connect();
-      const walletPublicKey = provider.publicKey.toString();
+      const connection = new Connection(SOLANA_RPC);
+      const recipientAddress = new PublicKey(
+        "2Ggmdr2qpuMsd7sGiCwPRBzoA3uXn6Tf6oTycg3fxAPB"
+      ); // Replace with your address
+      const lamports = Math.round(0.1 * LAMPORTS_PER_SOL);
 
-      // Generate a unique message for verification
-      const uniqueMessage = `Sign this message to verify your wallet ownership.`;
+      const transaction = new Transaction().add(
+        SystemProgram.transfer({
+          fromPubkey: publicKey,
+          toPubkey: recipientAddress,
+          lamports: lamports,
+        })
+      );
 
-      // Encode the message and request signature
-      const encodedMessage = new TextEncoder().encode(uniqueMessage);
-      const signature = await provider.signMessage(encodedMessage);
-
-      const token = localStorage.getItem("jwt");
-
-      const headers = { "Content-Type": "application/json" };
-      if (token) {
-        headers["auth-token"] = token;
-      }
-
-      setLoadingMessage("Verifying...");
-      // Send the signed message, wallet address, and signature to your backend
-      const response = await fetch("/api/verify-wallet", {
-        method: "POST",
-        headers: headers,
-        body: JSON.stringify({
-          walletAddress: walletPublicKey,
-          message: uniqueMessage,
-          signature: bs58.encode(signature.signature),
-        }),
+      const signature = await sendTransaction(transaction, connection);
+      const latestBlockhash = await connection.getLatestBlockhash();
+      await connection.confirmTransaction({
+        signature,
+        ...latestBlockhash,
       });
-
-      const result = await response.json();
-
-      if (response.ok && result.verified) {
-        // Verification successful
-        setError("");
-        localStorage.setItem("jwt", result.token);
-        setWalletAddress(walletPublicKey);
-        saveWalletAddress(walletPublicKey);
-        setAllowed(true);
-        getChallenge(walletPublicKey);
-      } else if (result.error) {
-        setLoadingMessage("");
-        setPageLoading(false);
-        setError(result.error);
-      } else {
-        // Verification failed
-        console.error("Verification failed:", result.error || "Unknown error");
-        setError("Wallet verification failed.");
-      }
-      setIsModalOpen(false);
+      return true;
     } catch (err) {
-      console.error("Error connecting to wallet:", err);
-      alert("Failed to connect wallet.");
-      setError("Failed to connect wallet.");
-      setLoadingMessage("");
-      setIsModalOpen(false);
-    }
-  };
-
-  const getChallenge = async (noLoading) => {
-    if (!noLoading) {
-      setPageLoading(true);
-      setLoadingMessage("Loading Interface...");
-    }
-    try {
-      const data = await axios
-        .get(`/api/challenges/get-challenge?id=${params.id}`)
-        .then((res) => res.data)
-        .catch((err) => err);
-
-      // setChallenge(data.challenge);
-      // setAttempts(data.break_attempts);
-      // setPrice(data.message_price);
-      // setConversation(data.chatHistory);
-
-      setChallenge((prev) =>
-        JSON.stringify(prev) !== JSON.stringify(data.challenge)
-          ? data.challenge
-          : prev
-      );
-      setAttempts((prev) =>
-        prev !== data.break_attempts ? data.break_attempts : prev
-      );
-      setPrice((prev) =>
-        prev !== data.message_price ? data.message_price : prev
-      );
-      setConversation((prev) =>
-        JSON.stringify(prev) !== JSON.stringify(data.chatHistory)
-          ? data.chatHistory
-          : prev
-      );
-
-      setPageLoading(false);
-      setLoadingMessage(null);
-
-      // const initialUrl = `/api/conversation/init/${params.id}`;
-      // conversationCall(initialUrl, {}, true);
-    } catch (err) {
-      setPageLoading(false);
-      setLoadingMessage(null);
-      setError("Falied to fetch challenge");
+      console.error(err);
+      setError("Payment failed. Please try again.");
+      setLoadingPayment(false);
+      return false;
     }
   };
 
   async function read(reader, initial) {
-    // scrollToBottom();
     if (!initial) {
       setLoading(false);
     }
@@ -296,125 +174,132 @@ export default function Challenge({ params }) {
       } else {
         messagesCopy = [...messagesCopy, { role: "assistant", content: chunk }];
       }
-      // scrollToBottom();
       return messagesCopy;
     });
 
-    const randomNumber = Math.floor(Math.random() * (400 - 300) + 100);
+    // const randomNumber = Math.floor(Math.random() * (400 - 300) + 100);
     await delay(150);
     return read(reader);
   }
 
-  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+  };
 
-  const conversationCall = async (url, body, isInitial) => {
-    setLoading(true);
-    setPageLoading(false);
-    setLoadingMessage("");
-    const token = localStorage.getItem("jwt");
+  useEffect(() => {
+    scrollToBottom();
+  }, [conversation]);
 
+  useEffect(() => {
+    getChallenge(true);
+    const interval = setInterval(() => getChallenge(true), 3000);
+    return () => clearInterval(interval);
+  }, [id]);
+
+  const getChallenge = async (noLoading) => {
+    if (!noLoading) {
+      setPageLoading(true);
+      setLoadingMessage("Loading Interface...");
+    }
     try {
-      fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "auth-token": token,
-        },
-        body: JSON.stringify(body),
-      })
-        .then(async (response) => {
-          if (response.ok) {
-            setAllowed(true);
-            setError("");
-            if (isInitial) {
-              const result = await response.json();
-              setLoading(false);
-              setConversation(result.chatHistory);
-            } else {
-              const reader = response.body.getReader();
-              return read(reader, isInitial);
-            }
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-          setLoading(false);
-        });
+      const data = await axios
+        .get(`/api/challenges/get-challenge?id=${id}`)
+        .then((res) => res.data)
+        .catch((err) => err);
+
+      setChallenge((prev) =>
+        JSON.stringify(prev) !== JSON.stringify(data.challenge)
+          ? data.challenge
+          : prev
+      );
+      setAttempts((prev) =>
+        prev !== data.break_attempts ? data.break_attempts : prev
+      );
+      setPrice((prev) =>
+        prev !== data.message_price ? data.message_price : prev
+      );
+      setConversation((prev) =>
+        JSON.stringify(prev) !== JSON.stringify(data.chatHistory)
+          ? data.chatHistory
+          : prev
+      );
+
+      setPageLoading(false);
+      setLoadingMessage(null);
     } catch (err) {
-      console.error(err);
-      setLoading(false);
-      setError("Falied to send message");
+      setPageLoading(false);
+      setLoadingMessage(null);
+      setError("Falied to fetch challenge");
     }
   };
 
-  const sendPrompt = () => {
-    if (!walletAddress) {
-      alert("Please connect your wallet to continue.");
-      return;
-    }
+  const conversationCall = async (url, body) => {
+    setLoading(true);
+    setPageLoading(false);
+    setLoadingMessage("");
 
-    setConversation((prevMessages) => [
-      ...prevMessages,
-      { role: "user", content: prompt, address: walletAddress },
-    ]);
-    scrollToBottom();
-    const promptUrl = `/api/conversation/submit/${params.id}`;
-    const body = {
-      prompt: prompt,
-      walletAddress,
-    };
-    conversationCall(promptUrl, body);
-    setPrompt("");
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (response.ok) {
+        setAllowed(true);
+        setError("");
+        const reader = response.body.getReader();
+        return read(reader);
+      }
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+      setError("Failed to send message");
+      throw err;
+    }
+  };
+
+  const sendPrompt = async () => {
+    try {
+      // Process payment before sending prompt
+      setLoadingPayment(true);
+      const paymentSuccess = await processPayment();
+      if (!paymentSuccess) return;
+      setLoadingPayment(false);
+      setConversation((prevMessages) => [
+        ...prevMessages,
+        { role: "user", content: prompt, address: publicKey.toString() },
+      ]);
+      scrollToBottom();
+
+      const promptUrl = `/api/conversation/submit/${id}`;
+      const body = {
+        prompt,
+        walletAddress: publicKey.toString(),
+      };
+
+      await conversationCall(promptUrl, body);
+      setPrompt("");
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+      setLoading(false);
+    }
   };
 
   const submit = async (e) => {
     e.preventDefault();
-    sendPrompt();
+    if (!prompt.trim()) return;
+    await sendPrompt();
   };
 
   const onChange = (e) => {
     setPrompt(e.target.value);
   };
-
-  // const fetchMessages = async () => {
-  //   try {
-  //     const url = `/api/conversation/init/${params.id}`;
-  //     const token = localStorage.getItem("jwt");
-  //     fetch(url, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         "auth-token": token,
-  //       },
-  //       body: JSON.stringify({ address: walletAddress }),
-  //     })
-  //       .then(async (response) => {
-  //         const result = await response.json();
-  //         // if (
-  //         //   result?.chatHistory[result.chatHistory.length - 1]?.content !=
-  //         //   conversation[conversation.length - 1]?.content
-  //         // ) {
-  //         //   setConversation(result.chatHistory);
-  //         // }
-  //         setConversation(result.chatHistory);
-
-  //         // if (!userAvatar) {
-  //         //   setUserAvatar(
-  //         //     <NiceAvatar
-  //         //       style={{ width: 30, height: 30 }}
-  //         //       {...result.userAvatar}
-  //         //     />
-  //         //   );
-  //         // }
-  //       })
-  //       .catch((err) => {
-  //         console.error(err);
-  //         setLoading(false);
-  //       });
-  //   } catch (err) {
-  //     console.error("Error fetching messages:", err);
-  //   }
-  // };
 
   const override = {
     display: "block",
@@ -427,14 +312,6 @@ export default function Challenge({ params }) {
       <div className="chatPageWrapper">
         <div className="chatHeader">
           <Header attempts={attempts} price={price} prize={1526.34} />
-          <WalletConnect
-            isModalOpen={isModalOpen}
-            walletAddress={walletAddress}
-            setWalletAddress={setWalletAddress}
-            setIsModalOpen={setIsModalOpen}
-            connectWallet={(provider) => connectWallet(provider)}
-            setAllowed={setAllowed}
-          />
           <hr />
         </div>
         {pageLoading ? (
@@ -583,12 +460,6 @@ export default function Challenge({ params }) {
                                 }}
                               >
                                 <Jdenticon value={item.address} size={"30"} />
-                                {/* <span style={{ margin: 0, padding: 0 }}>
-                                  {item.address.slice(0, 2)}
-                                </span>
-                                <span style={{ margin: 0, padding: 0 }}>
-                                  {item.address.slice(2, 4)}
-                                </span> */}
                               </div>
 
                               <div className="message">
@@ -644,10 +515,27 @@ export default function Challenge({ params }) {
                     task={challenge?.task}
                     submit={(e) => {
                       e.preventDefault();
-                      allowed && !error ? submit(e) : setIsModalOpen(true);
+                      submit(e);
                     }}
                     onChange={onChange}
-                    allowed={allowed && !error}
+                    allowed={true}
+                    button={
+                      connected ? (
+                        <button
+                          style={{ display: "flex" }}
+                          className="pointer"
+                          type="submit"
+                        >
+                          {loadingPayment ? (
+                            <RingLoader color="#ccc" size={14} />
+                          ) : (
+                            <PiPaperPlaneRightFill className="pointer" />
+                          )}
+                        </button>
+                      ) : (
+                        <WalletMultiButton />
+                      )
+                    }
                   />
                 </div>
               </div>

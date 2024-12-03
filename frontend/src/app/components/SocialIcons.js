@@ -14,7 +14,7 @@ export default function SocialIcons() {
         <FaXTwitter size={30} className="pointer" />
       </a>
       <a
-        href="https://t.me/+-MZ4uveXh2swZmFk"
+        href="https://t.me/jailbreakme_xyz"
         target="_blank"
         className="pointer"
       >

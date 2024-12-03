@@ -1,12 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import yellowLogo from "../../assets/yellowLogo.png";
 import stoneLogo from "../../assets/stoneLogo.png";
 import axios from "axios";
 import MainMenu from "../components/MainMenu";
-import { FaKey } from "react-icons/fa";
-import Link from "next/link";
 import MobileMenu from "../components/MobileMenu";
 import "../../styles/FAQ.css";
 import lightSlogen from "../../assets/lightSlogen.png";

@@ -30,6 +30,7 @@
     word-wrap: break-word;
     margin-bottom: 0px;
     padding: 1rem 0rem;
+    max-width: 100%;
   }
   
   .chat-bubble.user {
@@ -40,7 +41,7 @@
   }
   
   .chat-bubble.assistant, .chat-bubble.system {
-    padding-left: 200px;
+    padding-left: 150px;
     align-self: flex-end;
     /* float: right; */
     /* justify-content: end; */
@@ -73,7 +74,7 @@ height: 30px;
   }
   
   .chat-bubble .message {
-    max-width: 100%;
+    max-width: 85%;
     width: fit-content;
     padding: 10px 15px;
     border-radius: 15px;

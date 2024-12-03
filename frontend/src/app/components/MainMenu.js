@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import {
-  FaUserSecret,
   FaHome,
   FaUsers,
   FaTelegramPlane,
@@ -17,12 +16,6 @@ import { FaXTwitter } from "react-icons/fa6";
 import { GiBreakingChain } from "react-icons/gi";
 
 const MainMenu = () => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
-
   return (
     <div className="mainMenu desktopMenu">
       <>
@@ -55,7 +48,7 @@ const MainMenu = () => {
               <FaXTwitter size={30} className="pointer" />
             </a>
             <a
-              href="https://t.me/+-MZ4uveXh2swZmFk"
+              href="https://t.me/jailbreakme_xyz"
               target="_blank"
               className="pointer"
             >
@@ -77,15 +70,21 @@ const MainMenu = () => {
             </a>
           </div>
         </div>
-        <button
+        {/* <button
           id="comingSoonButton"
           className="styledBtn grayed disabled"
-          style={{ border: "0px", borderRadius: "5px", width: "100%" }}
+          style={{
+            border: "0px",
+            borderRadius: "5px",
+            width: "100%",
+            display: "grid",
+          }}
         >
-          Create Tournament
-          <br />
-          (Coming Soon) <FaChevronCircleRight className="disabled" />
-        </button>
+          <span>
+            Create Tournament <FaChevronCircleRight />
+          </span>
+          <span>(Coming Soon)</span>
+        </button> */}
       </>
     </div>
   );
