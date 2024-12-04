@@ -1,12 +1,12 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import {
   FaHome,
   FaUsers,
   FaTelegramPlane,
   FaCode,
   FaQuestionCircle,
-  FaChevronCircleRight,
+  FaInfoCircle,
 } from "react-icons/fa";
 
 import "../../styles/Chat.css";
@@ -15,23 +15,31 @@ import { SiGitbook, SiGithub } from "react-icons/si";
 import { FaXTwitter } from "react-icons/fa6";
 import { GiBreakingChain } from "react-icons/gi";
 
-const MainMenu = () => {
+function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+const MainMenu = (props) => {
   return (
     <div className="mainMenu desktopMenu">
       <>
-        <Link href="/" className="chatMainMenuItem pointer">
+        <Link target="_blank" href="/" className="chatMainMenuItem pointer">
           <FaHome size={25} /> HOME
         </Link>
-        <Link
-          href="/challenge/67464991a95c1b426ef3920d"
-          className="chatMainMenuItem pointer"
-        >
-          <GiBreakingChain size={25} /> BREAK
-        </Link>
-        <Link href="/docs" className="chatMainMenuItem pointer">
-          <FaCode size={25} /> API
-        </Link>
-        <Link href="/faq" className="chatMainMenuItem pointer">
+        {!props.hiddenItems?.includes("BREAK") && (
+          <Link
+            href="/challenge/67464991a95c1b426ef3920d"
+            className="chatMainMenuItem pointer"
+          >
+            <GiBreakingChain size={25} /> BREAK
+          </Link>
+        )}
+        {!props.hiddenItems?.includes("API") && (
+          <Link href="/docs" className="chatMainMenuItem pointer">
+            <FaCode size={25} /> API
+          </Link>
+        )}
+        <Link target="_blank" href="/faq" className="chatMainMenuItem pointer">
           <FaQuestionCircle size={25} /> FAQ
         </Link>
         <div className="chatMainMenuItem chatPageSocialMenu">
@@ -70,21 +78,41 @@ const MainMenu = () => {
             </a>
           </div>
         </div>
-        {/* <button
-          id="comingSoonButton"
-          className="styledBtn grayed disabled"
-          style={{
-            border: "0px",
-            borderRadius: "5px",
-            width: "100%",
-            display: "grid",
-          }}
-        >
-          <span>
-            Create Tournament <FaChevronCircleRight />
-          </span>
-          <span>(Coming Soon)</span>
-        </button> */}
+        {props.challenge?.name && (
+          <div
+            style={{ textAlign: "left", margin: "0px 0px 5px 0px" }}
+            className="chatMainMenuItem chatPageSocialMenu"
+          >
+            <span>
+              <FaInfoCircle size={25} /> INFO
+            </span>
+            <hr />
+            <div className="stats">
+              <p style={{ fontSize: "16px", fontWeight: "normal" }}>
+                The chat displays up to 50 messages. However, only your messages
+                are sent to {props.challenge?.name} for context.
+              </p>
+              <p style={{ fontSize: "16px", fontWeight: "normal" }}>
+                70% of all message fees go to growing the prize pool.
+              </p>
+              <div
+                style={{
+                  fontSize: "16px",
+                  fontWeight: "normal",
+                  textTransform: "none",
+                  lineHeight: "10px",
+                }}
+              >
+                <span style={{ fontWeight: "bold" }}>Limitations:</span>
+                <p>
+                  {numberWithCommas(props.challenge?.characterLimit)} characters
+                  per message.
+                </p>
+                <p>{props.challenge?.contextLimit} messages per context.</p>
+              </div>
+            </div>
+          </div>
+        )}
       </>
     </div>
   );

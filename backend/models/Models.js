@@ -10,12 +10,17 @@ const ChallengeSchema = new mongoose.Schema(
     task: String,
     label: String,
     level: String,
-    active: Boolean,
+    status: { type: String, default: "active" },
     phrase: String,
     assistant_id: String,
     system_message: String,
     deployed: Boolean,
-    tournamentAddress: String,
+    tournamentPDA: String,
+    idl: Object,
+    entryFee: Number,
+    characterLimit: Number,
+    contextLimit: Number,
+    expiry: Date,
   },
   { collection: "challenges" }
 );
@@ -33,26 +38,6 @@ const userSchema = new mongoose.Schema(
 
 export const User = mongoose.model("User", userSchema);
 
-const conversationSchema = new mongoose.Schema(
-  {
-    data: [
-      {
-        _id: false,
-        role: { type: String, required: true },
-        content: { type: String, required: true },
-      },
-    ],
-    model: String,
-    address: String,
-    challenge: { type: mongoose.Schema.Types.ObjectId, ref: "Challenge" },
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now },
-  },
-  { collection: "conversations" }
-);
-
-export const Conversation = mongoose.model("Conversation", conversationSchema);
-
 const chatSchema = new mongoose.Schema(
   {
     challenge: {
@@ -65,7 +50,7 @@ const chatSchema = new mongoose.Schema(
     content: { type: String, required: true },
     tool_calls: Object,
     address: { type: String, required: true },
-    ip: String,
+    txn: String,
     avatar: Object,
     date: { type: Date, default: Date.now },
   },

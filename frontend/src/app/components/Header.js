@@ -1,5 +1,4 @@
 import Image from "next/image";
-import yellowLogo from "../../assets/yellowLogo.png";
 import stoneLogo from "../../assets/stoneLogo.png";
 import MobileMenu from "./MobileMenu";
 import lightSlogen from "../../assets/lightSlogen.png";
@@ -26,7 +25,7 @@ export default function Header(props) {
           borderRadius: "0px 0px 50px 50px",
           marginBottom: "10px",
         }}
-        className="pointer"
+        className="pointer mainLogo"
       />
       <Image
         className="pointer"

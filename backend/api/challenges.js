@@ -33,7 +33,7 @@ router.get("/:id", async (req, res) => {
         title: 1,
         description: "$label",
         level: 1,
-        active: 1,
+        status: 1,
       }
     );
     res.send(challenges);

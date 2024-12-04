@@ -1,14 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import "../../../styles/Carousel.css";
-import Image from "next/image";
 
 const Card = ({ char }) => {
   return (
     <div className={`challengeCard active`}>
       <img src={char.image} alt={char.name} />
-
       <div className="challenge-card-info">
         <h2>{char.name}</h2>
+        <span>PRIZE POOL: {char.entryFee * 100} SOL</span>
         <hr />
         <p>{char.label}</p>
         <p className={`level ${char.level}`}>{char.level}</p>

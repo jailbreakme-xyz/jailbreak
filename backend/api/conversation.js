@@ -1,23 +1,27 @@
 import express from "express";
-import { Conversation } from "../models/Models.js";
+import { Chat } from "../models/Models.js";
 import verify from "./verify.js";
 const router = express.Router();
 
 router.get("/", verify, async (req, res) => {
   const address = req.user.address;
+  const limit = req.query.limit || 20;
+  const skip = req.query.skip || 0;
 
   try {
-    const conversations = await Conversation.find(
+    const conversations = await Chat.find(
       { address: address },
       {
         id: "$_id",
-        data: 1,
+        content: 1,
+        role: 1,
         address: 1,
         challenge: 1,
-        createdAt: 1,
-        updatedAt: 1,
+        date: 1,
       }
-    );
+    )
+      .skip(skip)
+      .limit(limit);
     res.send(conversations);
   } catch (err) {
     console.log(err);
@@ -27,19 +31,24 @@ router.get("/", verify, async (req, res) => {
 
 router.get("/challenge/:challenge", verify, async (req, res) => {
   const address = req.user.address;
+  const limit = req.query.limit || 20;
+  const skip = req.query.skip || 0;
 
   try {
-    const conversations = await Conversation.find(
+    const conversations = await Chat.find(
       { address: address, challenge: req.params.challenge },
       {
         _id: 0,
-        data: 1,
+        content: 1,
+        role: 1,
         address: 1,
         challenge: 1,
-        createdAt: 1,
-        updatedAt: 1,
+        date: 1,
       }
-    );
+    )
+      .skip(skip)
+      .limit(limit);
+
     res.send(conversations);
   } catch (err) {
     console.log(err);

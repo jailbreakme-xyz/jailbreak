@@ -1,21 +1,11 @@
 import express from "express";
-import path from "path";
 import bodyParser from "body-parser";
-import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import { endpoints } from "./data/endpoints.js";
 import { catchErrors } from "./hooks/errors.js";
-import { Challenge, Settings } from "./models/Models.js";
-import { faqData } from "./data/faq.js";
-
-// import { challenges } from "./data/challenges.js";
 
 dotenv.config();
 const dbURI = process.env.DB_URI;
-const __filename = fileURLToPath(import.meta.url);
-
-const __dirname = path.dirname(__filename);
 
 const app = express();
 const dev = app.get("env") !== "production";
@@ -72,7 +62,7 @@ app.set("trust proxy", true);
 // UI:
 import { challengesRoute } from "./routes/challenges.js";
 import { conversationRoute } from "./routes/conversation.js";
-import { verifyRoute } from "./routes/verify.js";
+import { settingsRoute } from "./routes/settings.js";
 
 // API:
 import { challengesAPI } from "./api/challenges.js";
@@ -80,7 +70,7 @@ import { conversationsAPI } from "./api/conversation.js";
 
 app.use("/api/challenges", challengesRoute);
 app.use("/api/conversation", conversationRoute);
-app.use("/api/verify-wallet", verifyRoute);
+app.use("/api/settings", settingsRoute);
 
 app.use("/api/json/v1/challenges", challengesAPI);
 app.use("/api/json/v1/conversations", conversationsAPI);
@@ -89,32 +79,6 @@ mongoose
   .connect(dbURI)
   .then(() => console.log("Database connected"))
   .catch((err) => console.log(err));
-
-app.get("/api/settings", async (req, res) => {
-  const settings = await Settings.findOne({ _id: "67499aec7a5af63de4eb84fb" });
-  const challenges = await Challenge.find(
-    {},
-    {
-      _id: 0,
-      id: "$_id",
-      name: 1,
-      title: 1,
-      image: 1,
-      label: 1,
-      level: 1,
-      active: 1,
-      pfp: 1,
-    }
-  );
-
-  const response = {
-    settings: settings,
-    endpoints: endpoints,
-    faq: faqData,
-    challenges: challenges,
-  };
-  res.send(response);
-});
 
 catchErrors();
 

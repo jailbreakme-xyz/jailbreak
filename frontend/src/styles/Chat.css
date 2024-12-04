@@ -2,7 +2,7 @@
 .chat-container {
     display: flex;
     flex-direction: column;
-    height: 78vh;
+    height: 80vh;
     /* max-width: 600px; */
     margin: 0 auto;
     border: 2px solid #ccc;
@@ -150,10 +150,10 @@ height: 30px;
 
   .chatMainMenuItem {
     border-radius: 10px;
-    padding: 1rem;
+    padding: 10px 15px;
     margin-bottom: 5px;
     font-weight: bold;
-    font-size: 24px;
+    font-size: 22px;
     text-decoration: none;
     text-align: left;
     background-color: #1F2024;
@@ -180,7 +180,7 @@ margin: 0px;
 color: lightgray;
 }
 .chatComingSoonMenuItem span {
-font-size: 32px;
+font-size: 26px;
 color: white;
 }
 

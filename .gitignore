@@ -1,1 +1,4 @@
 .DS_Store
+~/docker-secrets
+~/run/secrets
+/run/secrets

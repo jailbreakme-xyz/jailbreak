@@ -81,10 +81,6 @@ class OpenAIService {
         description: "The conversation was ended for an unspecified reason.",
       },
     ];
-    // this.isCollectingFunctionArgs = false;
-    // this.functionArguments = "";
-    // this.functionName = "";
-    // this.end_msg = "";
   }
 
   async createChatCompletion({ messages }) {
@@ -99,73 +95,13 @@ class OpenAIService {
         presence_penalty: 0.8,
         stream: true,
         tools: this.tools,
-        tool_choice: "required",
-        // tool_choice: {
-        //   type: "function",
-        //   function: { name: "handleChallengeFailed" }, // Default to failure, will be overridden if success
-        // },
+        tool_choice: "auto",
       });
 
       return stream;
     } catch (error) {
       console.error("OpenAI Service Error:", error);
       throw error;
-    }
-  }
-
-  async processStreamChunk(chunk, assistantMessage, res) {
-    const delta = chunk.choices[0].delta;
-    const finishReason = chunk.choices[0].finish_reason;
-
-    if (chunk && !finishReason) {
-      // Handle content
-      if (delta.content) {
-        assistantMessage.content += delta.content;
-        res.write(delta.content);
-      }
-
-      // Handle tool calls
-      if (delta.tool_calls) {
-        this.isCollectingFunctionArgs = true;
-        const toolCall = delta.tool_calls[0];
-
-        if (toolCall.function?.name) {
-          this.functionName = toolCall.function.name;
-          console.log("Function name:", this.functionName);
-        }
-
-        if (toolCall.function?.arguments) {
-          this.functionArguments += toolCall.function.arguments;
-          console.log(`Arguments: ${this.functionArguments}`);
-        }
-      }
-    } else {
-      const allowedFinishReasons = ["tool_calls", "stop"];
-      const finishReasonObj = this.finish_reasons.find(
-        (reason) => reason.name === finishReason
-      );
-
-      if (!finishReasonObj) {
-        this.end_msg = "The conversation was ended for an unspecified reason.";
-        res.write(this.end_msg);
-        res.end();
-      } else if (!allowedFinishReasons.includes(finishReason)) {
-        this.end_msg = finishReasonObj.description;
-        res.write(this.end_msg);
-        res.end();
-      } else if (this.isCollectingFunctionArgs) {
-        // Save assistant message when stream ends with function args
-        const args = JSON.parse(functionArguments);
-        console.log("Complete function arguments:", args);
-        assistantMessage.content += args.feedback;
-        assistantMessage.tool_calls = args;
-        assistantMessage.tool_calls.function_name = functionName;
-        //   Send back the feedback
-        res.write(args.feedback);
-      } else {
-        // If no function args, the message already written to res.
-        return;
-      }
     }
   }
 }

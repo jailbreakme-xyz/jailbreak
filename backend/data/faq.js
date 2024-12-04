@@ -12,17 +12,17 @@ export const faqData = [
   {
     question: "Do I need an account to play?",
     answer:
-      "Yes, you'll need to connect your wallet to track your progress and claim rewards.",
+      "Yes, you'll need to connect your Solana wallet to track your progress and claim rewards.",
   },
   {
     question: "What are $JAIL coins?",
     answer:
-      "$JAIL coins are the platform's native tokens. You must pay using $JAIL in order to participate in challenges.",
+      "$JAIL coins will be the platform's native tokens. Currently, you can only use Solana (SOL) to pay for the entry fee of a challenge. We will invest part of each tournament treasury in $JAIL tokens.",
   },
   {
     question: "How do I claim rewards?",
     answer:
-      "When you successfully complete a challenge, the system logs your conversation and validates your success. Rewards can then be claimed and will be transferred to your wallet.",
+      "When you successfully complete a challenge, the system logs your conversation and validates your success. Rewards will be automatically transferred to your wallet.",
   },
   {
     question: "What happens if I fail a challenge?",

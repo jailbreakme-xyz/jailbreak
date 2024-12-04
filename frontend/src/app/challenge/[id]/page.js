@@ -1,7 +1,9 @@
 "use client";
 import React, { useState, useEffect, useRef, use } from "react";
 import axios from "axios";
-import { FaSadCry } from "react-icons/fa";
+import { FaSadCry, FaClock } from "react-icons/fa";
+import { FaChartLine } from "react-icons/fa6";
+
 import RingLoader from "react-spinners/RingLoader";
 import BarLoader from "react-spinners/BarLoader";
 
@@ -11,8 +13,8 @@ import Header from "../../components/Header";
 import "../../../styles/Chat.css";
 import MainMenu from "../../components/MainMenu";
 import { PiPaperPlaneRightFill } from "react-icons/pi";
+import { createHash } from "crypto";
 
-import bs58 from "bs58";
 import TimeAgo from "react-timeago";
 import CountUp from "react-countup";
 import Jdenticon from "react-jdenticon";
@@ -23,8 +25,12 @@ import {
   PublicKey,
   Transaction,
   SystemProgram,
-  LAMPORTS_PER_SOL,
+  TransactionInstruction,
 } from "@solana/web3.js";
+import Timer from "../../components/partials/Timer";
+
+const SOLANA_RPC =
+  "https://special-cold-shard.solana-devnet.quiknode.pro/2e94b18cb7833ffd1e49b6e452de98cfef68a753";
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -80,107 +86,36 @@ export function ParsedText({ message }) {
   );
 }
 
-function numberWithCommas(x) {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
+const hashString = (str) => {
+  return createHash("sha256").update(str, "utf-8").digest();
+};
+
+const calculateDiscriminator = (instructionName) => {
+  const hash = createHash("sha256")
+    .update(`global:${instructionName}`, "utf-8")
+    .digest();
+  return hash.slice(0, 8); // Extract first 8 bytes
+};
 
 export default function Challenge({ params }) {
   const id = use(params).id;
   const [pageLoading, setPageLoading] = useState(true);
-  const [loadingMessage, setLoadingMessage] = useState("");
   const [error, setError] = useState(null);
-  const [allowed, setAllowed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [conversation, setConversation] = useState([]);
   const [challenge, setChallenge] = useState({});
   const [prompt, setPrompt] = useState("");
   const [loadingPayment, setLoadingPayment] = useState(false);
-  const [walletAddress, setWalletAddress] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [ca, setCa] = useState("");
-  const [threshold, setThreshold] = useState(0);
-  const [userAvatar, setUserAvatar] = useState(null);
-  const [showTooltip, setShowTooltip] = useState(false);
-  const [attempts, setAttempts] = useState(0);
-  const [price, setPrice] = useState(0.1);
 
-  const tooltipRef = useRef(null);
+  const [attempts, setAttempts] = useState(0);
+  const [price, setPrice] = useState(0);
+  const [prize, setPrize] = useState(0);
+  const [expiry, setExpiry] = useState(null);
 
   const messagesEndRef = useRef(null);
   const chatRef = useRef(null);
 
   const { publicKey, sendTransaction, connected } = useWallet();
-  const SOLANA_RPC =
-    "https://special-cold-shard.solana-devnet.quiknode.pro/2e94b18cb7833ffd1e49b6e452de98cfef68a753"; // Or your preferred RPC endpoint
-
-  const processPayment = async () => {
-    if (!connected || !publicKey) {
-      setError("Please connect your wallet first");
-      return false;
-    }
-
-    try {
-      const connection = new Connection(SOLANA_RPC);
-      const recipientAddress = new PublicKey(
-        "2Ggmdr2qpuMsd7sGiCwPRBzoA3uXn6Tf6oTycg3fxAPB"
-      ); // Replace with your address
-      const lamports = Math.round(0.1 * LAMPORTS_PER_SOL);
-
-      const transaction = new Transaction().add(
-        SystemProgram.transfer({
-          fromPubkey: publicKey,
-          toPubkey: recipientAddress,
-          lamports: lamports,
-        })
-      );
-
-      const signature = await sendTransaction(transaction, connection);
-      const latestBlockhash = await connection.getLatestBlockhash();
-      await connection.confirmTransaction({
-        signature,
-        ...latestBlockhash,
-      });
-      return true;
-    } catch (err) {
-      console.error(err);
-      setError("Payment failed. Please try again.");
-      setLoadingPayment(false);
-      return false;
-    }
-  };
-
-  async function read(reader, initial) {
-    if (!initial) {
-      setLoading(false);
-    }
-    const { done, value } = await reader.read();
-    if (done) {
-      if (initial) {
-        setLoading(false);
-      }
-      console.log("Stream completed");
-      return;
-    }
-    const chunk = new TextDecoder("utf-8").decode(value);
-
-    setConversation((prevMessages) => {
-      let messagesCopy = [...prevMessages];
-      const lastMessage = messagesCopy[messagesCopy.length - 1];
-      if (lastMessage && lastMessage.role === "assistant") {
-        messagesCopy[messagesCopy.length - 1] = {
-          ...lastMessage,
-          content: lastMessage.content + chunk,
-        };
-      } else {
-        messagesCopy = [...messagesCopy, { role: "assistant", content: chunk }];
-      }
-      return messagesCopy;
-    });
-
-    // const randomNumber = Math.floor(Math.random() * (400 - 300) + 100);
-    await delay(150);
-    return read(reader);
-  }
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({
@@ -198,10 +133,36 @@ export default function Challenge({ params }) {
     return () => clearInterval(interval);
   }, [id]);
 
+  async function read(reader) {
+    const { done, value } = await reader.read();
+    if (done) {
+      console.log("Stream completed");
+      return;
+    }
+    const chunk = new TextDecoder("utf-8").decode(value);
+
+    setConversation((prevMessages) => {
+      setLoading(false);
+      let messagesCopy = [...prevMessages];
+      const lastMessage = messagesCopy[messagesCopy.length - 1];
+      if (lastMessage && lastMessage.role === "assistant") {
+        messagesCopy[messagesCopy.length - 1] = {
+          ...lastMessage,
+          content: lastMessage.content + chunk,
+        };
+      } else {
+        messagesCopy = [...messagesCopy, { role: "assistant", content: chunk }];
+      }
+      return messagesCopy;
+    });
+
+    await delay(150);
+    return read(reader);
+  }
+
   const getChallenge = async (noLoading) => {
     if (!noLoading) {
       setPageLoading(true);
-      setLoadingMessage("Loading Interface...");
     }
     try {
       const data = await axios
@@ -220,6 +181,8 @@ export default function Challenge({ params }) {
       setPrice((prev) =>
         prev !== data.message_price ? data.message_price : prev
       );
+      setPrize((prev) => (prev !== data.prize ? data.prize : prev));
+      setExpiry((prev) => (prev !== data.expiry ? data.expiry : prev));
       setConversation((prev) =>
         JSON.stringify(prev) !== JSON.stringify(data.chatHistory)
           ? data.chatHistory
@@ -227,10 +190,8 @@ export default function Challenge({ params }) {
       );
 
       setPageLoading(false);
-      setLoadingMessage(null);
     } catch (err) {
       setPageLoading(false);
-      setLoadingMessage(null);
       setError("Falied to fetch challenge");
     }
   };
@@ -238,7 +199,6 @@ export default function Challenge({ params }) {
   const conversationCall = async (url, body) => {
     setLoading(true);
     setPageLoading(false);
-    setLoadingMessage("");
 
     try {
       const response = await fetch(url, {
@@ -250,7 +210,6 @@ export default function Challenge({ params }) {
       });
 
       if (response.ok) {
-        setAllowed(true);
         setError("");
         const reader = response.body.getReader();
         return read(reader);
@@ -263,27 +222,80 @@ export default function Challenge({ params }) {
     }
   };
 
+  const processPayment = async () => {
+    if (!connected || !publicKey) {
+      setError("Please connect your wallet first");
+      return false;
+    }
+
+    try {
+      const connection = new Connection(SOLANA_RPC, "confirmed");
+      const tournamentAccountInfo = await connection.getAccountInfo(
+        new PublicKey(challenge.tournamentPDA)
+      );
+      if (!tournamentAccountInfo) {
+        throw new Error("Tournament account not found");
+      }
+
+      const solutionHash = hashString(prompt);
+      const discriminator = calculateDiscriminator("submit_solution");
+
+      const data = Buffer.concat([discriminator, solutionHash]);
+
+      const keys = [
+        {
+          pubkey: new PublicKey(challenge.tournamentPDA),
+          isSigner: false,
+          isWritable: true,
+        },
+        { pubkey: publicKey, isSigner: true, isWritable: true },
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
+      ];
+
+      const instruction = new TransactionInstruction({
+        keys,
+        programId: new PublicKey(challenge.idl.address),
+        data,
+      });
+
+      const transaction = new Transaction().add(instruction);
+      const signature = await sendTransaction(transaction, connection);
+      console.log("Transaction sent:", signature);
+
+      await connection.confirmTransaction(signature, "confirmed");
+      console.log("Transaction confirmed");
+
+      return signature;
+    } catch (err) {
+      console.error("Error processing payment:", err);
+      setError("Payment failed. Please try again.");
+      setLoadingPayment(false);
+      return false;
+    }
+  };
+
   const sendPrompt = async () => {
     try {
-      // Process payment before sending prompt
       setLoadingPayment(true);
-      const paymentSuccess = await processPayment();
-      if (!paymentSuccess) return;
+      const signature = await processPayment();
+      if (!signature) return;
       setLoadingPayment(false);
       setConversation((prevMessages) => [
         ...prevMessages,
         { role: "user", content: prompt, address: publicKey.toString() },
       ]);
+
       scrollToBottom();
 
       const promptUrl = `/api/conversation/submit/${id}`;
       const body = {
         prompt,
         walletAddress: publicKey.toString(),
+        signature,
       };
 
-      await conversationCall(promptUrl, body);
       setPrompt("");
+      await conversationCall(promptUrl, body);
     } catch (err) {
       console.error(err);
       setError(err.message);
@@ -311,7 +323,7 @@ export default function Challenge({ params }) {
     <main className="main">
       <div className="chatPageWrapper">
         <div className="chatHeader">
-          <Header attempts={attempts} price={price} prize={1526.34} />
+          <Header attempts={attempts} price={price} prize={prize} />
           <hr />
         </div>
         {pageLoading ? (
@@ -364,7 +376,48 @@ export default function Challenge({ params }) {
                 </div>
               )}
               <div style={{ textAlign: "left" }} className="statsWrapper">
-                <h3>Stats</h3>
+                <h3 style={{ fontSize: "22px", margin: "5px 0px" }}>
+                  <FaClock
+                    style={{
+                      position: "relative",
+                      top: "4px",
+                    }}
+                  />{" "}
+                  EXPIRY
+                </h3>
+                <hr />
+                <div className="stats">
+                  <Timer expiryDate={expiry} />
+                  <p
+                    style={{
+                      fontSize: "14px",
+                      color: "#ccc",
+                      lineHeight: "10px",
+                    }}
+                  >
+                    Last sender wins when the timer ends.
+                  </p>
+                  <p
+                    style={{
+                      fontSize: "14px",
+                      color: "#ccc",
+                      lineHeight: "10px",
+                    }}
+                  >
+                    Each message adds 1 hour.
+                  </p>
+                </div>
+              </div>
+              <div style={{ textAlign: "left" }} className="statsWrapper">
+                <h3 style={{ fontSize: "22px", margin: "5px 0px" }}>
+                  <FaChartLine
+                    style={{
+                      position: "relative",
+                      top: "4px",
+                    }}
+                  />{" "}
+                  STATS
+                </h3>
                 <hr />
                 <div className="stats">
                   <div className="chatComingSoonMenuItem">
@@ -383,9 +436,9 @@ export default function Challenge({ params }) {
                       start={0}
                       end={price}
                       duration={2.75}
-                      decimals={2}
+                      decimals={4}
                       decimal="."
-                      prefix="$"
+                      suffix=" SOL"
                     />
                   </div>
                 </div>
@@ -399,12 +452,12 @@ export default function Challenge({ params }) {
                       {challenge?.name} PRIZE POOL
                     </h3>
                     <CountUp
-                      start={500}
-                      end={1526.34}
+                      start={0}
+                      end={prize}
                       duration={2.75}
-                      decimals={2}
+                      decimals={4}
                       decimal="."
-                      prefix="$"
+                      suffix=" SOL"
                     />
                   </div>
                 )}
@@ -443,7 +496,6 @@ export default function Challenge({ params }) {
                               <div
                                 className="avatar"
                                 style={{
-                                  // backgroundColor: "white",
                                   width: "25px",
                                   height: "25px",
                                   padding: "5px",
@@ -511,6 +563,7 @@ export default function Challenge({ params }) {
                 </div>
                 <div className="chat-footer">
                   <Footer
+                    status={challenge?.status}
                     value={prompt}
                     task={challenge?.task}
                     submit={(e) => {
@@ -540,7 +593,7 @@ export default function Challenge({ params }) {
                 </div>
               </div>
             </div>
-            <MainMenu />
+            <MainMenu challenge={challenge} hiddenItems={["API", "BREAK"]} />
           </div>
         )}
       </div>

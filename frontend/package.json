@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@project-serum/anchor": "^0.26.0",
     "@solana/spl-token": "^0.4.9",
     "@solana/wallet-adapter-base": "^0.9.23",
     "@solana/wallet-adapter-phantom": "^0.9.24",
@@ -17,6 +18,7 @@
     "@solana/web3.js": "^1.95.5",
     "axios": "^1.6.7",
     "bs58": "^6.0.0",
+    "crypto": "^1.0.1",
     "lottie-react": "^2.4.0",
     "next": "^15.0.3",
     "react": "^18",
@@ -25,7 +27,8 @@
     "react-icons": "^5.0.1",
     "react-jdenticon": "^1.4.0",
     "react-spinners": "^0.13.8",
-    "react-timeago": "^7.2.0"
+    "react-timeago": "^7.2.0",
+    "react-timer-hook": "^3.0.8"
   },
   "devDependencies": {
     "eslint": "^8",

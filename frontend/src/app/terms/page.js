@@ -77,10 +77,6 @@ const Terms = () => {
               <h3>2. User Responsibilities</h3>
               <ul>
                 <li>
-                  You must be at least 18 years old to use the platform or have
-                  the consent of a parent or guardian.
-                </li>
-                <li>
                   Users are prohibited from attempting to hack, exploit, or
                   otherwise interfere with the functionality of the AI or
                   platform.

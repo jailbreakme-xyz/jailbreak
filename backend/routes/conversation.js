@@ -1,44 +1,69 @@
 import express from "express";
 import dotenv from "dotenv";
 dotenv.config();
-import OpenAI from "openai";
-import verifyJWT from "../hooks/verifyJWT.js";
-import { Conversation, Challenge, Chat } from "../models/Models.js";
+import { Challenge, Chat } from "../models/Models.js";
 import OpenAIService from "../services/llm/openai.js";
 import BlockchainService from "../services/blockchain/index.js";
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
-
-const openai = new OpenAI({
-  apiKey: process.env.OPEN_AI_SECRET,
-});
 
 const router = express.Router();
 const model = "gpt-4o-mini";
 
+const solanaRpc = process.env.RPC_URL_DEVNET;
+
 router.post("/submit/:id", async (req, res) => {
   try {
-    const { prompt, transactionSignature, walletAddress } = req.body;
+    const { prompt, signature, walletAddress } = req.body;
     const { id } = req.params;
-    const chatLimit = 20;
-    const characterLimit = 1000;
+    const contextLimit = 100;
+    const characterLimit = 4000;
 
-    // if (!prompt || !transactionSignature || !walletAddress) {
-    //   return res.write("Missing required fields");
-    // }
-
-    // const isValid = await BlockchainService.verifyTransaction(
-    //   transactionSignature,
-    //   id,
-    //   walletAddress
-    // );
-
-    // if (!isValid) {
-    //   return res.write("Invalid transaction");
-    // }
+    if (!prompt || !signature || !walletAddress) {
+      return res.write("Missing required fields");
+    }
 
     // Find the challenge
     const challenge = await Challenge.findOne({ _id: id });
     if (!challenge) return res.write("Challenge not found");
+
+    const programId = challenge.idl?.address;
+    if (!programId) return res.write("Program ID not found");
+
+    const tournamentPDA = challenge.tournamentPDA;
+    if (!tournamentPDA) return res.write("Tournament PDA not found");
+
+    const blockchainService = new BlockchainService(solanaRpc, programId);
+    const tournamentData = await blockchainService.getTournamentData(
+      tournamentPDA
+    );
+    const entryFee = tournamentData.entryFee;
+    const currentExpiry = challenge.expiry;
+    const newExpiry = new Date(currentExpiry.getTime() + 3600000);
+
+    await Challenge.updateOne(
+      { _id: id },
+      {
+        $set: {
+          entryFee: entryFee,
+          expiry: newExpiry,
+        },
+      }
+    );
+
+    if (!entryFee) {
+      return res.write("Entry fee not found in tournament data");
+    }
+
+    const isValidTransaction = await blockchainService.verifyTransaction(
+      signature,
+      tournamentPDA,
+      entryFee
+    );
+
+    if (!isValidTransaction) {
+      return res.write("Transaction verification failed");
+    }
+
+    console.log("Transaction verified successfully for wallet:", walletAddress);
 
     if (prompt.length > characterLimit)
       return res.write(
@@ -52,25 +77,10 @@ router.post("/submit/:id", async (req, res) => {
       role: "user",
       content: prompt,
       address: walletAddress,
+      txn: signature,
     };
 
     await Chat.create(userMessage);
-
-    // const walletPublicKey = new PublicKey(walletAddress);
-
-    // const solutionHash = await BlockchainService.createSolutionHash(
-    //   assistantMessage.content
-    // );
-
-    // const tournamentData = await BlockchainService.getTournamentData(
-    //   challenge.tournamentAddress
-    // );
-
-    // const transaction = await BlockchainService.submitSolution(
-    //   walletPublicKey,
-    //   solutionHash,
-    //   Number(tournamentData.entryFee) / LAMPORTS_PER_SOL
-    // );
 
     const systemPrompt = challenge.system_message;
 
@@ -79,10 +89,11 @@ router.post("/submit/:id", async (req, res) => {
     // Fetch chat history for the challenge and address
     const chatHistory = await Chat.find({
       challenge: id,
-      role: { $ne: "system" },
+      address: walletAddress,
+      // role: { $ne: "system" },
     })
       .sort({ date: -1 })
-      .limit(chatLimit) // Sort by date to maintain chronological order
+      .limit(contextLimit) // Sort by date to maintain chronological order
       .select("role content -_id"); // Only include role and content
 
     const messages = [{ role: "system", content: systemPrompt }];
@@ -162,13 +173,23 @@ router.post("/submit/:id", async (req, res) => {
           assistantMessage.tool_calls = args;
           assistantMessage.tool_calls.function_name = functionName;
           if (functionName === "handleChallengeSuccess") {
-            // TODO: Handle Success
+            const concluded = await blockchainService.concludeTournament(
+              tournamentPDA,
+              walletAddress
+            );
+            const successMessage = `🥳 Congratulations! ${args.feedback} Tournament concluded: ${concluded}`;
+            assistantMessage.content = successMessage;
+            await Chat.create(assistantMessage);
+            await Challenge.updateOne(
+              { _id: id },
+              { $set: { status: "concluded" } }
+            );
+
+            res.write(successMessage);
           } else {
-            // TODO: Handle Failure
+            await Chat.create(assistantMessage);
+            res.write(args.feedback);
           }
-          //   Send back the feedback
-          await Chat.create(assistantMessage);
-          res.write(args.feedback);
         } else {
           // Save assistant message when stream ends
           await Chat.create(assistantMessage);

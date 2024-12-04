@@ -2,19 +2,14 @@ import React, { useState } from "react";
 import Link from "next/link";
 import {
   FaHome,
-  FaUserSecret,
   FaCode,
   FaQuestionCircle,
   FaUsers,
-  FaBars,
   FaTimes,
-  FaFlagCheckered,
-  FaShieldVirus,
 } from "react-icons/fa";
 import { FaTelegramPlane } from "react-icons/fa";
 import { SiGitbook, SiGithub } from "react-icons/si";
 import { FaXTwitter } from "react-icons/fa6";
-import { GiPodium } from "react-icons/gi";
 import { TiThMenu } from "react-icons/ti";
 import CountUp from "react-countup";
 
@@ -27,12 +22,10 @@ const MobileMenu = (props) => {
 
   return (
     <div className={props.absolute ? "absolute mobileMenu" : "mobileMenu"}>
-      {/* Hamburger Icon */}
       <div className="hamburgerIcon" onClick={toggleMenu}>
         {menuOpen ? <FaTimes size={20} /> : <TiThMenu size={20} />}
       </div>
 
-      {/* Menu Items */}
       <div className={`mainMenu ${menuOpen ? "open" : ""}`}>
         <Link
           href="/"
@@ -41,13 +34,6 @@ const MobileMenu = (props) => {
         >
           <FaHome size={25} /> HOME
         </Link>
-        {/* <Link
-          href="/beta"
-          className="chatMainMenuItem pointer"
-          onClick={() => setMenuOpen(false)}
-        >
-          <FaUserSecret size={25} /> CHALLENGES
-        </Link> */}
         <Link
           href="/docs"
           className="chatMainMenuItem pointer"
@@ -110,8 +96,9 @@ const MobileMenu = (props) => {
                     start={0}
                     end={props.prize}
                     duration={2.75}
-                    decimals={0}
+                    decimals={4}
                     decimal="."
+                    suffix=" SOL"
                   />
                 </div>
                 <div className="chatComingSoonMenuItem">
@@ -130,30 +117,15 @@ const MobileMenu = (props) => {
                     start={0}
                     end={props.price}
                     duration={2.75}
-                    decimals={2}
+                    decimals={4}
                     decimal="."
-                    prefix="$"
+                    suffix=" SOL"
                   />
                 </div>
               </div>
             </div>
           </div>
         )}
-        {/* <div className="chatMenu">
-          <div>
-            <h3>Coming Soon...</h3>
-            <hr />
-            <div className="chatMainMenuItem chatComingSoonMenuItem disabled">
-              <FaFlagCheckered size={25} /> TOURNAMENTS
-            </div>
-            <div className="chatMainMenuItem chatComingSoonMenuItem disabled">
-              <GiPodium size={25} /> LEADERBOARD
-            </div>
-            <div className="chatMainMenuItem chatComingSoonMenuItem disabled">
-              <FaShieldVirus size={25} /> SECURE AI AGENTS
-            </div>
-          </div>
-        </div> */}
       </div>
     </div>
   );

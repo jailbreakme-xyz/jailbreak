@@ -1,16 +1,16 @@
 import express from "express";
-import { Challenge, Settings, Chat } from "../models/Models.js";
+import { Challenge, Chat } from "../models/Models.js";
 import BlockchainService from "../services/blockchain/index.js";
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
-
-// import { challenges } from "../data/challenges.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 const router = express.Router();
+const solanaRpc = process.env.RPC_URL_DEVNET;
+const model = "gpt-4o-mini";
 
 router.get("/", async (req, res) => {
   try {
     const challenges = await Challenge.find({});
-    // await Challenge.insertMany(challenges);
     res.send(challenges);
   } catch (err) {
     console.log(err);
@@ -21,66 +21,64 @@ router.get("/", async (req, res) => {
 router.get("/get-challenge", async (req, res) => {
   try {
     const id = req.query.id;
-    const challenge = await Challenge.findOne(
-      { _id: id },
-      {
-        _id: 1,
-        title: 1,
-        label: 1,
-        task: 1,
-        level: 1,
-        image: 1,
-        pfp: 1,
-        active: 1,
-        name: 1,
-        deployed: 1,
-      }
-    );
+    const chatLimit = 50;
+
+    const projection = {
+      _id: 1,
+      title: 1,
+      label: 1,
+      task: 1,
+      level: 1,
+      image: 1,
+      pfp: 1,
+      status: 1,
+      name: 1,
+      deployed: 1,
+      idl: 1,
+      tournamentPDA: 1,
+      entryFee: 1,
+      characterLimit: 1,
+      contextLimit: 1,
+      expiry: 1,
+    };
+
+    const challengeInitialized = await Chat.findOne({
+      challenge: id,
+    });
+
+    if (!challengeInitialized) {
+      projection.system_message = 1;
+    }
+
+    let challenge = await Challenge.findOne({ _id: id }, projection);
 
     if (!challenge) {
       return res.status(404).send("Challenge not found");
     }
 
-    if (!challenge.active) {
+    const allowedStatuses = ["active", "concluded"];
+    if (!allowedStatuses.includes(challenge.status)) {
       return res.status(404).send("Challenge is not active");
     }
 
-    // Check if challenge needs tournament deployment
+    const programId = challenge.idl?.address;
+    if (!programId) return res.write("Program ID not found");
 
-    // if (!challenge.deployed) {
-    //   try {
-    //     // Create new tournament with initial entry fee
-    //     const initialEntryFee = 0.1 * LAMPORTS_PER_SOL; // 0.1 SOL
-    //     const transaction = await BlockchainService.createTournament(
-    //       initialEntryFee
-    //     );
+    const tournamentPDA = challenge.tournamentPDA;
+    if (!tournamentPDA) return res.write("Tournament PDA not found");
 
-    //     challenge.deployed = true;
-    //     await challenge.save();
+    const blockchainService = new BlockchainService(solanaRpc, programId);
+    const tournamentData = await blockchainService.getTournamentData(
+      tournamentPDA
+    );
 
-    //     const [tournamentPDA] = PublicKey.findProgramAddressSync(
-    //       [Buffer.from("tournament")],
-    //       BlockchainService.programId
-    //     );
-    //     challenge.tournamentAddress = tournamentPDA.toString();
-    //     await challenge.save();
-    //   } catch (error) {
-    //     console.error("Failed to deploy tournament:", error);
-    //     return res.status(500).send("Failed to deploy tournament");
-    //   }
-    // }
+    const message_price = tournamentData.entryFee;
+    const prize = message_price * 100;
 
-    // Get current entry fee from blockchain
-    // const tournamentData = await BlockchainService.getTournamentData(
-    //   challenge.tournamentAddress
-    // );
-
-    // const message_price = Number(tournamentData.entryFee) / LAMPORTS_PER_SOL;
-    const break_attempts = await Chat.countDocuments({ challenge: id });
-    const message_price = 14.83;
-    const chatLimit = 20;
-    const firstPrompt = challenge.system_message;
-    // const address = req.walletAddress;
+    const break_attempts = await Chat.countDocuments({
+      challenge: id,
+      role: "user",
+    });
 
     const chatHistory = await Chat.find({
       challenge: id,
@@ -89,40 +87,63 @@ router.get("/get-challenge", async (req, res) => {
       .sort({ date: -1 })
       .limit(chatLimit);
 
+    const now = new Date();
+    const expiry = challenge.expiry;
+
     if (chatHistory.length > 0) {
+      if (expiry < now && challenge.status === "active") {
+        const lastSender = chatHistory[0].address;
+        const concluded = await blockchainService.concludeTournament(
+          tournamentPDA,
+          lastSender
+        );
+        const successMessage = `🥳 Tournament concluded: ${concluded}`;
+        const assistantMessage = {
+          challenge: id,
+          model: model,
+          role: "assistant",
+          content: successMessage,
+          tool_calls: {},
+          address: lastSender,
+        };
+
+        await Chat.create(assistantMessage);
+        await Challenge.updateOne(
+          { _id: id },
+          { $set: { status: "concluded" } }
+        );
+      }
+
       return res.status(200).json({
         challenge,
         break_attempts,
         message_price,
+        prize,
+        expiry,
         chatHistory: chatHistory.reverse(),
       });
     }
 
-    const found = await Chat.findOne({
-      challenge: challenge,
-    });
-
-    if (!found) {
+    if (!challengeInitialized) {
+      const firstPrompt = challenge.system_message;
       const newChat = await Chat.create({
         challenge: id,
         model: model,
         role: "system",
         content: firstPrompt,
-        ip: clientIp,
+        address: challenge.tournamentPDA,
       });
 
       console.log("New chat document created:", newChat);
     }
 
-    // const settings = await Settings.findOne({
-    //   _id: "67499aec7a5af63de4eb84fb",
-    // });
-
     return res.status(200).json({
       challenge,
       break_attempts,
-      message_price: Number(tournamentData.entryFee) / LAMPORTS_PER_SOL,
+      message_price,
+      prize,
       chatHistory,
+      expiry,
       tournamentData,
     });
   } catch (err) {

@@ -194,7 +194,7 @@ outline: none;
 }
 
 .chatHeader {
-padding-bottom: 1rem;
+padding-bottom: 0px;
 }
 
 .mainMenu, .chatMenu {
@@ -495,7 +495,7 @@ color: gray;
   margin: 10px 0px;
 background-color: #1F2024;
 border-radius: 10px;
-padding: 10px;
+padding: 5px 10px;
 }
 .terms-container {
 padding: 0px 20px;
@@ -1180,7 +1180,7 @@ margin-right: 5px;
       width: auto;
       }
       #comingSoonButton {
-        font-size: 16px !important;
+        font-size: 20px !important;
         width: 100% !important;
       }
 /* Mobile Menu Container */
@@ -1237,7 +1237,7 @@ margin-right: 5px;
 .chatMainMenuItem {
   display: flex !important;
   align-items: center !important;
-  font-size: 18px !important;
+  font-size: 22px !important;
   margin: 4px 0 !important;
   color: #ccc;
   text-decoration: none !important;
@@ -1294,7 +1294,10 @@ justify-content: start !important;
 .chatComingSoonMenuItem {
   color: black;
 }
-
+.mainLogo {
+  width: 60px !important;
+  height: 60px !important;
+}
 .api-doc-container h2 {
 font-size: 18px;
 }

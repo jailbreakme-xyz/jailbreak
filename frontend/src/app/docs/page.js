@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import yellowLogo from "../../assets/yellowLogo.png";
 import stoneLogo from "../../assets/stoneLogo.png";
 import axios from "axios";
 import MainMenu from "../components/MainMenu";
@@ -12,7 +11,6 @@ import "../../styles/APIDocumentation.css";
 import lightSlogen from "../../assets/lightSlogen.png";
 
 const APIDocs = (props) => {
-  const [expanded, setExpanded] = useState(null);
   const [endpoints, setEndpoints] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,10 +31,6 @@ const APIDocs = (props) => {
       setEndpoints(props.endpoints);
     }
   }, []);
-
-  // const toggleAccordion = (index) => {
-  //   setExpanded(expanded === index ? null : index);
-  // };
 
   return (
     <main className="apiDocsPage">
@@ -104,16 +98,8 @@ const APIDocs = (props) => {
           >
             {endpoints.map((category, index) => (
               <div key={index} className="api-doc-accordion">
-                <div
-                  className={`accordion-header ${
-                    expanded === index ? "expanded" : ""
-                  }`}
-                  // onClick={() => toggleAccordion(index)}
-                >
+                <div className={`accordion-header`}>
                   <h2>{category.category}</h2>
-                  {/* <span className="accordion-icon">
-              {expanded === index ? "-" : "+"}
-            </span> */}
                 </div>
 
                 <div className="accordion-content">

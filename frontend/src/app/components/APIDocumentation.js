@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
-import yellowLogo from "../../assets/yellowLogo.png";
 import stoneLogo from "../../assets/stoneLogo.png";
 import { FaKey } from "react-icons/fa";
 import Link from "next/link";
@@ -8,12 +7,6 @@ import Link from "next/link";
 import "../../styles/APIDocumentation.css";
 
 const APIDocumentation = (props) => {
-  const [expanded, setExpanded] = useState(null);
-
-  // const toggleAccordion = (index) => {
-  //   setExpanded(expanded === index ? null : index);
-  // };
-
   return (
     <div className="api-doc-container" style={{ backgroundColor: "black" }}>
       <div style={{ textAlign: "center" }}>
@@ -42,18 +35,10 @@ const APIDocumentation = (props) => {
         </Link>
       </div>
       <hr />
-      {props.endpoints.map((category, index) => (
+      {props.endpoints?.map((category, index) => (
         <div key={index} className="api-doc-accordion">
-          <div
-            className={`accordion-header ${
-              expanded === index ? "expanded" : ""
-            }`}
-            // onClick={() => toggleAccordion(index)}
-          >
+          <div className={`accordion-header`}>
             <h2>{category.category}</h2>
-            {/* <span className="accordion-icon">
-              {expanded === index ? "-" : "+"}
-            </span> */}
           </div>
 
           <div className="accordion-content">

@@ -1,142 +1,145 @@
-import { Connection, PublicKey, SystemProgram, Keypair } from "@solana/web3.js";
-import * as anchor from "@coral-xyz/anchor";
-import { AnchorProvider, Wallet } from "@coral-xyz/anchor";
-
-import dotenv from "dotenv";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-import { Challenge } from "../../models/Models.js";
-
-dotenv.config();
-
-// Get current directory
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import {
+  Connection,
+  Transaction,
+  TransactionInstruction,
+  PublicKey,
+  SystemProgram,
+  Keypair,
+  LAMPORTS_PER_SOL,
+} from "@solana/web3.js";
+import { createHash } from "crypto";
+import bs58 from "bs58";
+import { readFileSync } from "fs";
 
 class BlockchainService {
-  constructor() {
-    // Use devnet connection
-    this.connection = new Connection(process.env.RPC_URL_DEVNET, "confirmed");
-
-    this.programId = new PublicKey(
-      "8SSA8rCG5E3K4LGrVB99pWjDL3BQapzQcEvhVkLrHh2S"
-    );
-
-    // Load your keypair
-    const keypairFile = fs.readFileSync(
-      path.join(
-        __dirname,
-        "../../jailbreak-pool/target/deploy/jailbreak_pool-keypair.json"
-      )
-    );
-    this.keypair = Keypair.fromSecretKey(
-      new Uint8Array(JSON.parse(keypairFile))
-    );
-
-    // Create wallet instance
-    this.wallet = new Wallet(this.keypair);
-
-    // Read IDL
-    this.idl = JSON.parse(
-      fs.readFileSync(
-        path.join(__dirname, "../../jailbreak-pool/target/idl/tournament.json"),
-        "utf8"
-      )
-    );
+  constructor(solanaRpc, programId) {
+    this.connection = new Connection(solanaRpc, "confirmed");
+    this.programId = new PublicKey(programId);
   }
 
-  async verifyAndCreateTransaction(walletAddress, challengeId, message) {
+  // Utility to calculate the discriminator
+  calculateDiscriminator(instructionName) {
+    const hash = createHash("sha256")
+      .update(`global:${instructionName}`, "utf-8")
+      .digest();
+    return hash.slice(0, 8);
+  }
+
+  // Verify a transaction
+  async verifyTransaction(signature, tournamentPDA, expectedAmount) {
     try {
-      // Get challenge and tournament data
-      const challenge = await Challenge.findOne({ _id: challengeId });
-      if (!challenge || !challenge.deployed) {
-        throw new Error("Challenge not found or not deployed");
+      // Fetch transaction details
+      const transactionDetails = await this.connection.getTransaction(
+        signature,
+        {
+          commitment: "confirmed",
+        }
+      );
+      if (!transactionDetails) {
+        throw new Error("Transaction not found");
       }
 
-      // Get current entry fee from tournament
-      const tournamentData = await this.getTournamentData(
-        challenge.tournamentAddress
+      // Check that the transaction includes the expected program
+      const { transaction, meta } = transactionDetails;
+      const programIndex = transaction.message.accountKeys.findIndex((key) =>
+        key.equals(this.programId)
       );
+      if (programIndex === -1) {
+        throw new Error("Program ID not found in transaction");
+      }
 
-      // Create solution hash
-      const solutionHash = await this.createSolutionHash(message);
+      // Verify the submit_solution instruction
+      const discriminator = this.calculateDiscriminator("submit_solution");
+      let validInstruction = false;
 
-      // Create transaction
-      const transaction = await this.submitSolution(
-        new PublicKey(walletAddress),
-        solutionHash,
-        new anchor.BN(tournamentData.entryFee)
+      for (const instruction of transaction.message.instructions) {
+        if (instruction.programIdIndex === programIndex) {
+          console.log("Raw Instruction Data:", instruction.data);
+          console.log("Instruction Accounts:", instruction.accounts);
+
+          // Decode instruction data and match discriminator
+          const decodedData = bs58.decode(instruction.data);
+          if (!Buffer.from(decodedData.slice(0, 8)).equals(discriminator)) {
+            console.log("Discriminator mismatch");
+            continue;
+          }
+
+          // Resolve account indices to public keys
+          const resolvedAccounts = instruction.accounts.map(
+            (index) => transaction.message.accountKeys[index]
+          );
+
+          // Check if tournamentPDA is in resolved accounts
+          if (
+            resolvedAccounts.some((key) =>
+              key.equals(new PublicKey(tournamentPDA))
+            )
+          ) {
+            validInstruction = true;
+            break;
+          }
+        }
+      }
+
+      if (!validInstruction) {
+        throw new Error("submit_solution instruction not found");
+      }
+
+      // Verify the amount transferred to the tournament PDA
+      const tournamentPdaIndex = transaction.message.accountKeys.findIndex(
+        (key) => key.equals(new PublicKey(tournamentPDA))
       );
+      const preBalance = meta.preBalances[tournamentPdaIndex];
+      const postBalance = meta.postBalances[tournamentPdaIndex];
+      const amountTransferred = (postBalance - preBalance) / LAMPORTS_PER_SOL;
 
-      return {
-        transaction: transaction.serialize().toString("base64"),
-        entryFee: tournamentData.entryFee,
-        tournamentAddress: challenge.tournamentAddress,
-      };
+      const tolerance = expectedAmount * 0.01;
+      const isWithinTolerance =
+        Math.abs(amountTransferred - expectedAmount) <= tolerance;
+
+      console.log("Pre Balance:", preBalance);
+      console.log("Post Balance:", postBalance);
+      console.log("Amount Transferred:", amountTransferred);
+
+      if (!isWithinTolerance) {
+        throw new Error(
+          `Incorrect amount transferred. Expected: ${expectedAmount} SOL (±${tolerance}), Got: ${amountTransferred} SOL`
+        );
+      }
+
+      console.log("Transaction verification successful");
+      return true;
     } catch (error) {
-      console.error("Error in verifyAndCreateTransaction:", error);
-      throw error;
+      console.error("Error verifying transaction:", error);
+      return false;
     }
   }
 
-  async createTournament(initialEntryFee) {
+  // Get tournament data
+  async getTournamentData(tournamentPDA) {
     try {
-      const provider = new AnchorProvider(this.connection, this.wallet, {
-        commitment: "confirmed",
-      });
-
-      // Create the coder explicitly
-      const coder = new anchor.BorshCoder(this.idl);
-
-      // Create program with explicit coder
-      const program = new anchor.Program(
-        this.idl,
-        this.programId,
-        provider,
-        coder // Pass the coder explicitly
+      // Fetch the account info
+      const accountInfo = await this.connection.getAccountInfo(
+        new PublicKey(tournamentPDA)
       );
+      if (!accountInfo) {
+        throw new Error("Tournament account not found");
+      }
 
-      // Generate tournament PDA
-      const [tournamentPDA] = PublicKey.findProgramAddressSync(
-        [Buffer.from("tournament")],
-        this.programId
-      );
+      const data = Buffer.from(accountInfo.data);
+      // Read authority (first 32 bytes)
+      const authority = new PublicKey(data.subarray(8, 40)); // Skip 8-byte discriminator
 
-      // Create tournament instruction
-      const tx = await program.methods
-        .initialize()
-        .accounts({
-          tournament: tournamentPDA,
-          authority: provider.wallet.publicKey,
-          systemProgram: SystemProgram.programId,
-        })
-        .rpc();
+      // Read state (1 byte)
+      const state = data.readUInt8(40);
 
-      console.log("Tournament created with transaction:", tx);
-      return tx;
-    } catch (error) {
-      console.error("Error creating tournament:", error);
-      throw error;
-    }
-  }
-
-  async getTournamentData(tournamentAddress) {
-    try {
-      const provider = new anchor.AnchorProvider(this.connection, null, {
-        commitment: "confirmed",
-      });
-
-      const program = new anchor.Program(this.idl, this.programId, provider);
-
-      const tournamentAccount = await program.account.tournament.fetch(
-        tournamentAddress
-      );
+      // Read entry fee (8 bytes)
+      const entryFee = data.readBigUInt64LE(41);
 
       return {
-        entryFee: tournamentAccount.entryFee.toString(),
-        state: tournamentAccount.state,
-        authority: tournamentAccount.authority.toString(),
+        authority: authority.toString(),
+        state,
+        entryFee: Number(entryFee) / LAMPORTS_PER_SOL, // Convert BigInt to number if needed
       };
     } catch (error) {
       console.error("Error fetching tournament data:", error);
@@ -144,73 +147,76 @@ class BlockchainService {
     }
   }
 
-  async verifyTransaction(signature, tournamentAddress, expectedFee) {
+  //   Conclude Tournament
+  async concludeTournament(tournamentPDA, winnerAccount) {
     try {
-      const transaction = await this.connection.getTransaction(signature);
-
-      if (!transaction) {
-        throw new Error("Transaction not found");
+      // Load wallet keypair (payer/authority)
+      const keypairFile = readFileSync("./secrets/solana-keypair");
+      const wallet = Keypair.fromSecretKey(
+        Uint8Array.from(JSON.parse(keypairFile.toString()))
+      );
+      // Fetch tournament account
+      const tournamentAccountInfo = await this.connection.getAccountInfo(
+        new PublicKey(tournamentPDA)
+      );
+      if (!tournamentAccountInfo) {
+        throw new Error("Tournament account not found");
       }
 
-      // Verify transaction details
-      const isValidTransaction =
-        transaction.transaction.message.accountKeys.some((key) =>
-          key.equals(new PublicKey(tournamentAddress))
-        ) && transaction.meta.fee >= Number(expectedFee);
+      // Define the instruction data for ConcludeTournament
+      const discriminator = this.calculateDiscriminator("conclude_tournament");
 
-      if (!isValidTransaction) {
-        throw new Error("Invalid transaction");
-      }
+      // Instruction data is just the discriminator
+      const data = Buffer.from(discriminator);
 
-      return true;
-    } catch (error) {
-      console.error("Transaction verification failed:", error);
-      throw error;
-    }
-  }
+      // Define the accounts involved
+      const keys = [
+        {
+          pubkey: new PublicKey(tournamentPDA),
+          isSigner: false,
+          isWritable: true,
+        }, // Tournament PDA
+        { pubkey: wallet.publicKey, isSigner: true, isWritable: true }, // Payer/Authority
+        {
+          pubkey: new PublicKey(winnerAccount),
+          isSigner: false,
+          isWritable: true,
+        }, // Winner account
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // System program
+      ];
 
-  async submitSolution(walletPublicKey, solutionHash, amount) {
-    try {
-      // Create provider
-      const provider = new anchor.AnchorProvider(
-        this.connection,
-        null, // wallet will be injected from frontend
-        { commitment: "confirmed" }
+      // Create the instruction
+      const instruction = new TransactionInstruction({
+        keys,
+        programId: this.programId,
+        data,
+      });
+
+      // Create the transaction and add the instruction
+      const transaction = new Transaction().add(instruction);
+
+      // Send the transaction
+      const signature = await this.connection.sendTransaction(
+        transaction,
+        [wallet],
+        {
+          preflightCommitment: "confirmed",
+        }
       );
 
-      // Create program interface
-      const program = new anchor.Program(this.idl, this.programId, provider);
-
-      // Get tournament account (you'll need to store this somewhere)
-      const [tournamentPDA] = PublicKey.findProgramAddressSync(
-        [Buffer.from("tournament")],
-        this.programId
+      // Confirm the transaction
+      const confirmation = await this.connection.confirmTransaction(
+        signature,
+        "confirmed"
       );
 
-      // Create transaction instruction
-      const tx = await program.methods
-        .submitSolution(solutionHash)
-        .accounts({
-          tournament: tournamentPDA,
-          payer: walletPublicKey,
-          systemProgram: SystemProgram.programId,
-        })
-        .transaction();
-
-      return tx;
+      console.log("ConcludeTournament transaction signature:", signature);
+      return signature;
     } catch (error) {
-      console.error("Error in submitSolution:", error);
+      console.error("Error concluding tournament:", error);
       throw error;
     }
-  }
-
-  // Helper function to create solution hash
-  createSolutionHash(solution) {
-    // Create a SHA-256 hash of the solution
-    const encoder = new TextEncoder();
-    const data = encoder.encode(solution);
-    return crypto.subtle.digest("SHA-256", data);
   }
 }
 
-export default new BlockchainService();
+export default BlockchainService;
