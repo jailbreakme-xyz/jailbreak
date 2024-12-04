@@ -12,8 +12,6 @@ services:
     ports:
       - "8001:8001"
     command: npm start
-    volumes:
-      - ~/docker-secrets/solana-keypair:/usr/src/app/backend/secrets/solana-keypair:ro
 
   front-end:
     build:

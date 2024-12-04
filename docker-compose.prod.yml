@@ -1,6 +1,8 @@
 services:
   back-end:
     command: npm run start
+    volumes:
+      - /home/ec2-user/docker-secrets/solana-keypair:/usr/src/app/backend/secrets/solana-keypair:ro
 
   front-end:
     command: npm run start
