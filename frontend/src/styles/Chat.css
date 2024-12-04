@@ -328,6 +328,9 @@ padding-bottom: 0px;
   z-index: 99999;
 }
 
+.chat-bubble .message {
+  max-width: 75%;
+}
 /* Menu Item Links */
 .chatMainMenuItem {
   display: flex !important;

@@ -7,7 +7,7 @@ const Card = ({ char }) => {
       <img src={char.image} alt={char.name} />
       <div className="challenge-card-info">
         <h2>{char.name}</h2>
-        <span>PRIZE POOL: {char.entryFee * 100} SOL</span>
+        <span>PRIZE POOL: {(char.entryFee * 100).toFixed(4)} SOL</span>
         <hr />
         <p>{char.label}</p>
         <p className={`level ${char.level}`}>{char.level}</p>
