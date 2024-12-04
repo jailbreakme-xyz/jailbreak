@@ -521,14 +521,14 @@ export default function Challenge({ params }) {
 
                               <div className="message">
                                 <p>{item.content}</p>
-                                {/* <TimeAgo date={new Date(item.date)} /> */}
+                                <TimeAgo date={new Date(item.date)} />
                               </div>
                             </>
                           ) : (
                             <>
                               <div className="message">
                                 <ParsedText message={item.content} />
-                                {/* <TimeAgo date={new Date(item.date)} /> */}
+                                <TimeAgo date={new Date(item.date)} />
                               </div>
                               <div className="avatar">
                                 <Image
