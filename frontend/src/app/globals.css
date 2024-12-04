@@ -489,7 +489,7 @@ color: gray;
 }
 
 .wallet-adapter-dropdown-list {
-  top: 0px;
+  top: 0px !important;
 }
 .statsWrapper {
   margin: 10px 0px;
