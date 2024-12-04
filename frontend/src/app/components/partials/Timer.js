@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useTimer } from "react-timer-hook";
 
 function Timer({ expiryDate }) {
-  const { seconds, minutes, hours, restart } = useTimer({
+  const { seconds, minutes, hours, days, restart } = useTimer({
     expiryTimestamp: new Date(expiryDate),
     onExpire: () => console.log("Timer expired!"),
   });
@@ -23,6 +23,24 @@ function Timer({ expiryDate }) {
           fontWeight: "bold",
         }}
       >
+        {days > 0 && (
+          <div
+            style={{
+              backgroundColor: "#ccc",
+              color: "black",
+              padding: "10px",
+              borderRadius: "10px",
+              width: "25px",
+              textAlign: "center",
+            }}
+          >
+            <span>{days < 10 ? `0${days}` : days}</span>
+          </div>
+        )}
+        {days > 0 && (
+          <span style={{ fontSize: "20px", fontWeight: "bold" }}>:</span>
+        )}
+
         <div
           style={{
             backgroundColor: "#ccc",

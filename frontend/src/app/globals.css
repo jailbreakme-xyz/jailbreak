@@ -8,7 +8,7 @@
   cursor: url("data:image/svg+xml,%3Csvg stroke='currentColor' fill='%23ccc' stroke-width='2' viewBox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' height='32' width='32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M22 14a8 8 0 0 1-8 8'%3E%3C/path%3E%3Cpath d='M18 11v-1a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0'%3E%3C/path%3E%3Cpath d='M14 10V9a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v1'%3E%3C/path%3E%3Cpath d='M10 9.5V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v10'%3E%3C/path%3E%3Cpath d='M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15'%3E%3C/path%3E%3C/svg%3E"), auto !important;
 }
 
-input, p, span, h1, h2, h3, h4, h5, h6 {
+input,textarea, p, span, h1, h2, h3, h4, h5, h6 {
 cursor: auto;
 }
 
@@ -176,7 +176,7 @@ padding: 1.5rem;
   padding: 0rem 0rem 2rem;
 }
 
-input:focus {
+input:focus, textarea:focus {
 outline: none;
 }
 .cta:hover {

@@ -129,7 +129,7 @@ export default function Challenge({ params }) {
   }, [conversation]);
 
   useEffect(() => {
-    getChallenge(true);
+    getChallenge(false);
     const interval = setInterval(() => getChallenge(true), 3000);
     return () => clearInterval(interval);
   }, [id]);
@@ -163,6 +163,32 @@ export default function Challenge({ params }) {
     return read(reader);
   }
 
+  const conversationCall = async (url, body) => {
+    setLoading(true);
+    setPageLoading(false);
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (response.ok) {
+        setError("");
+        const reader = response.body.getReader();
+        return read(reader);
+      }
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+      setError("Failed to send message");
+      throw err;
+    }
+  };
+
   const getChallenge = async (noLoading) => {
     if (!noLoading) {
       setPageLoading(true);
@@ -187,43 +213,27 @@ export default function Challenge({ params }) {
         );
         setPrize((prev) => (prev !== data.prize ? data.prize : prev));
         setExpiry((prev) => (prev !== data.expiry ? data.expiry : prev));
-        setConversation((prev) =>
-          JSON.stringify(prev) !== JSON.stringify(data.chatHistory)
-            ? data.chatHistory
-            : prev
-        );
+
+        const lastMessage = data.chatHistory[data.chatHistory.length - 1];
+        const lastMessagePrev = conversation[conversation.length - 1];
+
+        if (!noLoading) {
+          console.log("Updated initial conversation");
+          setConversation(data.chatHistory);
+        } else if (
+          lastMessage.address != publicKey?.toBase58() ||
+          lastMessage.role === "assistant"
+        ) {
+          console.log("Updated conversation with new user message");
+          setConversation(data.chatHistory);
+        }
       }
 
       setPageLoading(false);
-    } catch (err) {
-      setPageLoading(false);
-      setError("Falied to fetch challenge");
-    }
-  };
-
-  const conversationCall = async (url, body) => {
-    setLoading(true);
-    setPageLoading(false);
-
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
-
-      if (response.ok) {
-        setError("");
-        const reader = response.body.getReader();
-        return read(reader);
-      }
     } catch (err) {
       console.error(err);
-      setLoading(false);
-      setError("Failed to send message");
-      throw err;
+      setPageLoading(false);
+      setError("Falied to fetch challenge");
     }
   };
 
@@ -406,10 +416,11 @@ export default function Challenge({ params }) {
                     style={{
                       fontSize: "14px",
                       color: "#ccc",
-                      lineHeight: "10px",
+                      lineHeight: "1.2rem",
                     }}
                   >
-                    Each message adds 1 hour.
+                    Each message rounds the timer up to 1 hour if less than 1
+                    hour remains.
                   </p>
                 </div>
               </div>

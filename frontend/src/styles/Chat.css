@@ -121,7 +121,10 @@ height: 30px;
     justify-content: space-between;
   }
   
-  .chat-footer input[type="text"] {
+  textarea::-webkit-scrollbar {
+    display: none;
+  }
+  .chat-footer input[type="text"], .chat-footer textarea {
     flex: 1;
     padding: 10px;
     border-radius: 20px;
@@ -262,8 +265,8 @@ border: 0px;
     .chat-footer div form {
       width: 95% !important;
     }
-    .chat-footer div form input {
-      width: 90% !important;
+    .chat-footer div form input, .chat-footer div form textarea {
+      width: 90% !important;      
     }
 
     .poolDiv {

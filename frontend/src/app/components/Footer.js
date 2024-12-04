@@ -13,13 +13,24 @@ export default function Footer(props) {
             width: "100%",
           }}
         >
-          <input
-            style={{ fontSize: "16px" }}
+          <textarea
+            style={{
+              fontSize: "16px",
+              height: "1.5em",
+              overflowY: "auto",
+              overflowX: "hidden",
+              resize: "none",
+            }}
             minLength={1}
             maxLength={4000}
             value={props.value}
             onChange={props.onChange}
-            type="text"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault(); // Prevent default Enter behavior
+                props.submit(e); // Call the submit function
+              }
+            }}
             placeholder={
               props.task ? `${props.task}...` : "Jailbreak this prompt..."
             }

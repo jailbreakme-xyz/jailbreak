@@ -37,14 +37,19 @@ router.post("/submit/:id", async (req, res) => {
     );
     const entryFee = tournamentData.entryFee;
     const currentExpiry = challenge.expiry;
-    const newExpiry = new Date(currentExpiry.getTime() + 3600000);
+    const now = new Date();
+    const oneHourInMillis = 3600000;
 
+    // Set the entry fee regardless of expiry change
     await Challenge.updateOne(
       { _id: id },
       {
         $set: {
           entryFee: entryFee,
-          expiry: newExpiry,
+          // Update expiry only if there is less than 1 hour left
+          ...(currentExpiry - now < oneHourInMillis && {
+            expiry: new Date(now.getTime() + oneHourInMillis),
+          }),
         },
       }
     );
@@ -127,7 +132,6 @@ router.post("/submit/:id", async (req, res) => {
     let isCollectingFunctionArgs = false;
     let end_msg = "";
 
-    console.log(messages);
     for await (const chunk of stream) {
       const delta = chunk.choices[0].delta;
       const finishReason = chunk.choices[0].finish_reason;
@@ -224,6 +228,7 @@ router.post("/submit/:id", async (req, res) => {
           return res.end();
         }
       }
+
       res.flushHeaders();
     }
 
