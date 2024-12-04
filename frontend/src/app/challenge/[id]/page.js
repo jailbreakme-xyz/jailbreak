@@ -106,6 +106,7 @@ export default function Challenge({ params }) {
   const [challenge, setChallenge] = useState({});
   const [prompt, setPrompt] = useState("");
   const [loadingPayment, setLoadingPayment] = useState(false);
+  const [writing, setWriting] = useState(false);
 
   const [attempts, setAttempts] = useState(0);
   const [price, setPrice] = useState(0);
@@ -134,9 +135,11 @@ export default function Challenge({ params }) {
   }, [id]);
 
   async function read(reader) {
+    setWriting(true);
     const { done, value } = await reader.read();
     if (done) {
       console.log("Stream completed");
+      setWriting(false);
       return;
     }
     const chunk = new TextDecoder("utf-8").decode(value);
@@ -170,24 +173,26 @@ export default function Challenge({ params }) {
         .then((res) => res.data)
         .catch((err) => err);
 
-      setChallenge((prev) =>
-        JSON.stringify(prev) !== JSON.stringify(data.challenge)
-          ? data.challenge
-          : prev
-      );
-      setAttempts((prev) =>
-        prev !== data.break_attempts ? data.break_attempts : prev
-      );
-      setPrice((prev) =>
-        prev !== data.message_price ? data.message_price : prev
-      );
-      setPrize((prev) => (prev !== data.prize ? data.prize : prev));
-      setExpiry((prev) => (prev !== data.expiry ? data.expiry : prev));
-      setConversation((prev) =>
-        JSON.stringify(prev) !== JSON.stringify(data.chatHistory)
-          ? data.chatHistory
-          : prev
-      );
+      if (!writing) {
+        setChallenge((prev) =>
+          JSON.stringify(prev) !== JSON.stringify(data.challenge)
+            ? data.challenge
+            : prev
+        );
+        setAttempts((prev) =>
+          prev !== data.break_attempts ? data.break_attempts : prev
+        );
+        setPrice((prev) =>
+          prev !== data.message_price ? data.message_price : prev
+        );
+        setPrize((prev) => (prev !== data.prize ? data.prize : prev));
+        setExpiry((prev) => (prev !== data.expiry ? data.expiry : prev));
+        setConversation((prev) =>
+          JSON.stringify(prev) !== JSON.stringify(data.chatHistory)
+            ? data.chatHistory
+            : prev
+        );
+      }
 
       setPageLoading(false);
     } catch (err) {
@@ -516,14 +521,14 @@ export default function Challenge({ params }) {
 
                               <div className="message">
                                 <p>{item.content}</p>
-                                <TimeAgo date={new Date(item.date)} />
+                                {/* <TimeAgo date={new Date(item.date)} /> */}
                               </div>
                             </>
                           ) : (
                             <>
                               <div className="message">
                                 <ParsedText message={item.content} />
-                                <TimeAgo date={new Date(item.date)} />
+                                {/* <TimeAgo date={new Date(item.date)} /> */}
                               </div>
                               <div className="avatar">
                                 <Image

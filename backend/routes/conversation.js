@@ -127,6 +127,7 @@ router.post("/submit/:id", async (req, res) => {
     let isCollectingFunctionArgs = false;
     let end_msg = "";
 
+    console.log(messages);
     for await (const chunk of stream) {
       const delta = chunk.choices[0].delta;
       const finishReason = chunk.choices[0].finish_reason;
@@ -204,7 +205,7 @@ router.post("/submit/:id", async (req, res) => {
               tournamentPDA,
               walletAddress
             );
-            const successMessage = `🥳 Congratulations! ${args.feedback} Tournament concluded: ${concluded}`;
+            const successMessage = `🥳 Congratulations! ${assistantMessage.content} Tournament concluded: ${concluded}`;
             assistantMessage.content = successMessage;
             await Chat.create(assistantMessage);
             await Challenge.updateOne(
