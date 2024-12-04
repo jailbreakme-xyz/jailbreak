@@ -1,0 +1,21 @@
+{
+    "short_name": "Jailbreak",
+    "name": "Jailbreak",
+    "icons": [
+        {
+            "src": "images/192.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "images/512.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ],
+    "start_url": "/",
+    "display": "standalone",
+    "theme_color": "#ccc",
+    "background_color": "black",
+    "description": "JailBreak is a decentralized platform where users are challenged to jailbreak LLMs to find weaknesses and Be rewarded."
+}
