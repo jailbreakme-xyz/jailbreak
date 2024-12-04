@@ -3,7 +3,7 @@ services:
     command: npm run dev
     volumes:
       - ./backend:/usr/src/app/backend
-      - ~/docker-secrets/solana-keypair:/usr/src/app/backend/secrets/solana-keypair:ro
+      - ~/docker-secrets/solana-keypair:/usr/src/app/backend/secrets/solana-keypair.json:ro
 
   front-end:
     command: npm run dev
