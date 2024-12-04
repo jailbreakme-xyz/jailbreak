@@ -168,10 +168,37 @@ router.post("/submit/:id", async (req, res) => {
         } else if (isCollectingFunctionArgs) {
           // Save assistant message when stream ends with function args
           console.log(walletAddress, functionArguments);
-          const args = JSON.parse(functionArguments);
-          assistantMessage.content += args.feedback;
-          assistantMessage.tool_calls = args;
-          assistantMessage.tool_calls.function_name = functionName;
+          try {
+            const args = JSON.parse(functionArguments); // Attempt to parse JSON
+            assistantMessage.content += args.feedback;
+            assistantMessage.tool_calls = args;
+            assistantMessage.tool_calls.function_name = functionName;
+          } catch (error) {
+            console.error("Error parsing JSON:", error.message);
+
+            // Fallback: Attempt to extract feedback and failure_reason manually
+            const feedbackMatch = functionArguments.match(
+              /"feedback":\s*"([^"]+)"/
+            );
+            const failureReasonMatch = functionArguments.match(
+              /"failure_reason":\s*"([^"]+)"/
+            );
+
+            const feedback = feedbackMatch
+              ? feedbackMatch[1]
+              : "Unknown feedback";
+            const failureReason = failureReasonMatch
+              ? failureReasonMatch[1]
+              : "Unknown failure reason";
+
+            assistantMessage.content += feedback;
+            assistantMessage.tool_calls = {
+              failure_reason: failureReason,
+              feedback: feedback,
+              function_name: functionName,
+            };
+          }
+
           if (functionName === "handleChallengeSuccess") {
             const concluded = await blockchainService.concludeTournament(
               tournamentPDA,
@@ -188,7 +215,7 @@ router.post("/submit/:id", async (req, res) => {
             res.write(successMessage);
           } else {
             await Chat.create(assistantMessage);
-            res.write(args.feedback);
+            res.write(assistantMessage.content);
           }
         } else {
           // Save assistant message when stream ends
