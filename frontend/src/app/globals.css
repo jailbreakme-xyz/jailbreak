@@ -375,24 +375,24 @@ top: 12rem
   height: 2px; 
   width: calc(100% + 28.28px); 
   bottom: 0px;
-  left: 570px;
+  left: 580px;
   /* right: -45vw; */
   transform: rotate(135deg); 
 }
 
 .diagonal-bottom-2 {
-  left: 498px
+  left: 510px
   /* right: -40vw; */
 }
 
 .diagonal-bottom-3 {
-  left: 425px;
+  left: 440px;
   /* right: -35vw; */
 }
 
 .diagonal-bottom-4 {
   /* left: 34vh; */
-  left: 355px;
+  left: 365px;
   /* right: -30vw; */
 }
 
