@@ -7,6 +7,9 @@ skip-lint = false
 [programs.devnet]
 jailbreak_pool = "GFDQTid8CLhmZYpxF19LyqXYCK2S7y5YuNT6ti9WDQ4W"
 
+[registry]
+url = "https://api.apr.dev"
+
 [provider]
 cluster = "devnet"
 wallet = "~/.config/solana/id.json"

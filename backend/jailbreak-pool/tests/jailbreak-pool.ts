@@ -91,11 +91,39 @@ describe("tournament", () => {
     const balance = await provider.connection.getBalance(tournamentPubKey);
     assert.equal(balance - init_balance, entry_sum);
   });
+
+  it("Submits to the second tournament", async () => {
+    let tournamentAccount = await program.account.tournament.fetch(tournamentPubKey);
+    let entry_fee = tournamentAccount.entryFee / 1;
+    let solution_hash = Array.from(new Uint8Array(32).fill(3));
+    await program.methods.submitSolution(solution_hash).accounts({
+      tournament: tournamentPubKey,
+      payer: provider.wallet.publicKey,
+      systemProgram: anchor.web3.SystemProgram.programId,
+    }).rpc();
+    tournamentAccount = await program.account.tournament.fetch(tournamentPubKey);
+    assert.equal(tournamentAccount.entryFee, entry_fee*1.01);
+    let balance = await provider.connection.getBalance(tournamentPubKey);
+    assert.equal(balance - init_balance, entry_sum + entry_fee);
+
+    tournamentAccount = await program.account.tournament.fetch(tournamentPubKey);
+    let entry_fee2 = tournamentAccount.entryFee / 1;
+    solution_hash = Array.from(new Uint8Array(32).fill(4));
+    await program.methods.submitSolution(solution_hash).accounts({
+      tournament: tournamentPubKey,
+      payer: provider.wallet.publicKey,
+      systemProgram: anchor.web3.SystemProgram.programId,
+    }).rpc();
+    tournamentAccount = await program.account.tournament.fetch(tournamentPubKey);
+    assert.equal(tournamentAccount.entryFee, entry_fee2*1.01);
+    balance = await provider.connection.getBalance(tournamentPubKey);
+    assert.equal(balance - init_balance, entry_sum + entry_fee2 + entry_fee);
+  });
   
   it("Concludes a second tournament", async () => {
     await program.methods.concludeTournament().accounts({
       tournament: tournamentPubKey,
-      payer: provider.wallet.publicKey,
+      payer: provider.wallet.publicKey, 
       winnerAccount: provider.wallet.publicKey,
       systemProgram: anchor.web3.SystemProgram.programId,
     }).rpc();
