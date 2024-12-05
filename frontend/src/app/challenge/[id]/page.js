@@ -107,7 +107,7 @@ export default function Challenge({ params }) {
   const [prompt, setPrompt] = useState("");
   const [loadingPayment, setLoadingPayment] = useState(false);
   const [writing, setWriting] = useState(false);
-
+  const [lastMessageDate, setLastMessageDate] = useState(null);
   const [attempts, setAttempts] = useState(0);
   const [price, setPrice] = useState(0);
   const [prize, setPrize] = useState(0);
@@ -115,6 +115,7 @@ export default function Challenge({ params }) {
 
   const messagesEndRef = useRef(null);
   const chatRef = useRef(null);
+  // const shouldScrollRef = useRef(false);
 
   const { publicKey, sendTransaction, connected } = useWallet();
 
@@ -126,6 +127,12 @@ export default function Challenge({ params }) {
 
   useEffect(() => {
     scrollToBottom();
+  }, [pageLoading]);
+
+  useEffect(() => {
+    if (writing) {
+      scrollToBottom();
+    }
   }, [conversation]);
 
   useEffect(() => {
@@ -215,15 +222,10 @@ export default function Challenge({ params }) {
         setExpiry((prev) => (prev !== data.expiry ? data.expiry : prev));
 
         const lastMessage = data.chatHistory[data.chatHistory.length - 1];
-        const lastMessagePrev = conversation[conversation.length - 1];
-
         if (!noLoading) {
           console.log("Updated initial conversation");
           setConversation(data.chatHistory);
-        } else if (
-          lastMessage.address != publicKey?.toBase58() ||
-          lastMessage.role === "assistant"
-        ) {
+        } else if (publicKey && lastMessage.address != publicKey?.toBase58()) {
           console.log("Updated conversation with new user message");
           setConversation(data.chatHistory);
         }
@@ -291,16 +293,19 @@ export default function Challenge({ params }) {
 
   const sendPrompt = async () => {
     try {
+      setWriting(true);
       setLoadingPayment(true);
       const signature = await processPayment();
       if (!signature) return;
       setLoadingPayment(false);
       setConversation((prevMessages) => [
         ...prevMessages,
-        { role: "user", content: prompt, address: publicKey.toString() },
+        {
+          role: "user",
+          content: prompt,
+          address: publicKey.toString(),
+        },
       ]);
-
-      scrollToBottom();
 
       const promptUrl = `/api/conversation/submit/${id}`;
       const body = {

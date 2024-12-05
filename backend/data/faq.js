@@ -15,9 +15,9 @@ export const faqData = [
       "Yes, you'll need to connect your Solana wallet to track your progress and claim rewards.",
   },
   {
-    question: "What are $JAIL coins?",
+    question: "What are $JAIL tokens?",
     answer:
-      "$JAIL coins will be the platform's native tokens. Currently, you can only use Solana (SOL) to pay for the entry fee of a challenge. We will invest part of each tournament treasury in $JAIL tokens.",
+      "$JAIL tokens will be the platform's native tokens. Currently, you can only use Solana (SOL) to pay for the entry fee of a challenge. We will invest part of each tournament treasury in $JAIL tokens.",
   },
   {
     question: "How do I claim rewards?",

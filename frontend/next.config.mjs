@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
-  swcMinify: true,
   // webpack: (config, context) => {
   //   if (process.env.NEXT_WEBPACK_USEPOLLING) {
   //     config.watchOptions = {
