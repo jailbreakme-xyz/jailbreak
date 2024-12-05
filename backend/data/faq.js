@@ -35,6 +35,11 @@ export const faqData = [
       "Currently, only platform moderators can create challenges. However, we plan to introduce a feature allowing users to submit their own challenges for review.",
   },
   {
+    question: "How can I contact support?",
+    answer:
+      "You can reach out to us at dev@jailbreakme.xyz for any support inquiries.",
+  },
+  {
     question: "Is this app secure?",
     answer:
       "Yes, your wallet address and interactions are securely logged, and no sensitive information is stored. AI models are sandboxed to ensure platform integrity.",

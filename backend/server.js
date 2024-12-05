@@ -6,6 +6,9 @@ import { catchErrors } from "./hooks/errors.js";
 
 dotenv.config();
 const dbURI = process.env.DB_URI;
+const clientOptions = {
+  serverApi: { version: "1", strict: true, deprecationErrors: true },
+};
 
 const app = express();
 const dev = app.get("env") !== "production";
@@ -75,13 +78,20 @@ app.use("/api/settings", settingsRoute);
 app.use("/api/json/v1/challenges", challengesAPI);
 app.use("/api/json/v1/conversations", conversationsAPI);
 
-mongoose
-  .connect(dbURI)
-  .then(() => console.log("Database connected"))
-  .catch((err) => console.log(err));
-
 catchErrors();
+
+async function connectToDatabase() {
+  try {
+    // Create a Mongoose client with a MongoClientOptions object to set the Stable API version
+    await mongoose.connect(dbURI, clientOptions);
+    await mongoose.connection.db.admin().command({ ping: 1 });
+    console.log("Database connected!");
+  } catch (err) {
+    console.error("Error connecting to MongoDB:", err);
+  }
+}
 
 app.listen(port, () => {
   console.log(`Jailbreak app listening on port ${port}`);
+  connectToDatabase().catch(console.dir);
 });

@@ -151,7 +151,7 @@ class BlockchainService {
   async concludeTournament(tournamentPDA, winnerAccount) {
     try {
       // Load wallet keypair (payer/authority)
-      const keypairFile = readFileSync("./secrets/solana-keypair");
+      const keypairFile = readFileSync("./secrets/solana-keypair.json");
       const wallet = Keypair.fromSecretKey(
         Uint8Array.from(JSON.parse(keypairFile.toString()))
       );

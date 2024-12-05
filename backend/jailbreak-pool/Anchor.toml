@@ -5,13 +5,13 @@ resolution = true
 skip-lint = false
 
 [programs.devnet]
-jailbreak_pool = "GFDQTid8CLhmZYpxF19LyqXYCK2S7y5YuNT6ti9WDQ4W"
+jailbreak_pool = "BiADwrJnM5JHusfnA34XQAyrZyvkWyh5qcw9rgZziiru"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "devnet"
+cluster = "Devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
