@@ -50,7 +50,14 @@
     height: 60px;
     margin: 0px auto 15px;
     text-align: center;
-    border: 4px double;
+    border: 8px double;
+    display: flex ;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .step-icon:first-child svg path:nth-child(2), .step-icon:first-child svg path:nth-child(5), .step-icon:first-child svg path:nth-child(6) {
+    color: green;
   }
   
   /* Step Title */

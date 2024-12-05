@@ -469,10 +469,13 @@ export default function Challenge({ params }) {
               <div className="chat-container">
                 {challenge?.name && (
                   <div className="poolDiv">
-                    <h3 style={{ textTransform: "uppercase" }}>
+                    <h3
+                      style={{ textTransform: "uppercase", color: "#09bf99" }}
+                    >
                       {challenge?.name} PRIZE POOL
                     </h3>
                     <CountUp
+                      style={{ color: "#09bf99" }}
                       start={0}
                       end={prize}
                       duration={2.75}
@@ -577,7 +580,7 @@ export default function Challenge({ params }) {
                       )}
                   {loading && conversation?.length > 0 && (
                     <div className="loading-indicator">
-                      <RingLoader color="#ccc" size={30} />
+                      <RingLoader color="#09bf99" size={30} />
                     </div>
                   )}
                   <div ref={messagesEndRef}></div>
@@ -596,14 +599,23 @@ export default function Challenge({ params }) {
                     button={
                       connected ? (
                         <button
-                          style={{ display: "flex" }}
+                          style={{
+                            display: "flex",
+                            color: "#09bf99",
+                            backgroundColor: "black",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
                           className="pointer"
                           type="submit"
                         >
                           {loadingPayment ? (
-                            <RingLoader color="#ccc" size={14} />
+                            <RingLoader color="#09bf99" size={18} />
                           ) : (
-                            <PiPaperPlaneRightFill className="pointer" />
+                            <PiPaperPlaneRightFill
+                              className="pointer"
+                              size={20}
+                            />
                           )}
                         </button>
                       ) : (

@@ -1,25 +1,32 @@
 import React from "react";
 import "../../../styles/HowItWorks.css";
+import { TbTargetArrow } from "react-icons/tb";
+import { GiBreakingChain } from "react-icons/gi";
+import { FaRobot } from "react-icons/fa";
+import { FaTrophy } from "react-icons/fa";
 
 const steps = [
   {
-    title: "Choose a Challenge",
+    title: "Choose a Tournament",
     description:
       "Pick a challenge or get one assigned. Each is crafted to test your creativity.",
-    icon: "I",
+    icon: <TbTargetArrow color="#ff004b" />,
+    // icon: "I",
     // icon: "🎯",
   },
   {
     title: "Break the LLM Restrictions",
     description:
       "Use your ingenuity to bypass the AI's restrictions. We save conversations linked to your wallet to determine success.",
-    icon: "II",
-    // icon: "🤖",
+    icon: <GiBreakingChain color="#09bf99" />,
+    // icon: "II",
+    // icon: "⛓️‍💥",
   },
   {
-    title: "Claim Your Reward",
+    title: "Win the Prize Pool",
     description: "If you succeed, claim your reward and climb the leaderboard.",
-    icon: "III",
+    icon: <FaTrophy color="#ff9e01" />,
+    // icon: "III",
     // icon: "🏆",
   },
 ];

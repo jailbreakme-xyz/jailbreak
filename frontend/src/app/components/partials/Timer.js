@@ -19,15 +19,15 @@ function Timer({ expiryDate }) {
           width: "100%",
           justifyContent: "start",
           alignItems: "center",
-          columnGap: "5px",
+          columnGap: "3px",
           fontWeight: "bold",
         }}
       >
         {days > 0 && (
           <div
             style={{
-              backgroundColor: "#ccc",
-              color: "black",
+              backgroundColor: "black",
+              color: "#09bf99",
               padding: "10px",
               borderRadius: "10px",
               width: "25px",
@@ -38,13 +38,17 @@ function Timer({ expiryDate }) {
           </div>
         )}
         {days > 0 && (
-          <span style={{ fontSize: "20px", fontWeight: "bold" }}>:</span>
+          <span
+            style={{ fontSize: "20px", fontWeight: "bold", color: "#09bf99" }}
+          >
+            :
+          </span>
         )}
 
         <div
           style={{
-            backgroundColor: "#ccc",
-            color: "black",
+            backgroundColor: "black",
+            color: "#09bf99",
             padding: "10px",
             borderRadius: "10px",
             width: "25px",
@@ -53,11 +57,15 @@ function Timer({ expiryDate }) {
         >
           <span>{hours < 10 ? `0${hours}` : hours}</span>
         </div>
-        <span style={{ fontSize: "20px", fontWeight: "bold" }}>:</span>
+        <span
+          style={{ fontSize: "20px", fontWeight: "bold", color: "#09bf99" }}
+        >
+          :
+        </span>
         <div
           style={{
-            backgroundColor: "#ccc",
-            color: "black",
+            backgroundColor: "black",
+            color: "#09bf99",
             padding: "10px",
             borderRadius: "10px",
             width: "25px",
@@ -66,11 +74,15 @@ function Timer({ expiryDate }) {
         >
           <span>{minutes < 10 ? `0${minutes}` : minutes}</span>
         </div>
-        <span style={{ fontSize: "20px", fontWeight: "bold" }}>:</span>
+        <span
+          style={{ fontSize: "20px", fontWeight: "bold", color: "#09bf99" }}
+        >
+          :
+        </span>
         <div
           style={{
-            backgroundColor: "#ccc",
-            color: "black",
+            backgroundColor: "black",
+            color: "#09bf99",
             padding: "10px",
             borderRadius: "10px",
             width: "25px",

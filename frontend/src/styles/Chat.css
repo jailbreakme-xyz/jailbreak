@@ -127,24 +127,27 @@ height: 30px;
   .chat-footer input[type="text"], .chat-footer textarea {
     flex: 1;
     padding: 10px;
-    border-radius: 20px;
+    border-radius: 20px 0px 0px 20px;
     border: 1px solid #ccc;
-    margin-right: 10px;
+    /* margin-right: 10px; */
   }
   
   .chat-footer button {
     padding: 10px 20px;
     border: none;
-    border-radius: 20px;
-    background-color: #1a0047;
-    color: #fff;
+    border-radius: 0px 20px 20px 0px;
+    background-color: black;
+    color: #09bf99;
     cursor: pointer;
     transition: background-color 0.3s;
+    height: 48px;
+    min-width: 80px;
   }
-  
-  .chat-footer button:hover {
+
+
+  /* .chat-footer button:hover {
     background-color: #1e0052;
-  }
+  } */
   
   .chatPageMain .mainMenu {
     display: grid;
