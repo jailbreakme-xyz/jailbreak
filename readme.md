@@ -67,6 +67,7 @@ Submit a pull request.
 
 Twitter: Follow us on @jailbreakme_xyz for updates and news.
 Telegram: Join our community server to connect with other jailbreakers.
+Support: Contact us at dev@jailbreakme.xyz for any issues or feedback.
 
 🛡️ Legal Disclaimer
 

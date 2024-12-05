@@ -1148,29 +1148,29 @@ margin-right: 5px;
       position: absolute;
       background-color: #ccc; 
       height: 2px; 
-      width: calc(95%); 
+      width: calc(85%); 
       top: 10vh;
-      left: 10vh;
+      left: 15vh;
       transform-origin: top right;
       transform: rotate(45deg); 
     }
     
     .diagonal-middle-2 {
-      width: calc(90%); 
-      top: 20vh;
-      left: 20vh;
-    }
-    
-    .diagonal-middle-3 {
       width: calc(85%); 
       top: 30vh;
       left: 30vh;
     }
     
-    .diagonal-middle-4 {
-      width: calc(80%); 
+    .diagonal-middle-3 {
+      width: calc(85%); 
       top: 30vh;
-      left: 30vh;
+      left: 25vh;
+    }
+    
+    .diagonal-middle-4 {
+      width: calc(85%); 
+      top: 30vh;
+      left: 20vh;
     }
     .learnMoreButton {
       position: relative;

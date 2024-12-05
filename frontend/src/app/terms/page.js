@@ -187,6 +187,14 @@ const Terms = () => {
                 of JailbreakMe constitutes acceptance of the revised terms.
               </p>
             </section>
+
+            <section>
+              <h3>11. Contact Information</h3>
+              <p>
+                For any questions or concerns regarding these Terms and
+                Conditions, please contact us at dev@jailbreakme.xyz.
+              </p>
+            </section>
           </div>
         </div>
       )}
