@@ -28,7 +28,7 @@ export const metadata = {
     title: "Jailbreak",
     description:
       "JailBreak is a decentralized platform where users are challenged to jailbreak LLMs to find weaknesses and Be rewarded.",
-    images: ["./images/stoneLogo.png"],
+    images: ["https://jailbreakme.xyz/images/stoneLogo.png"],
   },
 };
 
@@ -40,7 +40,10 @@ export default function RootLayout({ children }) {
           property="og:image"
           content="https://jailbreakme.xyz/images/stoneLogo.png"
         />
-        <meta name="twitter:image" content="./images/stoneLogo.png" />
+        <meta
+          name="twitter:image"
+          content="https://jailbreakme.xyz/images/stoneLogo.png"
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="theme-color" content="#ffffff" />
 
