@@ -83,6 +83,10 @@ height: 30px;
     text-align: left;
   }
 
+  .message div {
+    word-break: break-word;
+  }
+
   .chat-bubble.assistant .message,  .chat-bubble.system .message  {
     max-width: 95%;
     width: fit-content;

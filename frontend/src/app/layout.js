@@ -46,6 +46,7 @@ export default function RootLayout({ children }) {
         />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="theme-color" content="#ffffff" />
+        <meta name="robots" content="index, follow" />
 
         <link rel="icon" href="./favicon.ico" sizes="any" />
         <link rel="icon" type="image/svg+xml" href="./favicon.ico" />

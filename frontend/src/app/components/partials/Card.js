@@ -13,7 +13,7 @@ const Card = ({ char }) => {
         <p className={`level ${char.level}`}>{char.level}</p>
         <button
           className="pointer"
-          onClick={() => window.open(`/challenge/${char.id}`, "_blank")}
+          onClick={() => window.open(`/break/${char.name}`, "_blank")}
         >
           Break {char.name} →
         </button>

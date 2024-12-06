@@ -27,10 +27,7 @@ const MainMenu = (props) => {
           <FaHome size={25} /> HOME
         </Link>
         {!props.hiddenItems?.includes("BREAK") && (
-          <Link
-            href="/challenge/67464991a95c1b426ef3920d"
-            className="chatMainMenuItem pointer"
-          >
+          <Link href="/break/zynx" className="chatMainMenuItem pointer">
             <GiBreakingChain size={25} /> BREAK
           </Link>
         )}

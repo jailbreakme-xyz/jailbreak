@@ -14,8 +14,6 @@ router.post("/submit/:id", async (req, res) => {
   try {
     const { prompt, signature, walletAddress } = req.body;
     const { id } = req.params;
-    const contextLimit = 100;
-    const characterLimit = 4000;
 
     if (!prompt || !signature || !walletAddress) {
       return res.write("Missing required fields");
@@ -24,9 +22,20 @@ router.post("/submit/:id", async (req, res) => {
     // Find the challenge
     const challenge = await Challenge.findOne({ _id: id });
     if (!challenge) return res.write("Challenge not found");
+    const challengeName = challenge.name;
+    const contextLimit = challenge.contextLimit;
+    const characterLimit = challenge.characterLimit;
 
     const programId = challenge.idl?.address;
     if (!programId) return res.write("Program ID not found");
+
+    if (prompt.length > characterLimit)
+      return res.write(
+        `Prompt length can't exceed ${characterLimit} characters`
+      );
+
+    const systemPrompt = challenge.system_message;
+    if (!systemPrompt) return res.write("Challenge is not active");
 
     const tournamentPDA = challenge.tournamentPDA;
     if (!tournamentPDA) return res.write("Tournament PDA not found");
@@ -35,6 +44,19 @@ router.post("/submit/:id", async (req, res) => {
     const tournamentData = await blockchainService.getTournamentData(
       tournamentPDA
     );
+
+    const isValidTransaction = await blockchainService.verifyTransaction(
+      signature,
+      tournamentPDA,
+      entryFee
+    );
+
+    if (!isValidTransaction) {
+      return res.write("Transaction verification failed");
+    }
+
+    console.log("Transaction verified successfully for wallet:", walletAddress);
+
     const entryFee = tournamentData.entryFee;
     const currentExpiry = challenge.expiry;
     const now = new Date();
@@ -58,26 +80,9 @@ router.post("/submit/:id", async (req, res) => {
       return res.write("Entry fee not found in tournament data");
     }
 
-    const isValidTransaction = await blockchainService.verifyTransaction(
-      signature,
-      tournamentPDA,
-      entryFee
-    );
-
-    if (!isValidTransaction) {
-      return res.write("Transaction verification failed");
-    }
-
-    console.log("Transaction verified successfully for wallet:", walletAddress);
-
-    if (prompt.length > characterLimit)
-      return res.write(
-        `Prompt length can't exceed ${characterLimit} characters`
-      );
-
     // Add user message to the Chat collection
     const userMessage = {
-      challenge: id,
+      challenge: challengeName,
       model: model,
       role: "user",
       content: prompt,
@@ -87,13 +92,9 @@ router.post("/submit/:id", async (req, res) => {
 
     await Chat.create(userMessage);
 
-    const systemPrompt = challenge.system_message;
-
-    if (!systemPrompt) return res.write("Challenge is not active");
-
     // Fetch chat history for the challenge and address
     const chatHistory = await Chat.find({
-      challenge: id,
+      challenge: challengeName,
       address: walletAddress,
       // role: { $ne: "system" },
     })
@@ -116,7 +117,7 @@ router.post("/submit/:id", async (req, res) => {
     });
 
     const assistantMessage = {
-      challenge: id,
+      challenge: challengeName,
       model: model,
       role: "assistant",
       content: "",
@@ -172,7 +173,6 @@ router.post("/submit/:id", async (req, res) => {
           res.end();
         } else if (isCollectingFunctionArgs) {
           // Save assistant message when stream ends with function args
-          console.log(walletAddress, functionArguments);
           try {
             const args = JSON.parse(functionArguments); // Attempt to parse JSON
             assistantMessage.content += args.feedback;
@@ -181,27 +181,51 @@ router.post("/submit/:id", async (req, res) => {
           } catch (error) {
             console.error("Error parsing JSON:", error.message);
 
-            // Fallback: Attempt to extract feedback and failure_reason manually
-            const feedbackMatch = functionArguments.match(
-              /"feedback":\s*"([^"]+)"/
-            );
-            const failureReasonMatch = functionArguments.match(
-              /"failure_reason":\s*"([^"]+)"/
-            );
+            if (functionName === "handleChallengeFailure") {
+              // Fallback: Attempt to extract feedback and failure_reason manually
+              const feedbackMatch = functionArguments.match(
+                /"feedback":\s*"([^"]+)"/
+              );
+              const failureReasonMatch = functionArguments.match(
+                /"failure_reason":\s*"([^"]+)"/
+              );
 
-            const feedback = feedbackMatch
-              ? feedbackMatch[1]
-              : "Unknown feedback";
-            const failureReason = failureReasonMatch
-              ? failureReasonMatch[1]
-              : "Unknown failure reason";
+              const feedback = feedbackMatch
+                ? feedbackMatch[1]
+                : "Unknown feedback";
+              const failureReason = failureReasonMatch
+                ? failureReasonMatch[1]
+                : "Unknown failure reason";
 
-            assistantMessage.content += feedback;
-            assistantMessage.tool_calls = {
-              failure_reason: failureReason,
-              feedback: feedback,
-              function_name: functionName,
-            };
+              assistantMessage.content += feedback;
+              assistantMessage.tool_calls = {
+                failure_reason: failureReason,
+                feedback: feedback,
+                function_name: functionName,
+              };
+            } else {
+              // Fallback: Attempt to extract feedback and failure_reason manually
+              const evidenceMatch = functionArguments.match(
+                /"evidence":\s*"([^"]+)"/
+              );
+              const successTypeMatch = functionArguments.match(
+                /"success_type":\s*"([^"]+)"/
+              );
+
+              const evidence = evidenceMatch
+                ? evidenceMatch[1]
+                : "Unknown evidence";
+              const successType = successTypeMatch
+                ? successTypeMatch[1]
+                : "Unknown success type";
+
+              assistantMessage.content += evidence;
+              assistantMessage.tool_calls = {
+                succes_type: successType,
+                evidence: evidence,
+                function_name: functionName,
+              };
+            }
           }
 
           if (functionName === "handleChallengeSuccess") {

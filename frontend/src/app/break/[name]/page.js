@@ -98,7 +98,7 @@ const calculateDiscriminator = (instructionName) => {
 };
 
 export default function Challenge({ params }) {
-  const id = use(params).id;
+  const name = use(params).name;
   const [pageLoading, setPageLoading] = useState(true);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -139,7 +139,7 @@ export default function Challenge({ params }) {
     getChallenge(false);
     const interval = setInterval(() => getChallenge(true), 3000);
     return () => clearInterval(interval);
-  }, [id]);
+  }, [name]);
 
   async function read(reader) {
     setWriting(true);
@@ -202,7 +202,9 @@ export default function Challenge({ params }) {
     }
     try {
       const data = await axios
-        .get(`/api/challenges/get-challenge?id=${id}`)
+        .get(
+          `/api/challenges/get-challenge?name=${name}&initial=${!noLoading}&price=${price}`
+        )
         .then((res) => res.data)
         .catch((err) => err);
 
@@ -307,7 +309,7 @@ export default function Challenge({ params }) {
         },
       ]);
 
-      const promptUrl = `/api/conversation/submit/${id}`;
+      const promptUrl = `/api/conversation/submit/${challenge._id}`;
       const body = {
         prompt,
         walletAddress: publicKey.toString(),

@@ -20,8 +20,11 @@ router.get("/", async (req, res) => {
 
 router.get("/get-challenge", async (req, res) => {
   try {
-    const id = req.query.id;
-    const chatLimit = 50;
+    const name = req.query.name;
+    const nameReg = { $regex: name, $options: "i" };
+    const initial = req.query.initial;
+    let message_price = Number(req.query.price);
+    let prize = message_price * 100;
 
     const projection = {
       _id: 1,
@@ -43,14 +46,17 @@ router.get("/get-challenge", async (req, res) => {
     };
 
     const challengeInitialized = await Chat.findOne({
-      challenge: id,
+      challenge: nameReg,
     });
 
     if (!challengeInitialized) {
       projection.system_message = 1;
     }
 
-    let challenge = await Challenge.findOne({ _id: id }, projection);
+    let challenge = await Challenge.findOne({ name: nameReg }, projection);
+    const challengeName = challenge.name;
+    const challengeId = challenge._id;
+    const chatLimit = challenge.chatLimit;
 
     if (!challenge) {
       return res.status(404).send("Challenge not found");
@@ -67,21 +73,13 @@ router.get("/get-challenge", async (req, res) => {
     const tournamentPDA = challenge.tournamentPDA;
     if (!tournamentPDA) return res.write("Tournament PDA not found");
 
-    const blockchainService = new BlockchainService(solanaRpc, programId);
-    const tournamentData = await blockchainService.getTournamentData(
-      tournamentPDA
-    );
-
-    const message_price = tournamentData.entryFee;
-    const prize = message_price * 100;
-
     const break_attempts = await Chat.countDocuments({
-      challenge: id,
+      challenge: challengeName,
       role: "user",
     });
 
     const chatHistory = await Chat.find({
-      challenge: id,
+      challenge: challengeName,
       role: { $ne: "system" },
     })
       .sort({ date: -1 })
@@ -93,13 +91,14 @@ router.get("/get-challenge", async (req, res) => {
     if (chatHistory.length > 0) {
       if (expiry < now && challenge.status === "active") {
         const lastSender = chatHistory[0].address;
+        const blockchainService = new BlockchainService(solanaRpc, programId);
         const concluded = await blockchainService.concludeTournament(
           tournamentPDA,
           lastSender
         );
         const successMessage = `🥳 Tournament concluded: ${concluded}`;
         const assistantMessage = {
-          challenge: id,
+          challenge: challengeName,
           model: model,
           role: "assistant",
           content: successMessage,
@@ -109,10 +108,13 @@ router.get("/get-challenge", async (req, res) => {
 
         await Chat.create(assistantMessage);
         await Challenge.updateOne(
-          { _id: id },
+          { _id: challengeId },
           { $set: { status: "concluded" } }
         );
       }
+
+      message_price = challenge.entryFee;
+      prize = message_price * 100;
 
       return res.status(200).json({
         challenge,
@@ -127,7 +129,7 @@ router.get("/get-challenge", async (req, res) => {
     if (!challengeInitialized) {
       const firstPrompt = challenge.system_message;
       const newChat = await Chat.create({
-        challenge: id,
+        challenge: challengeName,
         model: model,
         role: "system",
         content: firstPrompt,
@@ -137,6 +139,16 @@ router.get("/get-challenge", async (req, res) => {
       console.log("New chat document created:", newChat);
     }
 
+    if (initial) {
+      const blockchainService = new BlockchainService(solanaRpc, programId);
+      const tournamentData = await blockchainService.getTournamentData(
+        tournamentPDA
+      );
+
+      message_price = tournamentData.entryFee;
+      prize = message_price * 100;
+    }
+
     return res.status(200).json({
       challenge,
       break_attempts,
@@ -144,7 +156,6 @@ router.get("/get-challenge", async (req, res) => {
       prize,
       chatHistory,
       expiry,
-      tournamentData,
     });
   } catch (err) {
     console.error(err);

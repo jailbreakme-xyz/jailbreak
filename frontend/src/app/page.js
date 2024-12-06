@@ -53,12 +53,12 @@ export default function Home() {
           <div className="intro">
             <SocialIcons />
             <p>
-              JailbreakMe is a decentralized platform where users are challenged
-              to try and jailbreak pre-existing LLMs in order to find weaknesses
-              and be rewarded.
+              The first open-source decentralized app where organizations test
+              their AI models and agents while users earn rewards for
+              jailbreaking them.
             </p>
             <Link
-              href="/challenge/67464991a95c1b426ef3920d"
+              href="/break/zynx"
               target="_blank"
               className="pointer"
               style={{ zIndex: "99999", position: "relative" }}
@@ -67,27 +67,37 @@ export default function Home() {
                 START BREAKING <FaChevronCircleRight className="pointer" />
               </button>
             </Link>
+            <div
+              style={{
+                marginTop: "10px",
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
+                columnGap: "10px",
+                width: "70%",
+                margin: "10px auto 0px",
+              }}
+              className="desktopOnly links"
+            >
+              <a
+                className="pointer"
+                href="https://jailbreak.gitbook.io/jailbreakme.xyz"
+                target="_blank"
+              >
+                DOCS
+              </a>
+              <a className="pointer" href="/faq">
+                FAQ
+              </a>
+              <a className="pointer" href="/docs">
+                API
+              </a>
+              <a className="pointer" href="/terms">
+                TERMS
+              </a>
+            </div>
           </div>
-          <div
-            style={{
-              marginTop: "10px",
-              display: "flex",
-              justifyContent: "center",
-              alignContent: "center",
-              columnGap: "20px",
-            }}
-            className="desktopOnly links"
-          >
-            <a className="pointer" href="/faq">
-              FAQ
-            </a>
-            <a className="pointer" href="/docs">
-              API
-            </a>
-            <a className="pointer" href="/terms">
-              TERMS
-            </a>
-          </div>
+
           <HowItWorks />
         </div>
         <div className="section-3">

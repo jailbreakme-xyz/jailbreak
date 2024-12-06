@@ -20,6 +20,7 @@ const ChallengeSchema = new mongoose.Schema(
     entryFee: Number,
     characterLimit: Number,
     contextLimit: Number,
+    chatLimit: Number,
     expiry: Date,
   },
   { collection: "challenges" }
@@ -41,7 +42,7 @@ export const User = mongoose.model("User", userSchema);
 const chatSchema = new mongoose.Schema(
   {
     challenge: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
       ref: "Challenge",
       required: true,
     },

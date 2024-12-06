@@ -219,11 +219,28 @@ top: 12rem
 } */
 
 
+.desktopOnly.links a {
+  background-color: #ccc;
+  color: black;
+  border-radius: 50px;
+  padding: 5px 10px;
+  font-weight: bold;
+  width: 25%;
+  text-decoration: none;
+  border: 2px solid #ccc;
+  /* width: 75%; */
+}
 
+.desktopOnly.links a:hover {
+  background-color: black;
+  color: #ccc;
+  border: 2px solid #ccc;
+}
 
 .hero {
   /* min-height: 100vh; */
   background-color: black;
+  /* height: 780px; */
 }
 
 .styledBtn {
@@ -271,7 +288,8 @@ top: 12rem
 }
 
 .intro {
-  width: 35%;
+  width: 500px;
+  /* width: 35%; */
   text-align: center;
   font-size: 24px;
   font-weight: bold;
@@ -291,6 +309,17 @@ top: 12rem
 .intro .styledBtn {
   position: relative;
 }
+
+.stoneBtn {
+  background-color: #ccc;
+border: 2px solid #ccc;
+}
+
+.stoneBtn:hover {
+background-color: black;
+color: #ccc;
+}
+
 .section-2 {
   background-color: black;
   padding: 2rem 5rem;
@@ -373,26 +402,29 @@ top: 12rem
   position: absolute;
   background-color: #ccc; 
   height: 2px; 
-  width: calc(100% + 28.28px); 
+  width: calc(100%); 
   bottom: 0px;
-  left: 580px;
   /* right: -45vw; */
   transform: rotate(135deg); 
 }
 
+.diagonal-bottom-1 {
+  left: 590px;
+}
+
 .diagonal-bottom-2 {
-  left: 510px
+  left: 520px
   /* right: -40vw; */
 }
 
 .diagonal-bottom-3 {
-  left: 440px;
+  left: 450px;
   /* right: -35vw; */
 }
 
 .diagonal-bottom-4 {
   /* left: 34vh; */
-  left: 365px;
+  left: 380px;
   /* right: -30vw; */
 }
 
@@ -401,9 +433,9 @@ top: 12rem
   position: absolute;
   background-color: #ccc; 
   height: 2px; 
-  width: calc(95%); 
-  top: 25vh;
-    left: 15vh;
+  width: calc(100%); 
+  top: 150px;
+  left: 0;
 
   /* top: 20vh;
   left: 20vh; */
@@ -415,9 +447,9 @@ top: 12rem
 }
 
 .diagonal-middle-2 {
-  width: calc(90%); 
-  top: 50vh;
-    left: 40vh;
+  width: calc(100%); 
+  top: 220px;
+  left: 0;
 
   /* top: 30vh;
   left: 35vh; */
@@ -427,9 +459,9 @@ top: 12rem
 }
 
 .diagonal-middle-3 {
-  width: calc(85%); 
-  top: 75vh;
-    left: 65vh;
+  width: calc(100%); 
+  top: 290px;
+  left: 0;
 
   /* top: 40vh;
   left: 50vh; */
@@ -439,9 +471,9 @@ top: 12rem
 }
 
 .diagonal-middle-4 {
-  width: calc(80%); 
-  top: 100vh;
-    left: 90vh;
+  width: calc(100%); 
+  top: 360px;
+  left: 0;
 
   /* top: 50vh;
     left: 65vh; */
