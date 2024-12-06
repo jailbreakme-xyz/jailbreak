@@ -45,10 +45,24 @@ const Carousel = (props) => {
                 : ""
             }`}
           >
-            <img src={char.image} alt={char.name} />
+            <img
+              className="pointer"
+              src={char.image}
+              alt={char.name}
+              onClick={() => {
+                window.open(`/agent/${char.name}`, "_blank");
+              }}
+            />
 
             <div className="card-info">
-              <h2>{char.name}</h2>
+              <h2
+                className="pointer"
+                onClick={() => {
+                  window.open(`/agent/${char.name}`, "_blank");
+                }}
+              >
+                {char.name}
+              </h2>
               <p>{char.label}</p>
               <p className={`level ${char.level}`}>{char.level}</p>
               <button className="grayed" style={{ cursor: "not-allowed" }}>

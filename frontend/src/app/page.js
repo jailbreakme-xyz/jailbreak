@@ -89,11 +89,11 @@ export default function Home() {
               <a className="pointer" href="/faq">
                 FAQ
               </a>
-              <a className="pointer" href="/docs">
-                API
+              <a className="pointer" href="/agent/zynx">
+                ZYNX
               </a>
-              <a className="pointer" href="/terms">
-                TERMS
+              <a className="pointer" href="/jail-token">
+                $JAIL
               </a>
             </div>
           </div>
