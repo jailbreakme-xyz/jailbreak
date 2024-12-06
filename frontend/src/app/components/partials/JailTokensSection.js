@@ -13,7 +13,7 @@ const JailTokensSection = () => {
         <p>
           $JAIL tokens are designed to be the{" "}
           <strong>native currency of the JailbreakMe dApp</strong>, serving as
-          the backbone of the platform's economy. While the full utility of
+          the backbone of the platform&apos;s economy. While the full utility of
           $JAIL tokens will roll out in future updates, the groundwork is being
           laid to ensure their value and relevance within the ecosystem.
         </p>
@@ -33,7 +33,7 @@ const JailTokensSection = () => {
             <strong>Market Impact:</strong>
             <ul style={styles.sublist}>
               <li>
-                The buybacks help support the token's value by reducing the
+                The buybacks help support the token&apos;s value by reducing the
                 circulating supply.
               </li>
               <li>
@@ -50,8 +50,8 @@ const JailTokensSection = () => {
         <h2 style={styles.subtitle}>🚀 Future Plans for $JAIL Tokens</h2>
         <p>
           As the JailbreakMe platform evolves, $JAIL tokens will become integral
-          to the dApp’s functionality and user interactions. Planned use cases
-          include:
+          to the dApp&apos;s functionality and user interactions. Planned use
+          cases include:
         </p>
         <ul style={styles.list}>
           <li>
@@ -96,7 +96,7 @@ const JailTokensSection = () => {
           <li>
             <strong>Growth Potential:</strong> As the platform grows, so will
             the use cases and demand for $JAIL tokens, making them a vital part
-            of JailbreakMe's long-term vision.
+            of JailbreakMe&apos;s long-term vision.
           </li>
         </ul>
         <p>
