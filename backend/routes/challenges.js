@@ -2,6 +2,7 @@ import express from "express";
 import { Challenge, Chat } from "../models/Models.js";
 import BlockchainService from "../services/blockchain/index.js";
 import dotenv from "dotenv";
+import DatabaseService from "../services/db/index.js";
 dotenv.config();
 
 const router = express.Router();
@@ -10,7 +11,7 @@ const model = "gpt-4o-mini";
 
 router.get("/", async (req, res) => {
   try {
-    const challenges = await Challenge.find({});
+    const challenges = await DatabaseService.getAllChallenges();
     res.send(challenges);
   } catch (err) {
     console.log(err);
@@ -21,7 +22,6 @@ router.get("/", async (req, res) => {
 router.get("/get-challenge", async (req, res) => {
   try {
     const name = req.query.name;
-    const nameReg = { $regex: name, $options: "i" };
     const initial = req.query.initial;
     let message_price = Number(req.query.price);
     let prize = message_price * 100;
@@ -50,15 +50,15 @@ router.get("/get-challenge", async (req, res) => {
       developer_fee: 1,
     };
 
-    const challengeInitialized = await Chat.findOne({
-      challenge: nameReg,
+    const challengeInitialized = await DatabaseService.findOneChat({
+      challenge: { $regex: name, $options: "i" },
     });
 
     if (!challengeInitialized) {
       projection.system_message = 1;
     }
 
-    let challenge = await Challenge.findOne({ name: nameReg }, projection);
+    let challenge = await DatabaseService.getChallengeByName(name, projection);
     const challengeName = challenge.name;
     const challengeId = challenge._id;
     const chatLimit = challenge.chatLimit;
@@ -78,17 +78,19 @@ router.get("/get-challenge", async (req, res) => {
     const tournamentPDA = challenge.tournamentPDA;
     if (!tournamentPDA) return res.write("Tournament PDA not found");
 
-    const break_attempts = await Chat.countDocuments({
+    const break_attempts = await DatabaseService.getChatCount({
       challenge: challengeName,
       role: "user",
     });
 
-    const chatHistory = await Chat.find({
-      challenge: challengeName,
-      role: { $ne: "system" },
-    })
-      .sort({ date: -1 })
-      .limit(chatLimit);
+    const chatHistory = await DatabaseService.getFullChatHistory(
+      {
+        challenge: challengeName,
+        role: { $ne: "system" },
+      },
+      { date: -1 },
+      chatLimit
+    );
 
     const now = new Date();
     const expiry = challenge.expiry;
@@ -111,11 +113,10 @@ router.get("/get-challenge", async (req, res) => {
           address: lastSender,
         };
 
-        await Chat.create(assistantMessage);
-        await Challenge.updateOne(
-          { _id: challengeId },
-          { $set: { status: "concluded" } }
-        );
+        await DatabaseService.createChat(assistantMessage);
+        await DatabaseService.updateChallenge(challengeId, {
+          status: "concluded",
+        });
       }
 
       message_price = challenge.entryFee;
@@ -133,15 +134,13 @@ router.get("/get-challenge", async (req, res) => {
 
     if (!challengeInitialized) {
       const firstPrompt = challenge.system_message;
-      const newChat = await Chat.create({
+      await DatabaseService.createChat({
         challenge: challengeName,
         model: model,
         role: "system",
         content: firstPrompt,
         address: challenge.tournamentPDA,
       });
-
-      console.log("New chat document created:", newChat);
     }
 
     if (initial) {

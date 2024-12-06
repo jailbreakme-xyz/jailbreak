@@ -188,7 +188,7 @@ outline: none;
   display: flex;
   width: 100%;
   justify-content: center;
-  align-items: start;
+  align-items: flex-start;
   column-gap: 10px;
   padding: 0px;
 }
@@ -602,7 +602,7 @@ color: rgba(0, 0, 0, 0.681) !important;
   /* display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: auto;
-  align-items: start; 
+  align-items: flex-start; 
   gap: 20px; 
   width: 100%;
   margin: auto; */
@@ -754,7 +754,7 @@ font-size: 32px;
   height: 80%;
   display: flex;
   justify-content: center;
-  align-items: end;  
+  align-items: flex-end;  
 }
 
 #downImage > img {
@@ -799,7 +799,7 @@ border-right: 0px;
   /* height: 80%; */
   display: flex;
   justify-content: center;
-  align-items: end;  
+  align-items: flex-end;  
 }
 
 #leftImage > img {
@@ -990,7 +990,7 @@ margin-right: 5px;
   width: 100%;
   display: flex;
   justify-content: center;
-  align-items: start;
+  align-items: flex-start;
   column-gap: 10px;
 }
 .docsPage .mainMenu {
@@ -1057,7 +1057,7 @@ margin-right: 5px;
     }
 
     .section-2-title {
-      align-items: start;
+      align-items: flex-start;
       margin: auto;
       font-size: 14px;
       width: 90%;
@@ -1094,7 +1094,7 @@ margin-right: 5px;
       display: block;
       /* grid-template-columns: repeat(1, 1fr);
       grid-template-rows: auto;
-      align-items: start;  */
+      align-items: flex-start;  */
       gap: 20px; 
       width: 90%;
       margin: auto;
@@ -1258,7 +1258,7 @@ margin-right: 5px;
   transition: transform 0.3s ease-in-out;
   display: flex !important;
   flex-direction: column !important;
-  align-items: start !important;
+  align-items: flex-start !important;
   padding: 40px 20px;
   z-index: 1000;
   overflow-y: scroll;
@@ -1298,7 +1298,7 @@ margin-right: 5px;
 
 .chatPageSocialMenu span {
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   align-items: center;
   column-gap: 5px;
 }
@@ -1309,7 +1309,7 @@ margin-right: 5px;
 }
 
 .chatPageSocialIcons {
-justify-content: start !important;
+justify-content: flex-start !important;
 }
 
 .chatPageSocialIcons a {

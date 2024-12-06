@@ -54,7 +54,6 @@ const chatSchema = new mongoose.Schema(
     tool_calls: Object,
     address: { type: String, required: true },
     txn: String,
-    avatar: Object,
     date: { type: Date, default: Date.now },
   },
   { collection: "chats" }
@@ -62,12 +61,12 @@ const chatSchema = new mongoose.Schema(
 
 export const Chat = mongoose.model("Chat", chatSchema);
 
-const settingSchema = new mongoose.Schema(
+const pageSchema = new mongoose.Schema(
   {
-    address: String,
-    threshold: Number,
+    name: String,
+    content: Object,
   },
-  { collection: "settings" }
+  { collection: "pages" }
 );
 
-export const Settings = mongoose.model("Settings", settingSchema);
+export const Pages = mongoose.model("Pages", pageSchema);

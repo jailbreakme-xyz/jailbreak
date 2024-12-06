@@ -68,14 +68,14 @@ import { conversationRoute } from "./routes/conversation.js";
 import { settingsRoute } from "./routes/settings.js";
 
 // API:
-import { challengesAPI } from "./api/challenges.js";
+import { tournamentsAPI } from "./api/tournaments.js";
 import { conversationsAPI } from "./api/conversation.js";
 
 app.use("/api/challenges", challengesRoute);
 app.use("/api/conversation", conversationRoute);
 app.use("/api/settings", settingsRoute);
 
-app.use("/api/json/v1/challenges", challengesAPI);
+app.use("/api/json/v1/tournaments", tournamentsAPI);
 app.use("/api/json/v1/conversations", conversationsAPI);
 
 catchErrors();

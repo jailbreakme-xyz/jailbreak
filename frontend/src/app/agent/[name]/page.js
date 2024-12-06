@@ -155,7 +155,8 @@ const Agent = ({ params }) => {
             <strong>Context Window:</strong> ~{contextLimit}
             <br />
             <label style={styles.detailsLabel}>
-              The amount of messages sent to the agent (your messages only).
+              The amount of messages sent to the agent, including the agent
+              responses (your messages only).
             </label>
           </p>
           <p>

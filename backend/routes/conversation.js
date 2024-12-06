@@ -4,6 +4,7 @@ dotenv.config();
 import { Challenge, Chat } from "../models/Models.js";
 import OpenAIService from "../services/llm/openai.js";
 import BlockchainService from "../services/blockchain/index.js";
+import DatabaseService from "../services/db/index.js";
 
 const router = express.Router();
 const model = "gpt-4o-mini";
@@ -20,7 +21,7 @@ router.post("/submit/:id", async (req, res) => {
     }
 
     // Find the challenge
-    const challenge = await Challenge.findOne({ _id: id });
+    const challenge = await DatabaseService.getChallengeById(id);
     if (!challenge) return res.write("Challenge not found");
     const challengeName = challenge.name;
     const contextLimit = challenge.contextLimit;
@@ -63,18 +64,12 @@ router.post("/submit/:id", async (req, res) => {
     console.log("Transaction verified successfully for wallet:", walletAddress);
 
     // Set the entry fee regardless of expiry change
-    await Challenge.updateOne(
-      { _id: id },
-      {
-        $set: {
-          entryFee: entryFee,
-          // Update expiry only if there is less than 1 hour left
-          ...(currentExpiry - now < oneHourInMillis && {
-            expiry: new Date(now.getTime() + oneHourInMillis),
-          }),
-        },
-      }
-    );
+    await DatabaseService.updateChallenge(id, {
+      entryFee: entryFee,
+      ...(currentExpiry - now < oneHourInMillis && {
+        expiry: new Date(now.getTime() + oneHourInMillis),
+      }),
+    });
 
     if (!entryFee) {
       return res.write("Entry fee not found in tournament data");
@@ -90,17 +85,17 @@ router.post("/submit/:id", async (req, res) => {
       txn: signature,
     };
 
-    await Chat.create(userMessage);
+    await DatabaseService.createChat(userMessage);
 
     // Fetch chat history for the challenge and address
-    const chatHistory = await Chat.find({
-      challenge: challengeName,
-      address: walletAddress,
-      // role: { $ne: "system" },
-    })
-      .sort({ date: -1 })
-      .limit(contextLimit) // Sort by date to maintain chronological order
-      .select("role content -_id"); // Only include role and content
+    const chatHistory = await DatabaseService.getChatHistory(
+      {
+        challenge: challengeName,
+        address: walletAddress,
+      },
+      { date: -1 },
+      contextLimit
+    );
 
     const messages = [{ role: "system", content: systemPrompt }];
 
@@ -235,20 +230,17 @@ router.post("/submit/:id", async (req, res) => {
             );
             const successMessage = `🥳 Congratulations! ${assistantMessage.content} Tournament concluded: ${concluded}`;
             assistantMessage.content = successMessage;
-            await Chat.create(assistantMessage);
-            await Challenge.updateOne(
-              { _id: id },
-              { $set: { status: "concluded" } }
-            );
+            await DatabaseService.createChat(assistantMessage);
+            await DatabaseService.updateChallenge(id, { status: "concluded" });
 
             res.write(successMessage);
           } else {
-            await Chat.create(assistantMessage);
+            await DatabaseService.createChat(assistantMessage);
             res.write(assistantMessage.content);
           }
         } else {
           // Save assistant message when stream ends
-          await Chat.create(assistantMessage);
+          await DatabaseService.createChat(assistantMessage);
           return res.end();
         }
       }

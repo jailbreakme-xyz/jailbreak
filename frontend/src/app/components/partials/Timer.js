@@ -17,7 +17,7 @@ function Timer({ expiryDate }) {
         style={{
           display: "flex",
           width: "100%",
-          justifyContent: "start",
+          justifyContent: "flex-start",
           alignItems: "center",
           columnGap: "3px",
           fontWeight: "bold",

@@ -159,9 +159,21 @@ export default function Challenge({ params }) {
         messagesCopy[messagesCopy.length - 1] = {
           ...lastMessage,
           content: lastMessage.content + chunk,
+          date: messagesCopy.date
+            ? messagesCopy.date
+            : new Date().toISOString(),
         };
       } else {
-        messagesCopy = [...messagesCopy, { role: "assistant", content: chunk }];
+        messagesCopy = [
+          ...messagesCopy,
+          {
+            role: "assistant",
+            content: chunk,
+            date: messagesCopy.date
+              ? messagesCopy.date
+              : new Date().toISOString(),
+          },
+        ];
       }
       return messagesCopy;
     });
@@ -306,6 +318,7 @@ export default function Challenge({ params }) {
           role: "user",
           content: prompt,
           address: publicKey.toString(),
+          date: new Date().toISOString(),
         },
       ]);
 

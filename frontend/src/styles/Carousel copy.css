@@ -56,7 +56,7 @@
     height: 100%;
     display: grid;
     justify-items: center;
-    align-content: end;
+    align-content: flex-end;
   }
   
   .overlay h2 {

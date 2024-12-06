@@ -44,7 +44,7 @@
     padding-left: 150px;
     align-self: flex-end;
     /* float: right; */
-    /* justify-content: end; */
+    /* justify-content: flex-end; */
     /* flex-direction: row-reverse; */
   }
   .chat-bubble .avatar {
@@ -203,7 +203,7 @@ border: 0px;
   .chatPageSocialIcons {
     width: 100%;
     display: flex;
-    justify-content: start;
+    justify-content: flex-start;
     align-items: center;
     }
     
@@ -260,7 +260,7 @@ border: 0px;
       padding-left: 50px;
       align-self: flex-end;
       /* float: right; */
-      /* justify-content: end; */
+      /* justify-content: flex-end; */
     }
 
     .chat-footer {
@@ -327,7 +327,7 @@ padding-bottom: 0px;
   transition: transform 0.3s ease-in-out;
   display: flex !important;
   flex-direction: column !important;
-  align-items: start !important;
+  align-items: flex-start !important;
   padding: 40px 20px;
   z-index: 1000;
   overflow-y: scroll;
@@ -370,7 +370,7 @@ padding-bottom: 0px;
 
 .chatPageSocialMenu span {
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   align-items: center;
   column-gap: 5px;
 }
@@ -381,7 +381,7 @@ padding-bottom: 0px;
 }
 
 .chatPageSocialIcons {
-justify-content: start !important;
+justify-content: flex-start !important;
 }
 
 .chatPageSocialIcons a {
