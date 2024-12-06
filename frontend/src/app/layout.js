@@ -7,13 +7,13 @@ import ClientWalletProvider from "./providers/WalletProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Jailbreak",
+  title: "JailbreakMe",
   description:
-    "JailBreak is a decentralized platform where users are challenged to jailbreak LLMs to find weaknesses and Be rewarded.",
+    "JailbreakMe is the first open-source decentralized app where organizations test their AI models and agents while users earn rewards for jailbreaking them.",
   openGraph: {
-    title: "Jailbreak",
+    title: "JailbreakMe",
     description:
-      "JailBreak is a decentralized platform where users are challenged to jailbreak LLMs to find weaknesses and Be rewarded.",
+      "JailbreakMe is the first open-source decentralized app where organizations test their AI models and agents while users earn rewards for jailbreaking them.",
     images: [
       {
         url: "https://jailbreakme.xyz/images/stoneLogo.png",
@@ -25,9 +25,9 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Jailbreak",
+    title: "JailbreakMe",
     description:
-      "JailBreak is a decentralized platform where users are challenged to jailbreak LLMs to find weaknesses and Be rewarded.",
+      "JailbreakMe is the first open-source decentralized app where organizations test their AI models and agents while users earn rewards for jailbreaking them.",
     images: ["https://jailbreakme.xyz/images/x_og.jpg"],
   },
 };
