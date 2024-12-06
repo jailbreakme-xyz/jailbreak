@@ -1145,7 +1145,18 @@ margin-right: 5px;
       top: -10px;
       left: auto;
     }
-
+.jail-token-page {
+  width: 100% !important;
+  border-radius: 0px !important;
+}
+.jail-token-page h1 {
+  font-size: 24px !important;
+}
+.agent-page {
+  border-radius: 0px !important;
+  overflow-wrap: break-word !important;
+  margin: 10px auto 0px !important;
+}
     .notConnected {
       width: 50%;
       margin: auto;

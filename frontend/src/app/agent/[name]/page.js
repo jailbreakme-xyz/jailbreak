@@ -77,7 +77,7 @@ const Agent = ({ params }) => {
   return (
     <div>
       <Header />
-      <div style={styles.container}>
+      <div style={styles.container} className="agent-page">
         {/* Profile Section */}
         <div style={styles.profileSection}>
           <img
