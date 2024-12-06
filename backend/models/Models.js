@@ -11,8 +11,7 @@ const ChallengeSchema = new mongoose.Schema(
     label: String,
     level: String,
     status: { type: String, default: "active" },
-    phrase: String,
-    assistant_id: String,
+    model: String,
     system_message: String,
     deployed: Boolean,
     tournamentPDA: String,
@@ -22,6 +21,9 @@ const ChallengeSchema = new mongoose.Schema(
     contextLimit: Number,
     chatLimit: Number,
     expiry: Date,
+    initial_pool_size: Number,
+    developer_fee: Number,
+    tools: Array,
   },
   { collection: "challenges" }
 );

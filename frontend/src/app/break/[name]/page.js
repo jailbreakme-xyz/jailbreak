@@ -361,7 +361,9 @@ export default function Challenge({ params }) {
             <div className="page-loader">
               <BarLoader color="#ccc" size={150} cssOverride={override} />
               <br />
-              <span>Loading Interface...</span>
+              <span style={{ textTransform: "capitalize" }}>
+                Loading {name} Interface...
+              </span>
             </div>
           </div>
         ) : (
@@ -385,10 +387,13 @@ export default function Challenge({ params }) {
                     </div>
                     <div>
                       <Image
+                        onClick={() => {
+                          window.open(`/agent/${challenge?.name}`, "_blank");
+                        }}
                         alt="logo"
                         src={challenge?.pfp}
-                        width="30"
-                        height="30"
+                        width="40"
+                        height="40"
                         className="pfp"
                       />
                     </div>

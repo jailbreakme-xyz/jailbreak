@@ -13,7 +13,7 @@ import "../../styles/Chat.css";
 import Link from "next/link";
 import { SiGitbook, SiGithub } from "react-icons/si";
 import { FaXTwitter } from "react-icons/fa6";
-import { GiBreakingChain } from "react-icons/gi";
+import { GiBreakingChain, GiTwoCoins } from "react-icons/gi";
 
 function numberWithCommas(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -38,6 +38,9 @@ const MainMenu = (props) => {
         )}
         <Link target="_blank" href="/faq" className="chatMainMenuItem pointer">
           <FaQuestionCircle size={25} /> FAQ
+        </Link>
+        <Link href="/jail-token" className="chatMainMenuItem pointer">
+          <GiTwoCoins size={25} /> $JAIL TOKENS
         </Link>
         <div className="chatMainMenuItem chatPageSocialMenu">
           <span className="">
@@ -86,13 +89,44 @@ const MainMenu = (props) => {
             <hr />
             <div className="stats">
               <p style={{ fontSize: "16px", fontWeight: "normal" }}>
-                The chat displays up to 50 messages. However, only your messages
-                are sent to {props.challenge?.name} for context.
+                <strong>Characters Per Message:</strong> ~
+                {numberWithCommas(props.challenge.characterLimit)}
+              </p>
+
+              <p style={{ fontSize: "16px", fontWeight: "normal" }}>
+                <strong>Context Window:</strong> ~{props.challenge.contextLimit}
               </p>
               <p style={{ fontSize: "16px", fontWeight: "normal" }}>
-                70% of all message fees go to growing the prize pool.
+                <strong>UI Chat Limit:</strong> ~
+                {props.challenge.chatLimit || "Unlimited"}
               </p>
-              <div
+              {/* <p style={{ fontSize: "16px", fontWeight: "normal" }}>
+                The chat displays up to 50 messages. However, only your messages
+                are sent to {props.challenge?.name} for context.
+              </p> */}
+              <p
+                style={{
+                  fontSize: "16px",
+                  fontWeight: "normal",
+                  margin: "5px",
+                }}
+              >
+                {100 - props.challenge.developer_fee}% of all message fees go to
+                growing the prize pool.
+              </p>
+              <a
+                href={`/agent/${props.challenge?.name}`}
+                target="_blank"
+                className="pointer"
+                style={{
+                  color: "#09bf99",
+                  fontSize: "16px",
+                  fontWeight: "normal",
+                }}
+              >
+                Read More →
+              </a>
+              {/* <div
                 style={{
                   fontSize: "16px",
                   fontWeight: "normal",
@@ -106,7 +140,15 @@ const MainMenu = (props) => {
                   per message.
                 </p>
                 <p>{props.challenge?.contextLimit} messages per context.</p>
-              </div>
+                <a
+                  href={`/agent/${props.challenge?.name}`}
+                  target="_blank"
+                  className="pointer"
+                  style={{ color: "#09bf99" }}
+                >
+                  Read More →
+                </a>
+              </div> */}
             </div>
           </div>
         )}

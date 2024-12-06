@@ -45,6 +45,11 @@ router.post("/submit/:id", async (req, res) => {
       tournamentPDA
     );
 
+    const entryFee = tournamentData.entryFee;
+    const currentExpiry = challenge.expiry;
+    const now = new Date();
+    const oneHourInMillis = 3600000;
+
     const isValidTransaction = await blockchainService.verifyTransaction(
       signature,
       tournamentPDA,
@@ -56,11 +61,6 @@ router.post("/submit/:id", async (req, res) => {
     }
 
     console.log("Transaction verified successfully for wallet:", walletAddress);
-
-    const entryFee = tournamentData.entryFee;
-    const currentExpiry = challenge.expiry;
-    const now = new Date();
-    const oneHourInMillis = 3600000;
 
     // Set the entry fee regardless of expiry change
     await Challenge.updateOne(

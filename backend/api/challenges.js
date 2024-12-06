@@ -34,6 +34,7 @@ router.get("/:id", async (req, res) => {
         description: "$label",
         level: 1,
         status: 1,
+        model: 1,
       }
     );
     res.send(challenges);

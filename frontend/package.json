@@ -9,17 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@project-serum/anchor": "^0.26.0",
-    "@solana/spl-token": "^0.4.9",
     "@solana/wallet-adapter-base": "^0.9.23",
     "@solana/wallet-adapter-phantom": "^0.9.24",
     "@solana/wallet-adapter-react": "^0.15.35",
     "@solana/wallet-adapter-react-ui": "^0.9.35",
     "@solana/web3.js": "^1.95.8",
     "axios": "^1.6.7",
-    "bs58": "^6.0.0",
     "crypto": "^1.0.1",
-    "lottie-react": "^2.4.0",
     "next": "^15.0.3",
     "react": "^18",
     "react-countup": "^6.5.3",

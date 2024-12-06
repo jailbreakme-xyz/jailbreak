@@ -20,7 +20,17 @@ export const faqData = [
       "$JAIL tokens will be the platform's native tokens. Currently, you can only use Solana (SOL) to pay for the entry fee of a challenge. We will invest part of each tournament treasury in $JAIL tokens.",
   },
   {
-    question: "How do I claim rewards?",
+    question: "What is the entry fee?",
+    answer:
+      "The entry fee is the amount of SOL you need to pay to participate in a challenge.",
+  },
+  {
+    question: "How is the winner picked?",
+    answer:
+      "The selection of the winning user is determined entirely by the AI model itself. The AI evaluates all incoming prompts and decides whether a submission meets the challenge requirements by calling one of two predefined functions: `handleChallengeSuccess` or `handleChallengeFailed`.",
+  },
+  {
+    question: "What happens when I win a challenge?",
     answer:
       "When you successfully complete a challenge, the system logs your conversation and validates your success. Rewards will be automatically transferred to your wallet.",
   },

@@ -12,6 +12,7 @@ import { SiGitbook, SiGithub } from "react-icons/si";
 import { FaXTwitter } from "react-icons/fa6";
 import { TiThMenu } from "react-icons/ti";
 import CountUp from "react-countup";
+import { GiTwoCoins } from "react-icons/gi";
 
 const MobileMenu = (props) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -47,6 +48,13 @@ const MobileMenu = (props) => {
           onClick={() => setMenuOpen(false)}
         >
           <FaQuestionCircle size={25} /> FAQ
+        </Link>
+        <Link
+          href="/jail-token"
+          className="chatMainMenuItem pointer"
+          onClick={() => setMenuOpen(false)}
+        >
+          <GiTwoCoins size={25} /> $JAIL TOKENS
         </Link>
         <div className="chatMainMenuItem chatPageSocialMenu">
           <span className="">

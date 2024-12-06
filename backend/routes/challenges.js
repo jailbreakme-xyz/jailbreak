@@ -31,7 +31,9 @@ router.get("/get-challenge", async (req, res) => {
       title: 1,
       label: 1,
       task: 1,
+      tools: 1,
       level: 1,
+      model: 1,
       image: 1,
       pfp: 1,
       status: 1,
@@ -42,7 +44,10 @@ router.get("/get-challenge", async (req, res) => {
       entryFee: 1,
       characterLimit: 1,
       contextLimit: 1,
+      chatLimit: 1,
+      initial_pool_size: 1,
       expiry: 1,
+      developer_fee: 1,
     };
 
     const challengeInitialized = await Chat.findOne({

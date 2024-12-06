@@ -42,6 +42,10 @@ const FAQ = (props) => {
         style={{ textAlign: "center", display: "grid", placeItems: "center" }}
       >
         <Image
+          className="pointer"
+          onClick={() => {
+            window.location.href = "/";
+          }}
           alt="logo"
           src={stoneLogo}
           width="80"
