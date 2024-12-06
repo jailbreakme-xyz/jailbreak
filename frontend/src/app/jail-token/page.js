@@ -36,7 +36,7 @@ const Token = () => {
         <h2 className="faq-title">$JAIL Tokens</h2>
       </div>
       <hr />
-      <div className="docsPage jail-token-page">
+      <div className="docsPage">
         <MainMenu />
         <JailTokensSection />
       </div>

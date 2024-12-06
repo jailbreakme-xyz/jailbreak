@@ -2,7 +2,7 @@ import React from "react";
 
 const JailTokensSection = () => {
   return (
-    <div style={styles.container}>
+    <div style={styles.container} className="jail-token-page">
       <h1 style={styles.title}>
         $JAIL Tokens: The Future of the JailbreakMe Ecosystem
       </h1>

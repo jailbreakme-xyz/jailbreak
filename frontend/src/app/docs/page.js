@@ -57,7 +57,9 @@ const APIDocs = (props) => {
         />
         <h1 className="api-doc-title">JAILBREAK API</h1>
         <h2 style={{ margin: "5px 0px", color: "#ccc" }}>
-          Secure AI Agents (Coming Soon)
+          Secure AI Agents
+          <br />
+          (Coming Soon)
         </h2>
 
         <Link
