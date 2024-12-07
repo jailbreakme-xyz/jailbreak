@@ -30,7 +30,7 @@ import {
 import Timer from "../../components/partials/Timer";
 
 const SOLANA_RPC =
-  "https://special-cold-shard.solana-devnet.quiknode.pro/2e94b18cb7833ffd1e49b6e452de98cfef68a753";
+  "https://special-cold-shard.solana-mainnet.quiknode.pro/2e94b18cb7833ffd1e49b6e452de98cfef68a753";
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
