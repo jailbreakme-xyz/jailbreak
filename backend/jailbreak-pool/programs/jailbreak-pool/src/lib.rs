@@ -6,7 +6,7 @@ pub mod consts;
 use anchor_lang::prelude::*;
 use instructions::*;
 
-declare_id!("BiADwrJnM5JHusfnA34XQAyrZyvkWyh5qcw9rgZziiru");
+declare_id!("B1XbZeQYZxv5ezBpBgomEUqDvTbM8HwSYfktcpBGkgjg");
 
 #[program]
 pub mod tournament {
