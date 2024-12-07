@@ -35,7 +35,12 @@ const MobileMenu = (props) => {
       </div>
 
       <div className={`mainMenu ${menuOpen ? "open" : ""}`}>
-        <Image src={darkSlogen} alt="logo" width="200" />
+        <Image
+          src={darkSlogen}
+          alt="logo"
+          width="200"
+          style={{ marginBottom: "15px" }}
+        />
         <Link
           href="/"
           className="chatMainMenuItem pointer"
