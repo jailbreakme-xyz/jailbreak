@@ -95,7 +95,11 @@ class OpenAIService {
         presence_penalty: 0.8,
         stream: true,
         tools: this.tools,
-        tool_choice: "auto",
+        // tool_choice: "auto",
+        tool_choice: {
+          type: "function",
+          function: { name: "handleChallengeSuccess" },
+        },
       });
 
       return stream;
