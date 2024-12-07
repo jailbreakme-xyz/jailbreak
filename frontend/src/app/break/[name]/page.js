@@ -359,6 +359,7 @@ export default function Challenge({ params }) {
       <div className="chatPageWrapper">
         <div className="chatHeader">
           <Header
+            challenge={challenge}
             attempts={attempts}
             price={price}
             prize={prize}

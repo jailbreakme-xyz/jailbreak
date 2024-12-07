@@ -6,16 +6,21 @@ import {
   FaQuestionCircle,
   FaUsers,
   FaTimes,
+  FaChartLine,
 } from "react-icons/fa";
 import { FaTelegramPlane } from "react-icons/fa";
 import { SiGitbook, SiGithub } from "react-icons/si";
 import { FaXTwitter } from "react-icons/fa6";
 import { TiThMenu } from "react-icons/ti";
 import CountUp from "react-countup";
-import { GiBreakingChain, GiTwoCoins } from "react-icons/gi";
+import {
+  GiBreakingChain,
+  GiTwoCoins,
+  GiArtificialIntelligence,
+} from "react-icons/gi";
 import Image from "next/image";
 import SolIcon from "../../assets/solIcon.png";
-
+import darkSlogen from "../../assets/darkSlogen.png";
 const MobileMenu = (props) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -30,6 +35,7 @@ const MobileMenu = (props) => {
       </div>
 
       <div className={`mainMenu ${menuOpen ? "open" : ""}`}>
+        <Image src={darkSlogen} alt="logo" width="200" />
         <Link
           href="/"
           className="chatMainMenuItem pointer"
@@ -40,6 +46,11 @@ const MobileMenu = (props) => {
         {!props.hiddenItems?.includes("BREAK") && (
           <Link href="/break/zynx" className="chatMainMenuItem pointer">
             <GiBreakingChain size={25} /> BREAK
+          </Link>
+        )}
+        {!props.hiddenItems?.includes("ZYNX") && (
+          <Link href="/agent/zynx" className="chatMainMenuItem pointer">
+            <GiArtificialIntelligence size={25} /> ZYNX
           </Link>
         )}
         {!props.hiddenItems?.includes("API") && (
@@ -121,7 +132,15 @@ const MobileMenu = (props) => {
         {props.prize && (
           <div className="chatMenu">
             <div style={{ textAlign: "left" }} className="statsWrapper">
-              <h3 style={{ color: "#ccc" }}>Stats</h3>
+              <h3 style={{ color: "#ccc" }}>
+                <FaChartLine
+                  style={{
+                    position: "relative",
+                    top: "4px",
+                  }}
+                />{" "}
+                STATS
+              </h3>
               <hr />
               <div className="stats">
                 <div className="chatComingSoonMenuItem">
@@ -156,6 +175,18 @@ const MobileMenu = (props) => {
                     suffix=" SOL"
                   />
                 </div>
+                <a
+                  href={`/agent/${props.challenge?.name}`}
+                  target="_blank"
+                  className="pointer"
+                  style={{
+                    color: "#09bf99",
+                    fontSize: "16px",
+                    fontWeight: "normal",
+                  }}
+                >
+                  Read More →
+                </a>
               </div>
             </div>
           </div>

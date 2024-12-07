@@ -79,7 +79,7 @@ Each tournament has unique rules, including:
 - **Telegram Community**: [https://t.me/jailbreakme_xyz](https://t.me/jailbreakme_xyz)
 - **Gitbook Docs**: [https://jailbreak.gitbook.io/jailbreakme.xyz](https://jailbreak.gitbook.io/jailbreakme.xyz)
 - **Github Repo**: [https://github.com/probonodev/jailbreak](https://github.com/probonodev/jailbreak)
-- **Smart Contract**: _Coming Soon_
+- **Smart Contract**: [https://solscan.io/account/B1XbZeQYZxv5ezBpBgomEUqDvTbM8HwSYfktcpBGkgjg](https://solscan.io/account/B1XbZeQYZxv5ezBpBgomEUqDvTbM8HwSYfktcpBGkgjg)
 
 ---
 

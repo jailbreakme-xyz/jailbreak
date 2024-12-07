@@ -327,7 +327,7 @@ padding-bottom: 0px;
   top: 0;
   right: 0;
   width: 80%;
-  height: 100%;
+  min-height: 100%;
   background-color: #fff;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
   transform: translateX(100%);
@@ -335,7 +335,7 @@ padding-bottom: 0px;
   display: flex !important;
   flex-direction: column !important;
   align-items: flex-start !important;
-  padding: 40px 20px;
+  padding: 40px 20px 0px;
   z-index: 1000;
   overflow-y: scroll;
 }
@@ -356,7 +356,7 @@ padding-bottom: 0px;
   margin: 4px 0 !important;
   color: #ccc;
   text-decoration: none !important;
-  width: 70% !important;
+  width: 90% !important;
   column-gap: 5px !important;
 }
 
@@ -369,6 +369,7 @@ padding-bottom: 0px;
 /* Social Menu */
 .chatPageSocialMenu {
   margin-top: 20px;
+  width: 90% !important;
 }
 
 .chatPageSocialMenu {
@@ -392,6 +393,8 @@ justify-content: flex-start !important;
 }
 
 .chatPageSocialIcons a {
+  display: flex;
+  align-items: center;
   margin: 0px !important;
   /* margin: 0 10px; */
   color: #333;

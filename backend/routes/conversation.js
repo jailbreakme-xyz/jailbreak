@@ -231,7 +231,7 @@ router.post("/submit/:id", async (req, res) => {
               tournamentPDA,
               walletAddress
             );
-            const successMessage = `🥳 Congratulations! ${challenge.winning_message}\nEvidence: ${assistantMessage.content}\nTransaction: ${concluded}`;
+            const successMessage = `🥳 Congratulations! ${challenge.winning_message}.\nEvidence: ${assistantMessage.content}\nTransaction: ${concluded}`;
             assistantMessage.content = successMessage;
             await DatabaseService.createChat(assistantMessage);
             await DatabaseService.updateChallenge(id, { status: "concluded" });

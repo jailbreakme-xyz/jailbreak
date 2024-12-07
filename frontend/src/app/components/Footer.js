@@ -55,9 +55,11 @@ export default function Footer(props) {
         </form>
       ) : (
         <div style={{ width: "100%" }}>
-          <p style={{ color: "black" }}>
-            🥳 This tournament has concluded. See you next time!
-          </p>
+          <h3 style={{ color: "black" }}>
+            🥳 This tournament has concluded.
+            <br />
+            See you next time!
+          </h3>
           <p style={{ color: "black" }}>
             Stay tuned for the next tournament! 🚀{" "}
             <a
