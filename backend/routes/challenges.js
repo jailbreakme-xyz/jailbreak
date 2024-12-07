@@ -6,10 +6,7 @@ import DatabaseService from "../services/db/index.js";
 dotenv.config();
 
 const router = express.Router();
-const solanaRpc =
-  process.env.NODE_ENV === "development"
-    ? process.env.RPC_URL_DEVNET
-    : process.env.RPC_URL;
+const solanaRpc = process.env.RPC_URL;
 const model = "gpt-4o-mini";
 
 router.get("/", async (req, res) => {

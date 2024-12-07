@@ -9,10 +9,7 @@ import DatabaseService from "../services/db/index.js";
 const router = express.Router();
 const model = "gpt-4o-mini";
 
-const solanaRpc =
-  process.env.NODE_ENV === "development"
-    ? process.env.RPC_URL_DEVNET
-    : process.env.RPC_URL;
+const solanaRpc = process.env.RPC_URL;
 
 router.post("/submit/:id", async (req, res) => {
   try {
