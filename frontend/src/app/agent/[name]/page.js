@@ -269,6 +269,27 @@ const styles = {
     color: "green",
     textTransform: "capitalize",
   },
+  concluded: {
+    fontSize: "16px",
+    fontWeight: "bold",
+    margin: "0",
+    color: "blue",
+    textTransform: "capitalize",
+  },
+  closed: {
+    fontSize: "16px",
+    fontWeight: "bold",
+    margin: "0",
+    color: "red",
+    textTransform: "capitalize",
+  },
+  pending: {
+    fontSize: "16px",
+    fontWeight: "bold",
+    margin: "0",
+    color: "orange",
+    textTransform: "capitalize",
+  },
   description: {
     fontSize: "16px",
     margin: "10px 0px",
