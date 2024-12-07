@@ -24,6 +24,7 @@ const ChallengeSchema = new mongoose.Schema(
     initial_pool_size: Number,
     developer_fee: Number,
     tools: Array,
+    winning_message: String,
   },
   { collection: "challenges" }
 );

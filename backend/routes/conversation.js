@@ -170,12 +170,15 @@ router.post("/submit/:id", async (req, res) => {
           // Save assistant message when stream ends with function args
           try {
             const args = JSON.parse(functionArguments); // Attempt to parse JSON
-            assistantMessage.content += args.feedback;
-            assistantMessage.tool_calls = args;
             assistantMessage.tool_calls.function_name = functionName;
+            assistantMessage.tool_calls = args;
+            if (functionName === "handleChallengeFailure") {
+              assistantMessage.content += args.feedback;
+            } else {
+              assistantMessage.content += args.evidence;
+            }
           } catch (error) {
             console.error("Error parsing JSON:", error.message);
-
             if (functionName === "handleChallengeFailure") {
               // Fallback: Attempt to extract feedback and failure_reason manually
               const feedbackMatch = functionArguments.match(
@@ -216,7 +219,7 @@ router.post("/submit/:id", async (req, res) => {
 
               assistantMessage.content += evidence;
               assistantMessage.tool_calls = {
-                succes_type: successType,
+                success_type: successType,
                 evidence: evidence,
                 function_name: functionName,
               };
@@ -228,7 +231,7 @@ router.post("/submit/:id", async (req, res) => {
               tournamentPDA,
               walletAddress
             );
-            const successMessage = `🥳 Congratulations! ${assistantMessage.content} Tournament concluded: ${concluded}`;
+            const successMessage = `🥳 Congratulations! ${challenge.winning_message}\nEvidence: ${assistantMessage.content}\nTransaction: ${concluded}`;
             assistantMessage.content = successMessage;
             await DatabaseService.createChat(assistantMessage);
             await DatabaseService.updateChallenge(id, { status: "concluded" });
