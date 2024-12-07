@@ -12,7 +12,9 @@ import { SiGitbook, SiGithub } from "react-icons/si";
 import { FaXTwitter } from "react-icons/fa6";
 import { TiThMenu } from "react-icons/ti";
 import CountUp from "react-countup";
-import { GiTwoCoins } from "react-icons/gi";
+import { GiBreakingChain, GiTwoCoins } from "react-icons/gi";
+import Image from "next/image";
+import SolIcon from "../../assets/solIcon.png";
 
 const MobileMenu = (props) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -35,13 +37,20 @@ const MobileMenu = (props) => {
         >
           <FaHome size={25} /> HOME
         </Link>
-        <Link
-          href="/docs"
-          className="chatMainMenuItem pointer"
-          onClick={() => setMenuOpen(false)}
-        >
-          <FaCode size={25} /> API
-        </Link>
+        {!props.hiddenItems?.includes("BREAK") && (
+          <Link href="/break/zynx" className="chatMainMenuItem pointer">
+            <GiBreakingChain size={25} /> BREAK
+          </Link>
+        )}
+        {!props.hiddenItems?.includes("API") && (
+          <Link
+            href="/docs"
+            className="chatMainMenuItem pointer"
+            onClick={() => setMenuOpen(false)}
+          >
+            <FaCode size={25} /> API
+          </Link>
+        )}
         <Link
           href="/faq"
           className="chatMainMenuItem pointer"
@@ -75,6 +84,23 @@ const MobileMenu = (props) => {
               className="pointer"
             >
               <FaTelegramPlane size={30} className="pointer" />
+            </a>
+            <a
+              href="https://solscan.io/account/BiADwrJnM5JHusfnA34XQAyrZyvkWyh5qcw9rgZziiru"
+              target="_blank"
+              className="pointer imgIcon"
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <Image
+                src={SolIcon}
+                alt="Solana"
+                width={30}
+                height={30}
+                className="pointer"
+              />
             </a>
             <a
               href="https://jailbreak.gitbook.io/jailbreakme.xyz"

@@ -72,39 +72,11 @@ const JailTokensSection = () => {
             </ul>
           </li>
           <li>
-            <strong>Staking Opportunities:</strong> Future staking mechanisms
-            may allow users to lock $JAIL tokens to earn rewards or gain special
-            access to premium tournaments and features.
+            <strong>AI Agent Security Tournament Marketplace:</strong> projects
+            will be able to burn and lock $JAIL tokens to fund tournaments to
+            test own AI Agents against attacks.
           </li>
         </ul>
-      </section>
-
-      {/* Why It Matters */}
-      <section style={styles.section}>
-        <h2 style={styles.subtitle}>🌟 Why $JAIL Tokens Matter</h2>
-        <ul style={styles.list}>
-          <li>
-            <strong>Economic Sustainability:</strong> The buyback program
-            ensures a steady demand for $JAIL tokens, while future utilities
-            will deepen their integration into the platform.
-          </li>
-          <li>
-            <strong>Incentivized Engagement:</strong> Users and organizations
-            alike will benefit from a token that aligns incentives across the
-            ecosystem.
-          </li>
-          <li>
-            <strong>Growth Potential:</strong> As the platform grows, so will
-            the use cases and demand for $JAIL tokens, making them a vital part
-            of JailbreakMe&apos;s long-term vision.
-          </li>
-        </ul>
-        <p>
-          $JAIL tokens are more than just a currency—they are the foundation of
-          a thriving ecosystem, fostering collaboration between users,
-          developers, and organizations. The journey has just begun, stay tuned
-          🚀
-        </p>
       </section>
     </div>
   );

@@ -124,7 +124,11 @@ height: 30px;
     align-items: center;
     justify-content: space-between;
   }
-  
+  .chat-footer > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
   textarea::-webkit-scrollbar {
     display: none;
   }
@@ -194,7 +198,7 @@ font-size: 26px;
 color: white;
 }
 
-.chatPageSocialMenu:hover {
+.chatPageSocialMenu:hover:not(.imgIcon) {
 background-color: #1F2024;
 color: #ccc;
 border: 0px;
@@ -208,7 +212,7 @@ border: 0px;
     }
     
     
-    .chatPageSocialIcons svg {
+    .chatPageSocialIcons svg, .chatPageSocialIcons img {
       margin: 0px 5px;
     border-radius: 100px;
     background-color: #ccc;
@@ -217,10 +221,13 @@ border: 0px;
     border: 2px solid #ccc;
     }
     .chatPageSocialIcons svg:hover {
-
     background-color: #1E1A39;
     fill: #ccc;
     }
+    .chatPageSocialIcons img:hover {
+    background-color: #0BBF99;
+    }
+
   /* .chatMainMenuItem a {
 
   } */

@@ -13,6 +13,7 @@ export default function Header(props) {
         attempts={props.attempts}
         price={props.price}
         prize={props.prize}
+        hiddenItems={props.hiddenItems}
       />
       <Image
         onClick={() => {

@@ -379,7 +379,7 @@ color: #ccc;
   background-color: #ccc; 
   height: 2px; 
   width: calc(100% + 28.28px); 
-  top: 10vh;
+  top: 12vh;
   left: 0;
   transform-origin: top left;
   transform: rotate(-45deg); 
@@ -390,11 +390,11 @@ color: #ccc;
 }
 
 .diagonal-top-3 {
-  top: 30vh;
+  top: 28vh;
 }
 
 .diagonal-top-4 {
-  top: 40vh;
+  top: 36vh;
 }
 
 .diagonal-bottom {
@@ -912,7 +912,7 @@ align-items: center;
 }
 
 
-.socialIcons svg {
+.socialIcons svg, .socialIcons img {
   margin: 0px 5px;
 border-radius: 100px;
 background-color: #ccc;
@@ -924,7 +924,9 @@ border: 2px solid #ccc;
   background-color: #1E1A39;
 fill: #ccc;
 }
-
+.socialIcons img:hover {
+  background-color: #0BBF99;
+}
 .pies {
   margin-top: 1rem;
 }

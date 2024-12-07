@@ -7,6 +7,7 @@ import {
   FaCode,
   FaQuestionCircle,
   FaInfoCircle,
+  FaFileContract,
 } from "react-icons/fa";
 
 import "../../styles/Chat.css";
@@ -14,6 +15,8 @@ import Link from "next/link";
 import { SiGitbook, SiGithub } from "react-icons/si";
 import { FaXTwitter } from "react-icons/fa6";
 import { GiBreakingChain, GiTwoCoins } from "react-icons/gi";
+import Image from "next/image";
+import SolIcon from "../../assets/solIcon.png";
 
 function numberWithCommas(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -61,6 +64,23 @@ const MainMenu = (props) => {
               className="pointer"
             >
               <FaTelegramPlane size={30} className="pointer" />
+            </a>
+            <a
+              href="https://solscan.io/account/BiADwrJnM5JHusfnA34XQAyrZyvkWyh5qcw9rgZziiru"
+              target="_blank"
+              className="pointer imgIcon"
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <Image
+                src={SolIcon}
+                alt="Solana"
+                width={30}
+                height={30}
+                className="pointer"
+              />
             </a>
             <a
               href="https://jailbreak.gitbook.io/jailbreakme.xyz"

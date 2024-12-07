@@ -358,7 +358,12 @@ export default function Challenge({ params }) {
     <main className="main">
       <div className="chatPageWrapper">
         <div className="chatHeader">
-          <Header attempts={attempts} price={price} prize={prize} />
+          <Header
+            attempts={attempts}
+            price={price}
+            prize={prize}
+            hiddenItems={["API", "BREAK"]}
+          />
           <hr />
         </div>
         {pageLoading ? (
@@ -407,7 +412,7 @@ export default function Challenge({ params }) {
                         src={challenge?.pfp}
                         width="40"
                         height="40"
-                        className="pfp"
+                        className="pfp pointer"
                       />
                     </div>
                   </div>

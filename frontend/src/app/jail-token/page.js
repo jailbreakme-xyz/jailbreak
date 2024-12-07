@@ -23,6 +23,10 @@ const Token = () => {
             borderRadius: "0px 0px 150px 150px",
             marginBottom: "10px",
           }}
+          className="pointer"
+          onClick={() => {
+            window.location.href = "/";
+          }}
         />
         <Image
           className="pointer"
