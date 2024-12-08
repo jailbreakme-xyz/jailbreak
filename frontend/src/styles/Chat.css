@@ -230,19 +230,19 @@ border: 0px;
     background-color: #0BBF99;
     }
 
-    .desktopChatMenu, .desktopMenu {
+    .desktopChatMenu, .breakMenu {
       display: flex;
       flex-direction: column;
       justify-content: start;
       height: 80.5vh;
     }
 
-    .desktopChatMenu .statsWrapper:last-child, .desktopMenu .chatMainMenuItem:last-child {
+    .desktopChatMenu .statsWrapper:last-child, .breakMenu .chatMainMenuItem:last-child {
       margin: 0px;
       flex-grow: 1;
     }
 
-    .desktopMenu .chatMainMenuItem > a {
+    .breakMenu .chatMainMenuItem > a {
       display: flex;
     justify-content: start;
     align-items: center;

@@ -652,7 +652,11 @@ export default function Challenge({ params }) {
                 </div>
               </div>
             </div>
-            <MainMenu challenge={challenge} hiddenItems={["API", "BREAK"]} />
+            <MainMenu
+              challenge={challenge}
+              hiddenItems={["API", "BREAK"]}
+              component="break"
+            />
           </div>
         )}
       </div>

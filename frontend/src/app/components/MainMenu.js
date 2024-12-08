@@ -24,7 +24,13 @@ function numberWithCommas(x) {
 
 const MainMenu = (props) => {
   return (
-    <div className="mainMenu desktopMenu">
+    <div
+      className={
+        props.component === "break"
+          ? "mainMenu desktopMenu breakMenu"
+          : "mainMenu desktopMenu"
+      }
+    >
       <>
         <Link target="_blank" href="/" className="chatMainMenuItem pointer">
           <FaHome size={25} /> <span>HOME</span>
