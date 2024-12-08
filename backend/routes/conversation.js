@@ -48,6 +48,8 @@ router.post("/submit/:id", async (req, res) => {
       tournamentPDA
     );
 
+    if (!tournamentData) return res.write("Tournament data not found");
+
     const entryFee = tournamentData.entryFee;
     const currentExpiry = challenge.expiry;
     const now = new Date();
@@ -113,6 +115,7 @@ router.post("/submit/:id", async (req, res) => {
       model: model,
     });
 
+    if (!stream) return res.write("Failed to generate response");
     const assistantMessage = {
       challenge: challengeName,
       model: model,

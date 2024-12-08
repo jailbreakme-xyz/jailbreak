@@ -101,7 +101,7 @@ class OpenAIService {
       return stream;
     } catch (error) {
       console.error("OpenAI Service Error:", error);
-      throw error;
+      return false;
     }
   }
 }

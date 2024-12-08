@@ -121,7 +121,7 @@ class BlockchainService {
         new PublicKey(tournamentPDA)
       );
       if (!accountInfo) {
-        throw new Error("Tournament account not found");
+        return false;
       }
 
       const data = Buffer.from(accountInfo.data);
@@ -141,7 +141,7 @@ class BlockchainService {
       };
     } catch (error) {
       console.error("Error fetching tournament data:", error);
-      throw error;
+      return false;
     }
   }
 
@@ -158,7 +158,7 @@ class BlockchainService {
         new PublicKey(tournamentPDA)
       );
       if (!tournamentAccountInfo) {
-        throw new Error("Tournament account not found");
+        return false;
       }
 
       // Define the instruction data for ConcludeTournament
@@ -212,7 +212,7 @@ class BlockchainService {
       return signature;
     } catch (error) {
       console.error("Error concluding tournament:", error);
-      throw error;
+      return false;
     }
   }
 }

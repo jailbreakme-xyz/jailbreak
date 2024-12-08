@@ -220,31 +220,31 @@ export default function Challenge({ params }) {
         .then((res) => res.data)
         .catch((err) => err);
 
-      if (!writing) {
-        setChallenge((prev) =>
-          JSON.stringify(prev) !== JSON.stringify(data.challenge)
-            ? data.challenge
-            : prev
-        );
-        setAttempts((prev) =>
-          prev !== data.break_attempts ? data.break_attempts : prev
-        );
-        setPrice((prev) =>
-          prev !== data.message_price ? data.message_price : prev
-        );
-        setPrize((prev) => (prev !== data.prize ? data.prize : prev));
-        setExpiry((prev) => (prev !== data.expiry ? data.expiry : prev));
+      // if (!writing) {
+      setChallenge((prev) =>
+        JSON.stringify(prev) !== JSON.stringify(data.challenge)
+          ? data.challenge
+          : prev
+      );
+      setAttempts((prev) =>
+        prev !== data.break_attempts ? data.break_attempts : prev
+      );
+      setPrice((prev) =>
+        prev !== data.message_price ? data.message_price : prev
+      );
+      setPrize((prev) => (prev !== data.prize ? data.prize : prev));
+      setExpiry((prev) => (prev !== data.expiry ? data.expiry : prev));
 
-        const lastMessage = data.chatHistory[data.chatHistory.length - 1];
+      const lastMessage = data.chatHistory[data.chatHistory.length - 1];
 
-        if (!noLoading) {
-          console.log("Updated initial conversation");
-          setConversation(data.chatHistory);
-        } else if (publicKey && lastMessage.address != publicKey?.toBase58()) {
-          console.log("Updated conversation with new user message");
-          setConversation(data.chatHistory);
-        }
+      if (!noLoading) {
+        console.log("Updated initial conversation");
+        setConversation(data.chatHistory);
+      } else if (publicKey && lastMessage.address != publicKey?.toBase58()) {
+        console.log("Updated conversation with new user message");
+        setConversation(data.chatHistory);
       }
+      // }
 
       setPageLoading(false);
     } catch (err) {
