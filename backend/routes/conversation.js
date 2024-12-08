@@ -5,6 +5,7 @@ import { Challenge, Chat } from "../models/Models.js";
 import OpenAIService from "../services/llm/openai.js";
 import BlockchainService from "../services/blockchain/index.js";
 import DatabaseService from "../services/db/index.js";
+import TelegramBotService from "../services/bots/telegram.js";
 
 const router = express.Router();
 const model = "gpt-4o-mini";
@@ -127,6 +128,16 @@ router.post("/submit/:id", async (req, res) => {
     let functionName = "";
     let isCollectingFunctionArgs = false;
     let end_msg = "";
+
+    const message = `💉 New prompt injection attempt 🦾
+    
+    Prize Pool: ${entryFee * 100}
+    Message Price: ${entryFee}
+
+    Check it out: https://jailbreakme.xyz/break/${challengeName}
+    Prompt: ${prompt}`;
+
+    await TelegramBotService.sendMessageToGroup(message);
 
     for await (const chunk of stream) {
       const delta = chunk.choices[0].delta;
