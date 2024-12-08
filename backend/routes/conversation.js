@@ -134,8 +134,7 @@ router.post("/submit/:id", async (req, res) => {
     Prize Pool: ${entryFee * 100}
     Message Price: ${entryFee}
 
-    Check it out: https://jailbreakme.xyz/break/${challengeName}
-    Prompt: ${prompt}`;
+    Check it out: https://jailbreakme.xyz/break/${challengeName}`;
 
     await TelegramBotService.sendMessageToGroup(message);
 
