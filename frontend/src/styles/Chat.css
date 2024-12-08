@@ -233,7 +233,7 @@ border: 0px;
     .desktopChatMenu, .breakMenu {
       display: flex;
       flex-direction: column;
-      justify-content: start;
+      justify-content: flex-start;
       height: 80.5vh;
     }
 
@@ -244,7 +244,7 @@ border: 0px;
 
     .breakMenu .chatMainMenuItem > a {
       display: flex;
-    justify-content: start;
+    justify-content: flex-start;
     align-items: center;
     column-gap: 5px;
     }

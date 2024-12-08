@@ -131,8 +131,8 @@ router.post("/submit/:id", async (req, res) => {
 
     const message = `💉 New prompt injection attempt 🦾
     
-    Prize Pool: ${entryFee * 100}
-    Message Price: ${entryFee}
+    Prize Pool: ${entryFee * 100} SOL
+    Message Price: ${entryFee} SOL
 
     Check it out: https://jailbreakme.xyz/break/${challengeName}`;
 
