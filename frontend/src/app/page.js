@@ -58,7 +58,7 @@ export default function Home() {
               jailbreaking them.
             </p>
             <Link
-              href="/break/zynx"
+              href="/break/Lumiere"
               target="_blank"
               className="pointer"
               style={{ zIndex: "99999", position: "relative" }}
@@ -89,8 +89,8 @@ export default function Home() {
               <a className="pointer" href="/faq">
                 FAQ
               </a>
-              <a className="pointer" href="/agent/zynx">
-                ZYNX
+              <a className="pointer" href="/agent/Lumiere">
+                LUMIERE
               </a>
               <a className="pointer" href="/jail-token">
                 $JAIL
