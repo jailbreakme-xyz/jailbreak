@@ -236,15 +236,14 @@ export default function Challenge({ params }) {
         setExpiry((prev) => (prev !== data.expiry ? data.expiry : prev));
 
         const lastMessage = data.chatHistory[data.chatHistory.length - 1];
-        setConversation(data.chatHistory);
 
-        // if (!noLoading) {
-        //   console.log("Updated initial conversation");
-        //   setConversation(data.chatHistory);
-        // } else if (publicKey && lastMessage.address != publicKey?.toBase58()) {
-        //   console.log("Updated conversation with new user message");
-        //   setConversation(data.chatHistory);
-        // }
+        if (!noLoading) {
+          console.log("Updated initial conversation");
+          setConversation(data.chatHistory);
+        } else if (publicKey && lastMessage.address != publicKey?.toBase58()) {
+          console.log("Updated conversation with new user message");
+          setConversation(data.chatHistory);
+        }
       }
 
       setPageLoading(false);

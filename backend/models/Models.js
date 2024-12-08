@@ -25,6 +25,7 @@ const ChallengeSchema = new mongoose.Schema(
     developer_fee: Number,
     tools: Array,
     winning_message: String,
+    phrase: String,
   },
   { collection: "challenges" }
 );

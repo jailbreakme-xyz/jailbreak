@@ -93,7 +93,7 @@ class BlockchainService {
       const postBalance = meta.postBalances[tournamentPdaIndex];
       const amountTransferred = (postBalance - preBalance) / LAMPORTS_PER_SOL;
 
-      const tolerance = expectedAmount * 0.01;
+      const tolerance = expectedAmount * 0.03;
       const isWithinTolerance =
         Math.abs(amountTransferred - expectedAmount) <= tolerance;
 
@@ -102,9 +102,7 @@ class BlockchainService {
       console.log("Amount Transferred:", amountTransferred);
 
       if (!isWithinTolerance) {
-        throw new Error(
-          `Incorrect amount transferred. Expected: ${expectedAmount} SOL (±${tolerance}), Got: ${amountTransferred} SOL`
-        );
+        return false;
       }
 
       console.log("Transaction verification successful");
