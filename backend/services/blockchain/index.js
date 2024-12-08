@@ -36,7 +36,7 @@ class BlockchainService {
         }
       );
       if (!transactionDetails) {
-        throw new Error("Transaction not found");
+        return false;
       }
 
       // Check that the transaction includes the expected program
@@ -45,7 +45,7 @@ class BlockchainService {
         key.equals(this.programId)
       );
       if (programIndex === -1) {
-        throw new Error("Program ID not found in transaction");
+        return false;
       }
 
       // Verify the submit_solution instruction
@@ -82,7 +82,7 @@ class BlockchainService {
       }
 
       if (!validInstruction) {
-        throw new Error("submit_solution instruction not found");
+        return false;
       }
 
       // Verify the amount transferred to the tournament PDA
