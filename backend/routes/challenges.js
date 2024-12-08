@@ -59,6 +59,9 @@ router.get("/get-challenge", async (req, res) => {
     }
 
     let challenge = await DatabaseService.getChallengeByName(name, projection);
+    if (!challenge) {
+      return res.write("Challenge not found");
+    }
     const challengeName = challenge.name;
     const challengeId = challenge._id;
     const chatLimit = challenge.chatLimit;
