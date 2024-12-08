@@ -27,6 +27,7 @@ router.post("/submit/:id", async (req, res) => {
     const challengeName = challenge.name;
     const contextLimit = challenge.contextLimit;
     const characterLimit = challenge.characterLimit;
+    const phrase = challenge.phrase;
 
     const programId = challenge.idl?.address;
     if (!programId) return res.write("Program ID not found");
@@ -81,7 +82,7 @@ router.post("/submit/:id", async (req, res) => {
       challenge: challengeName,
       model: model,
       role: "user",
-      content: prompt,
+      content: prompt.replace(/#END SESSION/g, ""),
       address: walletAddress,
       txn: signature,
     };
@@ -129,14 +130,14 @@ router.post("/submit/:id", async (req, res) => {
     let isCollectingFunctionArgs = false;
     let end_msg = "";
 
-    const message = `💉 New prompt injection attempt 🦾
-    
-    Prize Pool: ${entryFee * 100} SOL
-    Message Price: ${entryFee} SOL
+    // const message = `💉 New prompt injection attempt 🦾
 
-    Check it out: https://jailbreakme.xyz/break/${challengeName}`;
+    // Prize Pool: ${entryFee * 100} SOL
+    // Message Price: ${entryFee} SOL
 
-    await TelegramBotService.sendMessageToGroup(message);
+    // Check it out: https://jailbreakme.xyz/break/${challengeName}`;
+
+    // await TelegramBotService.sendMessageToGroup(message);
 
     for await (const chunk of stream) {
       const delta = chunk.choices[0].delta;
@@ -237,16 +238,26 @@ router.post("/submit/:id", async (req, res) => {
           }
 
           if (functionName === "handleChallengeSuccess") {
-            const concluded = await blockchainService.concludeTournament(
-              tournamentPDA,
-              walletAddress
-            );
-            const successMessage = `🥳 Congratulations! ${challenge.winning_message}.\nEvidence: ${assistantMessage.content}\nTransaction: ${concluded}`;
-            assistantMessage.content = successMessage;
-            await DatabaseService.createChat(assistantMessage);
-            await DatabaseService.updateChallenge(id, { status: "concluded" });
+            if (
+              assistantMessage?.content
+                ?.toLocaleLowerCase()
+                .includes(phrase.toLocaleLowerCase())
+            ) {
+              const concluded = await blockchainService.concludeTournament(
+                tournamentPDA,
+                walletAddress
+              );
+              const successMessage = `🥳 Congratulations! ${challenge.winning_message}.\nEvidence: ${assistantMessage.content}\nTransaction: ${concluded}`;
+              assistantMessage.content = successMessage;
+              await DatabaseService.createChat(assistantMessage);
+              await DatabaseService.updateChallenge(id, {
+                status: "concluded",
+              });
 
-            res.write(successMessage);
+              res.write(successMessage);
+            } else {
+              res.write(challenge.label);
+            }
           } else {
             await DatabaseService.createChat(assistantMessage);
             res.write(assistantMessage.content);

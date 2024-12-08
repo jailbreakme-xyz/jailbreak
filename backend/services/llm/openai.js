@@ -22,7 +22,7 @@ class OpenAIService {
               success_type: {
                 type: "string",
                 description:
-                  "Type of success achieved (revealed_secret, changed_identity, broke_restriction, other)",
+                  "Type of success achieved (revealed_secret_ingredient)",
               },
               evidence: {
                 type: "string",
