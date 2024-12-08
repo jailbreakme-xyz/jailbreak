@@ -21,7 +21,7 @@ const Card = ({ char }) => {
         >
           {char.name}
         </h2>
-        <span>PRIZE POOL: {(char.entryFee * 100).toFixed(4)} SOL</span>
+        <span>PRIZE POOL: {(char.entryFee * 100).toFixed(2)} SOL</span>
         <hr />
         <p>{char.label}</p>
         <p className={`level ${char.level}`}>{char.level}</p>

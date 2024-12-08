@@ -483,7 +483,7 @@ export default function Challenge({ params }) {
                       start={0}
                       end={price}
                       duration={2.75}
-                      decimals={4}
+                      decimals={3}
                       decimal="."
                       suffix=" SOL"
                     />
@@ -505,7 +505,7 @@ export default function Challenge({ params }) {
                       start={0}
                       end={prize}
                       duration={2.75}
-                      decimals={4}
+                      decimals={2}
                       decimal="."
                       suffix=" SOL"
                     />

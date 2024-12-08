@@ -154,7 +154,7 @@ const MobileMenu = (props) => {
                     start={0}
                     end={props.prize}
                     duration={2.75}
-                    decimals={4}
+                    decimals={2}
                     decimal="."
                     suffix=" SOL"
                   />
@@ -175,7 +175,7 @@ const MobileMenu = (props) => {
                     start={0}
                     end={props.price}
                     duration={2.75}
-                    decimals={4}
+                    decimals={3}
                     decimal="."
                     suffix=" SOL"
                   />

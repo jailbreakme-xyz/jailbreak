@@ -176,7 +176,7 @@ const Agent = ({ params }) => {
           </p>
           <p>
             <strong>Entry Fee:</strong>{" "}
-            {entryFee ? `${entryFee.toFixed(4)} SOL` : "Free"}
+            {entryFee ? `${entryFee.toFixed(3)} SOL` : "Free"}
           </p>
           <p>
             <strong>Developer Fee:</strong> {developer_fee}%
