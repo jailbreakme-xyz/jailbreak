@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import stoneLogo from "../../assets/stoneLogo.png";
 import MainMenu from "../components/MainMenu";
@@ -7,8 +7,28 @@ import MobileMenu from "../components/MobileMenu";
 import lightSlogen from "../../assets/lightSlogen.png";
 import JailTokensSection from "../components/partials/JailTokensSection";
 import "../../styles/FAQ.css";
+import axios from "axios";
 
 const Token = () => {
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState(null);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`/api/settings`);
+      setData(response.data?.jailToken);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <main>
       <MobileMenu absolute={true} />
@@ -42,7 +62,8 @@ const Token = () => {
       <hr />
       <div className="docsPage">
         <MainMenu />
-        <JailTokensSection />
+
+        <JailTokensSection data={data} loading={loading} />
       </div>
     </main>
   );

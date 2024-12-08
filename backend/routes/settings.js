@@ -10,11 +10,13 @@ router.get("/", async (req, res) => {
     const endpoints = pages.find((page) => page.name === "api-endpoints")
       ?.content?.endpoints;
     const faq = pages.find((page) => page.name === "faq")?.content?.faq;
+    const jailToken = pages.find((page) => page.name === "jail-token")?.content;
 
     const response = {
       endpoints: endpoints,
       faq: faq,
       challenges: challenges,
+      jailToken: jailToken,
     };
 
     res.send(response);
