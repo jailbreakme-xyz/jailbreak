@@ -108,31 +108,54 @@ const MainMenu = (props) => {
             </span>
             <hr />
             <div className="stats">
-              <p style={{ fontSize: "16px", fontWeight: "normal" }}>
-                <strong>Characters Per Message:</strong> ~
-                {numberWithCommas(props.challenge.characterLimit)}
-              </p>
-
-              <p style={{ fontSize: "16px", fontWeight: "normal" }}>
-                <strong>Context Window:</strong> ~{props.challenge.contextLimit}
-              </p>
-              <p style={{ fontSize: "16px", fontWeight: "normal" }}>
-                <strong>UI Chat Limit:</strong> ~
-                {props.challenge.chatLimit || "Unlimited"}
-              </p>
-              {/* <p style={{ fontSize: "16px", fontWeight: "normal" }}>
-                The chat displays up to 50 messages. However, only your messages
-                are sent to {props.challenge?.name} for context.
-              </p> */}
               <p
                 style={{
                   fontSize: "16px",
                   fontWeight: "normal",
-                  margin: "5px",
+                  margin: "5px 0px",
                 }}
               >
-                {100 - props.challenge.developer_fee}% of all message fees go to
-                growing the prize pool.
+                <strong>Characters Per Message:</strong> ~
+                {numberWithCommas(props.challenge.characterLimit)}
+              </p>
+
+              <p
+                style={{
+                  fontSize: "16px",
+                  fontWeight: "normal",
+                  margin: "5px 0px",
+                }}
+              >
+                <strong>Context Window:</strong> ~{props.challenge.contextLimit}
+              </p>
+              <p
+                style={{
+                  fontSize: "16px",
+                  fontWeight: "normal",
+                  margin: "5px 0px",
+                }}
+              >
+                <strong>UI Chat Limit:</strong> ~
+                {props.challenge.chatLimit || "Unlimited"}
+              </p>
+              <p
+                style={{
+                  fontSize: "16px",
+                  fontWeight: "normal",
+                  margin: "5px 0px",
+                }}
+              >
+                <strong>Developer Fee: </strong>
+                {props.challenge.developer_fee}%
+              </p>
+              <p
+                style={{
+                  fontSize: "16px",
+                  fontWeight: "normal",
+                  margin: "5px 0px",
+                }}
+              >
+                Message fees increase the prize pool.
               </p>
               <a
                 href={`/agent/${props.challenge?.name}`}
