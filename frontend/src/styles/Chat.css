@@ -172,7 +172,9 @@ height: 30px;
     text-align: left;
     background-color: #1F2024;
 color: #ccc;
-
+  }
+  .chatMainMenuItem:last-child {
+    margin-bottom: 0px;
   }
   .chatMainMenuItem:hover {
     background-color: #ccc;
@@ -228,6 +230,25 @@ border: 0px;
     background-color: #0BBF99;
     }
 
+    .desktopChatMenu, .desktopMenu {
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      height: 80.5vh;
+    }
+
+    .desktopChatMenu .statsWrapper:last-child, .desktopMenu .chatMainMenuItem:last-child {
+      margin: 0px;
+      flex-grow: 1;
+    }
+
+    .desktopMenu .chatMainMenuItem > a {
+      display: flex;
+    justify-content: start;
+    align-items: center;
+    column-gap: 5px;
+    }
+   
   /* .chatMainMenuItem a {
 
   } */

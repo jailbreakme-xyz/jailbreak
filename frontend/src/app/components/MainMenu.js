@@ -27,23 +27,23 @@ const MainMenu = (props) => {
     <div className="mainMenu desktopMenu">
       <>
         <Link target="_blank" href="/" className="chatMainMenuItem pointer">
-          <FaHome size={25} /> HOME
+          <FaHome size={25} /> <span>HOME</span>
         </Link>
         {!props.hiddenItems?.includes("BREAK") && (
           <Link href="/break/zynx" className="chatMainMenuItem pointer">
-            <GiBreakingChain size={25} /> BREAK
+            <GiBreakingChain size={25} /> <span>BREAK</span>
           </Link>
         )}
         {!props.hiddenItems?.includes("API") && (
           <Link href="/docs" className="chatMainMenuItem pointer">
-            <FaCode size={25} /> API
+            <FaCode size={25} /> <span>API</span>
           </Link>
         )}
         <Link target="_blank" href="/faq" className="chatMainMenuItem pointer">
-          <FaQuestionCircle size={25} /> FAQ
+          <FaQuestionCircle size={25} /> <span>FAQ</span>
         </Link>
         <Link href="/jail-token" className="chatMainMenuItem pointer">
-          <GiTwoCoins size={25} /> $JAIL TOKENS
+          <GiTwoCoins size={25} /> <span>$JAIL TOKENS</span>
         </Link>
         <div className="chatMainMenuItem chatPageSocialMenu">
           <span className="">
@@ -100,7 +100,7 @@ const MainMenu = (props) => {
         </div>
         {props.challenge?.name && (
           <div
-            style={{ textAlign: "left", margin: "0px 0px 5px 0px" }}
+            style={{ textAlign: "left", margin: "0px 0px 0px 0px" }}
             className="chatMainMenuItem chatPageSocialMenu"
           >
             <span>
