@@ -258,25 +258,34 @@ router.post("/submit/:id", async (req, res) => {
                 status: "concluded",
               });
 
-              console.log("success", assistantMessage);
+              console.log("success:", assistantMessage);
               res.write(successMessage);
             } else {
-              const msg = assistantMessage?.tool_calls?.evidence
-                ? assistantMessage.tool_calls.evidence
-                : assistantMessage.content
+              if (
+                assistantMessage?.tool_calls?.evidence &&
+                !assistantMessage.content
+              ) {
+                assistantMessage.content =
+                  assistantMessage?.tool_calls?.evidence;
+              }
+              const msg = assistantMessage.content
                 ? assistantMessage.content
                 : challenge.label;
-              console.log("failed", assistantMessage);
+              console.log("failed:", msg);
               res.write(msg);
             }
           } else {
-            const msg = assistantMessage?.tool_calls?.feedback
-              ? assistantMessage.tool_calls.feedback
-              : assistantMessage.content
+            if (
+              assistantMessage?.tool_calls?.feedback &&
+              !assistantMessage.content
+            ) {
+              assistantMessage.content = assistantMessage?.tool_calls?.feedback;
+            }
+            const msg = assistantMessage.content
               ? assistantMessage.content
               : challenge.label;
 
-            console.log("failed", msg);
+            console.log("failed:", msg);
             await DatabaseService.createChat(assistantMessage);
             res.write(msg);
           }
