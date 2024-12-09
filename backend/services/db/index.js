@@ -11,7 +11,32 @@ class DataBaseService {
   // Challenge-related methods
   async getAllChallenges() {
     try {
-      return await Challenge.find({});
+      return await Challenge.find(
+        {},
+        {
+          _id: 1,
+          title: 1,
+          label: 1,
+          task: 1,
+          tools: 1,
+          level: 1,
+          model: 1,
+          image: 1,
+          pfp: 1,
+          status: 1,
+          name: 1,
+          deployed: 1,
+          idl: 1,
+          tournamentPDA: 1,
+          entryFee: 1,
+          characterLimit: 1,
+          contextLimit: 1,
+          chatLimit: 1,
+          initial_pool_size: 1,
+          expiry: 1,
+          developer_fee: 1,
+        }
+      );
     } catch (error) {
       console.error("Database Service Error:", error);
       return false;
