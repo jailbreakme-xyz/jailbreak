@@ -598,7 +598,7 @@ color: rgba(0, 0, 0, 0.681) !important;
   border-top: 2px solid #ccc;
   border-bottom: 2px solid #ccc;
   overflow: hidden;
-  padding: 4rem 5rem;
+  padding: 0rem 5rem 4rem;
   /* display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: auto;
@@ -617,13 +617,17 @@ margin: 0px;
 }
 
 .activeSection {
-margin: 3rem 0rem;
+margin: 0rem 0rem 3rem;
 }
 
 .activeChallenges {
-display: flex;
-justify-content: center;
-align-items: center;
+display: block;
+}
+.activeChallenges > .challengeCard {
+  margin: 0px auto 20px;
+}
+.activeChallenges > #comingSoonButton {
+  width: 364px;
 }
 
 .challengeCard {
@@ -977,7 +981,6 @@ margin-right: 5px;
 
 #comingSoonButton {
   font-size: 18px;
-  width: 400px;
 }
 /* .exampleListWrapper {
   background-color: black;
@@ -987,7 +990,15 @@ margin-right: 5px;
 .applyButton, .applyButton:hover {
   width: 40%;
 }
-
+.upcoming-timer > div > div {
+  display: flex;
+  justify-content: center !important;
+  align-items: center;
+  column-gap: 10px;
+}
+.upcoming-timer > div > div > div {
+  background-color: #181825 !important;
+}
 .docsPage {
   width: 100%;
   display: flex;
@@ -1004,6 +1015,42 @@ margin-right: 5px;
   padding: 0px !important;
   width: 70%;
   max-width: 100%;
+}
+
+.counters {
+  margin: 0px auto;
+  width: 60%;
+  max-width: 660px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 10px;
+  margin-bottom: 3rem;
+}
+
+.counters h4 {
+  margin: 0px;
+}
+
+.counters hr {
+  width: 90%;
+  margin: 0px auto;
+  border: 1px solid #0BBF99;
+}
+
+.counters > div {
+  color: #0BBF99;
+  background-color: black;
+    border-radius: 0px 0px 50px 50px;
+    padding: 20px 5px;
+    width: 33%;
+    display: grid;
+    place-items: center;
+    row-gap: 10px;
+    border: 2px solid #ccc;
+}
+.counters > div  > span {
+  font-size: 34px;
 }
 @media screen and (max-width:768px) {
   .applyButton, .applyButton:hover {
@@ -1092,7 +1139,7 @@ margin-right: 5px;
       border-top: 2px solid #ccc;
       border-bottom: 2px solid #ccc;
       overflow: hidden;
-      padding: 3rem 1rem;
+      padding: 0rem 1rem 1rem;
       display: block;
       /* grid-template-columns: repeat(1, 1fr);
       grid-template-rows: auto;
@@ -1366,6 +1413,25 @@ font-size: 18px;
 
   .challengeTitle {
     border-radius: 0px;
+  }
+
+  .activeChallenges > .challengeCard {
+    width: 80% !important;
+  }
+
+  .counters {
+    width: 80% !important;
+    flex-direction: column-reverse !important;
+    row-gap: 10px !important;
+  }
+  .counters > div {
+    width: 100% !important;
+    position: relative !important;
+    border-radius: 20px !important;
+  }
+  .counters > div:last-child {
+    border-radius: 0px 0px 20px 20px !important;
+    border-top: 0px !important;
   }
 }
 

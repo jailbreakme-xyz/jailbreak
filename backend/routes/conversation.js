@@ -27,18 +27,24 @@ router.post("/submit/:id", async (req, res) => {
     const challengeName = challenge.name;
     const contextLimit = challenge.contextLimit;
     const characterLimit = challenge.characterLimit;
-    const phrase = challenge.phrase;
 
     const programId = challenge.idl?.address;
     if (!programId) return res.write("Program ID not found");
 
-    if (prompt.length > characterLimit)
-      return res.write(
-        `Prompt length can't exceed ${characterLimit} characters`
-      );
+    if (prompt.length > characterLimit) {
+      prompt = prompt.slice(0, characterLimit);
+    }
 
     const systemPrompt = challenge.system_message;
-    if (!systemPrompt) return res.write("Challenge is not active");
+    if (!systemPrompt) return res.write("System prompt not found");
+
+    if (challenge.status === "upcoming") {
+      return res.write(`Tournament starts in ${challenge.start_date}`);
+    } else if (challenge.status === "concluded") {
+      return res.write("Tournament has already concluded");
+    } else if (challenge.status != "active") {
+      return res.write("Tournament is not active");
+    }
 
     const tournamentPDA = challenge.tournamentPDA;
     if (!tournamentPDA) return res.write("Tournament PDA not found");
@@ -79,7 +85,10 @@ router.post("/submit/:id", async (req, res) => {
       return res.write("Entry fee not found in tournament data");
     }
 
-    prompt = prompt.replace(/[^a-zA-Z\s]/g, "");
+    if (challenge.disable?.includes("special_characters")) {
+      prompt = prompt.replace(/[^a-zA-Z0-9 ]/g, "");
+    }
+
     // Add user message to the Chat collection
     const userMessage = {
       challenge: challengeName,
@@ -88,6 +97,7 @@ router.post("/submit/:id", async (req, res) => {
       content: prompt,
       address: walletAddress,
       txn: signature,
+      date: now,
     };
 
     await DatabaseService.createChat(userMessage);
@@ -111,10 +121,11 @@ router.post("/submit/:id", async (req, res) => {
       });
     });
 
-    const stream = await OpenAIService.createChatCompletion({
-      messages: messages,
-      model: model,
-    });
+    const stream = await OpenAIService.createChatCompletion(
+      messages,
+      challenge.tools,
+      challenge.tool_choice
+    );
 
     if (!stream) return res.write("Failed to generate response");
     const assistantMessage = {
@@ -124,6 +135,7 @@ router.post("/submit/:id", async (req, res) => {
       content: "",
       tool_calls: {},
       address: walletAddress,
+      date: new Date(),
     };
 
     res.setHeader("Content-Type", "text/event-stream");
@@ -184,105 +196,51 @@ router.post("/submit/:id", async (req, res) => {
         } else if (isCollectingFunctionArgs) {
           // Save assistant message when stream ends with function args
           try {
-            const args = JSON.parse(functionArguments); // Attempt to parse JSON
-            assistantMessage.tool_calls.function_name = functionName;
+            const args = JSON.parse(functionArguments);
             assistantMessage.tool_calls = args;
-            if (functionName === "handleChallengeFailure") {
-              assistantMessage.content += args.feedback;
-            } else {
-              assistantMessage.content += args.evidence;
-            }
+            assistantMessage.tool_calls.function_name = functionName;
+            assistantMessage.content += args.results;
           } catch (error) {
             console.log("Error parsing JSON:", error.message);
-            if (functionName === "handleChallengeFailure") {
-              // Fallback: Attempt to extract feedback and failure_reason manually
-              const feedbackMatch = functionArguments.match(
-                /"feedback":\s*"([^"]+)"/
-              );
-              const failureReasonMatch = functionArguments.match(
-                /"failure_reason":\s*"([^"]+)"/
-              );
-
-              const feedback = feedbackMatch
-                ? feedbackMatch[1]
-                : "Unknown feedback";
-              const failureReason = failureReasonMatch
-                ? failureReasonMatch[1]
-                : "Unknown failure reason";
-
-              assistantMessage.content += feedback;
-              assistantMessage.tool_calls = {
-                failure_reason: failureReason,
-                feedback: feedback,
-                function_name: functionName,
-              };
-            } else {
-              // Fallback: Attempt to extract feedback and failure_reason manually
-              const evidenceMatch = functionArguments.match(
-                /"evidence":\s*"([^"]+)"/
-              );
-              const successTypeMatch = functionArguments.match(
-                /"success_type":\s*"([^"]+)"/
-              );
-
-              const evidence = evidenceMatch
-                ? evidenceMatch[1]
-                : "Unknown evidence";
-              const successType = successTypeMatch
-                ? successTypeMatch[1]
-                : "Unknown success type";
-
-              assistantMessage.content += evidence;
-              assistantMessage.tool_calls = {
-                success_type: successType,
-                evidence: evidence,
-                function_name: functionName,
-              };
-            }
+            const resultsMatch = functionArguments.match(
+              /"results":\s*"([^"]+)"/
+            );
+            const results = resultsMatch ? resultsMatch[1] : "Unknown results";
+            assistantMessage.content += results;
+            assistantMessage.tool_calls = {
+              results: results,
+              function_name: functionName,
+            };
           }
 
-          if (functionName === "handleChallengeSuccess") {
-            if (
-              assistantMessage?.content
-                ?.toLocaleLowerCase()
-                .includes(phrase.toLocaleLowerCase())
-            ) {
-              const concluded = await blockchainService.concludeTournament(
-                tournamentPDA,
-                walletAddress
-              );
-              const successMessage = `🥳 Congratulations! ${challenge.winning_message}.\nEvidence: ${assistantMessage.content}\nTransaction: ${concluded}`;
-              assistantMessage.content = successMessage;
-              await DatabaseService.createChat(assistantMessage);
-              await DatabaseService.updateChallenge(id, {
-                status: "concluded",
-              });
-
-              console.log("success:", assistantMessage);
-              res.write(successMessage);
-            } else {
-              if (assistantMessage?.tool_calls?.evidence) {
-                assistantMessage.content =
-                  assistantMessage?.tool_calls?.evidence;
-              }
-              const msg = assistantMessage.content
-                ? assistantMessage.content
-                : challenge.label;
-
-              console.log("failed:", msg);
-              res.write(msg);
-            }
+          if (assistantMessage?.tool_calls?.results) {
+            assistantMessage.content = assistantMessage?.tool_calls?.results;
+          } else if (assistantMessage.content) {
+            assistantMessage.content = assistantMessage.content;
           } else {
-            if (assistantMessage?.tool_calls?.feedback) {
-              assistantMessage.content = assistantMessage?.tool_calls?.feedback;
-            }
-            const msg = assistantMessage.content
-              ? assistantMessage.content
-              : challenge.label;
+            assistantMessage.content = challenge.label;
+          }
 
-            console.log("failed:", msg);
+          if (functionName === challenge.success_function) {
+            const concluded = await blockchainService.concludeTournament(
+              tournamentPDA,
+              walletAddress
+            );
+
+            const successMessage = `🥳 Congratulations! ${challenge.winning_message}.\n\n${assistantMessage.content}\nTransaction: ${concluded}`;
+            assistantMessage.content = successMessage;
             await DatabaseService.createChat(assistantMessage);
-            res.write(msg);
+            await DatabaseService.updateChallenge(id, {
+              status: "concluded",
+              winning_prize: entryFee * 100,
+              expiry: new Date(),
+            });
+            console.log("success:", successMessage);
+            res.write(successMessage);
+          } else {
+            console.log("failed:", assistantMessage.content);
+            await DatabaseService.createChat(assistantMessage);
+            res.write(assistantMessage.content);
           }
         } else {
           // Save assistant message when stream ends
@@ -293,7 +251,6 @@ router.post("/submit/:id", async (req, res) => {
 
       res.flushHeaders();
     }
-
     res.end();
   } catch (error) {
     console.error("Error handling submit:", error);

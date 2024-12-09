@@ -242,13 +242,16 @@ border: 0px;
       flex-grow: 1;
     }
 
-    .breakMenu .chatMainMenuItem > a {
-      display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    column-gap: 5px;
+    .breakMenu > a {
+      display: flex !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    column-gap: 5px !important;
     }
    
+    .breakMenu > a > svg {
+      top: 0px !important;
+    }
   /* .chatMainMenuItem a {
 
   } */

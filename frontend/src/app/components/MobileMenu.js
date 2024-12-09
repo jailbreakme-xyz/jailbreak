@@ -21,6 +21,11 @@ import {
 import Image from "next/image";
 import SolIcon from "../../assets/solIcon.png";
 import darkSlogen from "../../assets/darkSlogen.png";
+
+function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 const MobileMenu = (props) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -53,11 +58,23 @@ const MobileMenu = (props) => {
             <GiBreakingChain size={25} /> BREAK
           </Link>
         )}
-        {!props.hiddenItems?.includes("ZYNX") && (
-          <Link href="/agent/Myrios" className="chatMainMenuItem pointer">
-            <GiArtificialIntelligence size={25} /> MYRIOS
+        {props.activeChallenge && (
+          <Link
+            href={`/agent/${props.activeChallenge?.name}`}
+            className="chatMainMenuItem pointer"
+            style={{ textTransform: "uppercase" }}
+          >
+            <Image
+              src={props.activeChallenge?.pfp}
+              alt="logo"
+              width="25"
+              height="25"
+              style={{ borderRadius: "50px" }}
+            />{" "}
+            {props.activeChallenge?.name}
           </Link>
         )}
+
         {!props.hiddenItems?.includes("API") && (
           <Link
             href="/docs"
@@ -81,62 +98,68 @@ const MobileMenu = (props) => {
         >
           <GiTwoCoins size={25} /> $JAIL TOKENS
         </Link>
-        <div className="chatMainMenuItem chatPageSocialMenu">
-          <span className="">
-            <FaUsers size={25} /> LINKS
-          </span>
-          <hr />
-          <div className="chatPageSocialIcons">
-            <a
-              href="https://twitter.com/jailbreakme_xyz"
-              target="_blank"
-              className="pointer"
-            >
-              <FaXTwitter size={30} className="pointer" />
-            </a>
-            <a
-              href="https://t.me/jailbreakme_xyz"
-              target="_blank"
-              className="pointer"
-            >
-              <FaTelegramPlane size={30} className="pointer" />
-            </a>
-            <a
-              href="https://solscan.io/account/B1XbZeQYZxv5ezBpBgomEUqDvTbM8HwSYfktcpBGkgjg"
-              target="_blank"
-              className="pointer imgIcon"
-              style={{
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <Image
-                src={SolIcon}
-                alt="Solana"
-                width={30}
-                height={30}
+        {!props.hiddenItems?.includes("SOCIAL") && (
+          <div className="chatMainMenuItem chatPageSocialMenu">
+            <span className="">
+              <FaUsers size={25} /> LINKS
+            </span>
+            <hr />
+            <div className="chatPageSocialIcons">
+              <a
+                href="https://twitter.com/jailbreakme_xyz"
+                target="_blank"
                 className="pointer"
-              />
-            </a>
-            <a
-              href="https://jailbreak.gitbook.io/jailbreakme.xyz"
-              target="_blank"
-              className="pointer"
-            >
-              <SiGitbook size={30} className="pointer" />
-            </a>
-            <a
-              href="https://github.com/probonodev/jailbreak"
-              target="_blank"
-              className="pointer"
-            >
-              <SiGithub size={30} className="pointer" />
-            </a>
+              >
+                <FaXTwitter size={30} className="pointer" />
+              </a>
+              <a
+                href="https://t.me/jailbreakme_xyz"
+                target="_blank"
+                className="pointer"
+              >
+                <FaTelegramPlane size={30} className="pointer" />
+              </a>
+              <a
+                href="https://solscan.io/account/B1XbZeQYZxv5ezBpBgomEUqDvTbM8HwSYfktcpBGkgjg"
+                target="_blank"
+                className="pointer imgIcon"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Image
+                  src={SolIcon}
+                  alt="Solana"
+                  width={30}
+                  height={30}
+                  className="pointer"
+                />
+              </a>
+              <a
+                href="https://jailbreak.gitbook.io/jailbreakme.xyz"
+                target="_blank"
+                className="pointer"
+              >
+                <SiGitbook size={30} className="pointer" />
+              </a>
+              <a
+                href="https://github.com/probonodev/jailbreak"
+                target="_blank"
+                className="pointer"
+              >
+                <SiGithub size={30} className="pointer" />
+              </a>
+            </div>
           </div>
-        </div>
-        {props.prize && (
+        )}
+
+        {props.usdPrize && (
           <div className="chatMenu">
-            <div style={{ textAlign: "left" }} className="statsWrapper">
+            <div
+              style={{ textAlign: "left", color: "#ccc" }}
+              className="statsWrapper"
+            >
               <h3 style={{ color: "#ccc" }}>
                 <FaChartLine
                   style={{
@@ -152,11 +175,11 @@ const MobileMenu = (props) => {
                   <h4>PRIZE</h4>
                   <CountUp
                     start={0}
-                    end={props.prize}
+                    end={props.usdPrize}
                     duration={2.75}
                     decimals={2}
                     decimal="."
-                    suffix=" SOL"
+                    prefix="$"
                   />
                 </div>
                 <div className="chatComingSoonMenuItem">
@@ -173,13 +196,76 @@ const MobileMenu = (props) => {
                   <h4>Message Price</h4>
                   <CountUp
                     start={0}
-                    end={props.price}
+                    end={props.usdPrice}
                     duration={2.75}
-                    decimals={3}
+                    decimals={2}
                     decimal="."
-                    suffix=" SOL"
+                    prefix="$"
                   />
                 </div>
+                <hr />
+                <br />
+                <p
+                  style={{
+                    fontSize: "16px",
+                    fontWeight: "normal",
+                    margin: "8px 0px",
+                  }}
+                >
+                  <strong>Characters Per Message:</strong> ~
+                  {numberWithCommas(props.challenge.characterLimit)}
+                </p>
+
+                <p
+                  style={{
+                    fontSize: "16px",
+                    fontWeight: "normal",
+                    margin: "8px 0px",
+                  }}
+                >
+                  <strong>Context Window:</strong> ~
+                  {props.challenge.contextLimit}
+                </p>
+                <p
+                  style={{
+                    fontSize: "16px",
+                    fontWeight: "normal",
+                    margin: "8px 0px",
+                  }}
+                >
+                  <strong>UI Chat Limit:</strong> ~
+                  {props.challenge.chatLimit || "Unlimited"}
+                </p>
+                <p
+                  style={{
+                    fontSize: "16px",
+                    fontWeight: "normal",
+                    margin: "8px 0px",
+                  }}
+                >
+                  <strong>Developer Fee: </strong>
+                  {props.challenge.developer_fee}%
+                </p>
+                <p
+                  style={{
+                    fontSize: "16px",
+                    fontWeight: "normal",
+                    margin: "8px 0px",
+                  }}
+                >
+                  Message fees increase the prize pool.
+                </p>
+                {props.challenge?.custom_rules && (
+                  <p
+                    style={{
+                      fontSize: "16px",
+                      fontWeight: "normal",
+                      margin: "8px 0px",
+                    }}
+                  >
+                    {props.challenge?.custom_rules}
+                  </p>
+                )}
                 <a
                   href={`/agent/${props.challenge?.name}`}
                   target="_blank"

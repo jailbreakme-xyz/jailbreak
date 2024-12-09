@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import "../../../styles/Carousel.css";
 
+function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 const Carousel = (props) => {
   const characters = props.challenges;
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -49,11 +53,18 @@ const Carousel = (props) => {
 
             <div className="card-info">
               <h2>{char.name}</h2>
+              <strong>
+                PRIZE POOL RECORD: $
+                {numberWithCommas(
+                  (char.winning_prize * props.data.solPrice).toFixed(0)
+                )}
+              </strong>
+              <hr style={{ width: "90%", borderStyle: "dashed" }} />
               <p>{char.label}</p>
               <p className={`level ${char.level}`}>{char.level}</p>
-              <button className="grayed" style={{ cursor: "not-allowed" }}>
+              {/* <button className="grayed" style={{ cursor: "not-allowed" }}>
                 COMING SOON
-              </button>
+              </button> */}
             </div>
           </div>
         ))}

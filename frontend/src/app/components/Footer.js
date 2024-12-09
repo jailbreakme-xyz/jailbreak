@@ -1,9 +1,9 @@
 import React from "react";
-
+import Timer from "./partials/Timer";
 export default function Footer(props) {
   return (
     <div style={{ width: "100%" }}>
-      {props.status !== "concluded" ? (
+      {props.status === "active" ? (
         <form
           onSubmit={props.submit}
           style={{
@@ -53,7 +53,7 @@ export default function Footer(props) {
             {props.button}
           </div>
         </form>
-      ) : (
+      ) : props.status === "concluded" ? (
         <div style={{ width: "100%" }}>
           <h3 style={{ color: "black" }}>
             🥳 This tournament has concluded.
@@ -71,6 +71,13 @@ export default function Footer(props) {
               @jailbreakme_xyz
             </a>
           </p>
+        </div>
+      ) : (
+        <div style={{ width: "100%" }}>
+          <h3 style={{ color: "black" }}>Tournament starts in</h3>
+          <div className="upcoming-timer">
+            <Timer expiryDate={props.start_date} />
+          </div>
         </div>
       )}
     </div>

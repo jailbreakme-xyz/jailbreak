@@ -1,8 +1,7 @@
 "use client";
 import React, { useEffect, useState, use } from "react";
 import Header from "../../components/Header";
-import MainMenu from "../../components/MainMenu";
-
+import Timer from "../../components/partials/Timer";
 async function getAgentData(name) {
   const response = await fetch(`/api/challenges/get-challenge?name=${name}`);
   if (!response.ok) {
@@ -71,7 +70,10 @@ const Agent = ({ params }) => {
     entryFee,
     model,
     tools,
+    tools_description,
+    custom_rules,
     developer_fee,
+    start_date,
   } = agentData?.challenge;
 
   return (
@@ -109,36 +111,54 @@ const Agent = ({ params }) => {
         </div>
         {/* Description */}
         <p style={styles.description}>{label}</p>
-        <button
-          className="pointer"
-          onClick={() => window.open(`/break/${name}`, "_blank")}
-          style={styles.breakButton}
-        >
-          Break {name} →
-        </button>
+        {status === "active" ? (
+          <button
+            className="pointer"
+            onClick={() => window.open(`/break/${name}`, "_blank")}
+            style={styles.breakButton}
+          >
+            JAILBREAK ME →
+          </button>
+        ) : (
+          <div>
+            <p>Tournament starts in</p>
+            <Timer expiryDate={start_date} />
+          </div>
+        )}
         <hr />
 
         {/* Task */}
         <div style={styles.taskSection}>
           <p style={styles.task}>🏁 {task}</p>
-          {tools && tools.length > 0 && (
+          {((tools && tools.length > 0) || tools_description) && (
             <div style={styles.toolsSection}>
               <h4 style={styles.toolsTitle}>🛠️ Available Tools:</h4>
-              <ul style={styles.toolsList}>
-                {tools.map((tool, index) => (
-                  <li key={index} style={styles.toolItem}>
-                    <span style={styles.toolName}>{tool.name}</span>
-                    <br />
-                    <label style={styles.detailsLabel}>
-                      {tool.description}
-                    </label>
-                  </li>
-                ))}
-              </ul>
+              {tools_description ? (
+                <span style={styles.toolsDescription}>{tools_description}</span>
+              ) : (
+                <ul style={styles.toolsList}>
+                  {tools.map((tool, index) => (
+                    <li key={index} style={styles.toolItem}>
+                      <span style={styles.toolName}>{tool.name}</span>
+                      <br />
+                      <label style={styles.detailsLabel}>
+                        {tool.description}
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           )}
+          <hr />
         </div>
-        <hr />
+        {custom_rules && (
+          <>
+            <h4 style={styles.customRulesTitle}>📜 Settings & Rules</h4>
+            <p style={styles.customRules}>{custom_rules}</p>
+            <hr />
+          </>
+        )}
         {/* Details Section */}
         <div style={styles.details}>
           <h4 style={styles.toolsTitle}>💬 Chat Details:</h4>
@@ -172,11 +192,17 @@ const Agent = ({ params }) => {
           </p>
           <p>
             <strong>Initial Pool Size:</strong>{" "}
-            {initial_pool_size ? `${initial_pool_size} SOL` : "N/A"}
+            {initial_pool_size
+              ? `$${numberWithCommas(
+                  initial_pool_size.toFixed(2) * agentData.solPrice
+                )}`
+              : "N/A"}
           </p>
           <p>
             <strong>Entry Fee:</strong>{" "}
-            {entryFee ? `${entryFee.toFixed(3)} SOL` : "Free"}
+            {entryFee
+              ? `$${numberWithCommas(entryFee.toFixed(2) * agentData.solPrice)}`
+              : "Free"}
           </p>
           <p>
             <strong>Developer Fee:</strong> {developer_fee}%
@@ -283,7 +309,7 @@ const styles = {
     color: "red",
     textTransform: "capitalize",
   },
-  pending: {
+  upcoming: {
     fontSize: "16px",
     fontWeight: "bold",
     margin: "0",
@@ -349,6 +375,19 @@ const styles = {
     borderRadius: "50px",
     color: "#ccc",
     fontSize: "14px",
+  },
+  toolsDescription: {
+    fontSize: "14px",
+    margin: "10px 0",
+  },
+  customRulesTitle: {
+    fontSize: "16px",
+    margin: "10px 0",
+    fontWeight: "bold",
+  },
+  customRules: {
+    fontSize: "14px",
+    margin: "10px 0",
   },
 };
 

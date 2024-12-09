@@ -18,7 +18,6 @@ class DataBaseService {
           title: 1,
           label: 1,
           task: 1,
-          tools: 1,
           level: 1,
           model: 1,
           image: 1,
@@ -119,9 +118,9 @@ class DataBaseService {
       return false;
     }
   }
-  async getPages() {
+  async getPages(query) {
     try {
-      return await Pages.find({});
+      return await Pages.find(query);
     } catch (error) {
       console.error("Database Service Error:", error);
       return false;
@@ -130,7 +129,7 @@ class DataBaseService {
   // Settings-related methods
   async getSettings() {
     try {
-      return await Challenge.find(
+      const challenge = await Challenge.find(
         {},
         {
           _id: 0,
@@ -144,8 +143,13 @@ class DataBaseService {
           pfp: 1,
           entryFee: 1,
           expiry: 1,
+          winning_prize: 1,
+          developer_fee: 1,
+          start_date: 1,
         }
       );
+
+      return challenge;
     } catch (error) {
       console.error("Database Service Error:", error);
       return false;
@@ -215,7 +219,7 @@ class DataBaseService {
           initial_pool_size: 1,
           entryFee: 1,
           developer_fee: 1,
-          tools: 1,
+          // tools: 0,
           idl: 1,
         }
       );
@@ -245,7 +249,7 @@ class DataBaseService {
           initial_pool_size: 1,
           entryFee: 1,
           developer_fee: 1,
-          tools: 1,
+          // tools: 0,
           idl: 1,
         }
       );

@@ -3,21 +3,23 @@ import { Challenge, Chat } from "../models/Models.js";
 import BlockchainService from "../services/blockchain/index.js";
 import dotenv from "dotenv";
 import DatabaseService from "../services/db/index.js";
+import getSolPriceInUSDT from "../hooks/solPrice.js";
+
 dotenv.config();
 
 const router = express.Router();
 const solanaRpc = process.env.RPC_URL;
 const model = "gpt-4o-mini";
 
-router.get("/", async (req, res) => {
-  try {
-    const challenges = await DatabaseService.getAllChallenges();
-    res.send(challenges);
-  } catch (err) {
-    console.log(err);
-    return res.status(400).send(err);
-  }
-});
+// router.get("/", async (req, res) => {
+//   try {
+//     const challenges = await DatabaseService.getAllChallenges();
+//     res.send(challenges);
+//   } catch (err) {
+//     console.log(err);
+//     return res.status(400).send(err);
+//   }
+// });
 
 router.get("/get-challenge", async (req, res) => {
   try {
@@ -31,7 +33,11 @@ router.get("/get-challenge", async (req, res) => {
       title: 1,
       label: 1,
       task: 1,
-      tools: 1,
+      tools_description: 1,
+      custom_rules: 1,
+      disable: 1,
+      start_date: 1,
+      // tools: 1,
       level: 1,
       model: 1,
       image: 1,
@@ -60,7 +66,7 @@ router.get("/get-challenge", async (req, res) => {
 
     let challenge = await DatabaseService.getChallengeByName(name, projection);
     if (!challenge) {
-      return res.write("Challenge not found");
+      return res.status(404).send("Challenge not found");
     }
     const challengeName = challenge.name;
     const challengeId = challenge._id;
@@ -70,7 +76,7 @@ router.get("/get-challenge", async (req, res) => {
       return res.status(404).send("Challenge not found");
     }
 
-    const allowedStatuses = ["active", "concluded"];
+    const allowedStatuses = ["active", "concluded", "upcoming"];
 
     if (!allowedStatuses.includes(challenge.status)) {
       return res.status(404).send("Challenge is not active");
@@ -98,6 +104,7 @@ router.get("/get-challenge", async (req, res) => {
 
     const now = new Date();
     const expiry = challenge.expiry;
+    const solPrice = await getSolPriceInUSDT();
 
     if (chatHistory.length > 0) {
       if (expiry < now && challenge.status === "active") {
@@ -126,12 +133,17 @@ router.get("/get-challenge", async (req, res) => {
       message_price = challenge.entryFee;
       prize = message_price * 100;
 
+      const usdMessagePrice = message_price * solPrice;
+      const usdPrize = prize * solPrice;
       return res.status(200).json({
         challenge,
         break_attempts,
         message_price,
         prize,
+        usdMessagePrice,
+        usdPrize,
         expiry,
+        solPrice,
         chatHistory: chatHistory.reverse(),
       });
     }
@@ -157,13 +169,19 @@ router.get("/get-challenge", async (req, res) => {
       prize = message_price * 100;
     }
 
+    const usdMessagePrice = message_price * solPrice;
+    const usdPrize = prize * solPrice;
+
     return res.status(200).json({
       challenge,
       break_attempts,
       message_price,
       prize,
+      usdMessagePrice,
+      usdPrize,
       chatHistory,
       expiry,
+      solPrice,
     });
   } catch (err) {
     console.error(err);

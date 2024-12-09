@@ -51,59 +51,62 @@ const MainMenu = (props) => {
         <Link href="/jail-token" className="chatMainMenuItem pointer">
           <GiTwoCoins size={25} /> <span>$JAIL TOKENS</span>
         </Link>
-        <div className="chatMainMenuItem chatPageSocialMenu">
-          <span className="">
-            <FaUsers size={25} /> LINKS
-          </span>
-          <hr />
-          <div className="chatPageSocialIcons">
-            <a
-              href="https://twitter.com/jailbreakme_xyz"
-              target="_blank"
-              className="pointer"
-            >
-              <FaXTwitter size={30} className="pointer" />
-            </a>
-            <a
-              href="https://t.me/jailbreakme_xyz"
-              target="_blank"
-              className="pointer"
-            >
-              <FaTelegramPlane size={30} className="pointer" />
-            </a>
-            <a
-              href="https://solscan.io/account/B1XbZeQYZxv5ezBpBgomEUqDvTbM8HwSYfktcpBGkgjg"
-              target="_blank"
-              className="pointer imgIcon"
-              style={{
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <Image
-                src={SolIcon}
-                alt="Solana"
-                width={30}
-                height={30}
+        {!props.hiddenItems?.includes("SOCIAL") && (
+          <div className="chatMainMenuItem chatPageSocialMenu">
+            <span className="">
+              <FaUsers size={25} /> LINKS
+            </span>
+            <hr />
+            <div className="chatPageSocialIcons">
+              <a
+                href="https://twitter.com/jailbreakme_xyz"
+                target="_blank"
                 className="pointer"
-              />
-            </a>
-            <a
-              href="https://jailbreak.gitbook.io/jailbreakme.xyz"
-              target="_blank"
-              className="pointer"
-            >
-              <SiGitbook size={30} className="pointer" />
-            </a>
-            <a
-              href="https://github.com/probonodev/jailbreak"
-              target="_blank"
-              className="pointer"
-            >
-              <SiGithub size={30} className="pointer" />
-            </a>
+              >
+                <FaXTwitter size={30} className="pointer" />
+              </a>
+              <a
+                href="https://t.me/jailbreakme_xyz"
+                target="_blank"
+                className="pointer"
+              >
+                <FaTelegramPlane size={30} className="pointer" />
+              </a>
+              <a
+                href="https://solscan.io/account/B1XbZeQYZxv5ezBpBgomEUqDvTbM8HwSYfktcpBGkgjg"
+                target="_blank"
+                className="pointer imgIcon"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Image
+                  src={SolIcon}
+                  alt="Solana"
+                  width={30}
+                  height={30}
+                  className="pointer"
+                />
+              </a>
+              <a
+                href="https://jailbreak.gitbook.io/jailbreakme.xyz"
+                target="_blank"
+                className="pointer"
+              >
+                <SiGitbook size={30} className="pointer" />
+              </a>
+              <a
+                href="https://github.com/probonodev/jailbreak"
+                target="_blank"
+                className="pointer"
+              >
+                <SiGithub size={30} className="pointer" />
+              </a>
+            </div>
           </div>
-        </div>
+        )}
+
         {props.challenge?.name && (
           <div
             style={{ textAlign: "left", margin: "0px 0px 0px 0px" }}
@@ -118,7 +121,7 @@ const MainMenu = (props) => {
                 style={{
                   fontSize: "16px",
                   fontWeight: "normal",
-                  margin: "5px 0px",
+                  margin: "8px 0px",
                 }}
               >
                 <strong>Characters Per Message:</strong> ~
@@ -129,7 +132,7 @@ const MainMenu = (props) => {
                 style={{
                   fontSize: "16px",
                   fontWeight: "normal",
-                  margin: "5px 0px",
+                  margin: "8px 0px",
                 }}
               >
                 <strong>Context Window:</strong> ~{props.challenge.contextLimit}
@@ -138,7 +141,7 @@ const MainMenu = (props) => {
                 style={{
                   fontSize: "16px",
                   fontWeight: "normal",
-                  margin: "5px 0px",
+                  margin: "8px 0px",
                 }}
               >
                 <strong>UI Chat Limit:</strong> ~
@@ -148,7 +151,7 @@ const MainMenu = (props) => {
                 style={{
                   fontSize: "16px",
                   fontWeight: "normal",
-                  margin: "5px 0px",
+                  margin: "8px 0px",
                 }}
               >
                 <strong>Developer Fee: </strong>
@@ -158,11 +161,22 @@ const MainMenu = (props) => {
                 style={{
                   fontSize: "16px",
                   fontWeight: "normal",
-                  margin: "5px 0px",
+                  margin: "8px 0px",
                 }}
               >
                 Message fees increase the prize pool.
               </p>
+              {props.challenge?.custom_rules && (
+                <p
+                  style={{
+                    fontSize: "16px",
+                    fontWeight: "normal",
+                    margin: "8px 0px",
+                  }}
+                >
+                  {props.challenge?.custom_rules}
+                </p>
+              )}
               <a
                 href={`/agent/${props.challenge?.name}`}
                 target="_blank"

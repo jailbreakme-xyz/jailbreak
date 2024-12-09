@@ -25,7 +25,7 @@
   .step {
     flex: 1;
     max-width: calc(33.333% - 20px);
-    border: 1px solid #ccc;
+    border: 2px solid #ccc;
     border-radius: 10px;
     padding: 20px;
     background-color: #181726;

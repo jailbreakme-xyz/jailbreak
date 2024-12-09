@@ -3,7 +3,7 @@ import verify from "./verify.js";
 import DatabaseService from "../services/db/index.js";
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get("/", verify, async (req, res) => {
   try {
     const challenges = await DatabaseService.getAllTournaments();
     res.send(challenges);
@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", verify, async (req, res) => {
   try {
     const challenges = await DatabaseService.getTournamentById(req.params.id);
     res.send(challenges);

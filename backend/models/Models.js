@@ -26,6 +26,14 @@ const ChallengeSchema = new mongoose.Schema(
     tools: Array,
     winning_message: String,
     phrase: String,
+    winning_prize: Number,
+    tools_description: String,
+    custom_rules: String,
+    disable: Array,
+    success_function: String,
+    fail_function: String,
+    tool_choice: String,
+    start_date: Date,
   },
   { collection: "challenges" }
 );
@@ -92,3 +100,43 @@ export const Pages = mongoose.model("Pages", pageSchema);
 // );
 
 // export const Chat = mongoose.model("ChatTest", chatTestSchema);
+
+// const challengeTestSchema = new mongoose.Schema(
+//   {
+//     title: String,
+//     name: String,
+//     description: String,
+//     image: String,
+//     pfp: String,
+//     task: String,
+//     label: String,
+//     level: String,
+//     status: { type: String, default: "active" },
+//     model: String,
+//     system_message: String,
+//     deployed: Boolean,
+//     tournamentPDA: String,
+//     idl: Object,
+//     entryFee: Number,
+//     characterLimit: Number,
+//     contextLimit: Number,
+//     chatLimit: Number,
+//     expiry: Date,
+//     initial_pool_size: Number,
+//     developer_fee: Number,
+//     tools: Array,
+//     winning_message: String,
+//     phrase: String,
+//     winning_prize: Number,
+//     tools_description: String,
+//     custom_rules: String,
+//     disable: Array,
+//     success_function: String,
+//     fail_function: String,
+//     tool_choice: String,
+//     start_date: Date,
+//   },
+//   { collection: "challenges_test" }
+// );
+
+// export const Challenge = mongoose.model("ChallengeTest", challengeTestSchema);

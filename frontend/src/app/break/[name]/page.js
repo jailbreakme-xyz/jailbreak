@@ -111,6 +111,8 @@ export default function Challenge({ params }) {
   const [attempts, setAttempts] = useState(0);
   const [price, setPrice] = useState(0);
   const [prize, setPrize] = useState(0);
+  const [usdPrice, setUsdPrice] = useState(0);
+  const [usdPrize, setUsdPrize] = useState(0);
   const [expiry, setExpiry] = useState(null);
 
   const messagesEndRef = useRef(null);
@@ -225,7 +227,7 @@ export default function Challenge({ params }) {
         )
         .then((res) => res.data)
         .catch((err) => err);
-
+      setError(null);
       if (!writing) {
         setChallenge((prev) =>
           JSON.stringify(prev) !== JSON.stringify(data.challenge)
@@ -239,15 +241,19 @@ export default function Challenge({ params }) {
           prev !== data.message_price ? data.message_price : prev
         );
         setPrize((prev) => (prev !== data.prize ? data.prize : prev));
+        setUsdPrice((prev) =>
+          prev !== data.usdMessagePrice ? data.usdMessagePrice : prev
+        );
+        setUsdPrize((prev) => (prev !== data.usdPrize ? data.usdPrize : prev));
         setExpiry((prev) => (prev !== data.expiry ? data.expiry : prev));
 
-        const lastMessage = data.chatHistory[data.chatHistory.length - 1];
+        const lastMessage = data.chatHistory[data.chatHistory?.length - 1];
         const address = localStorage.getItem("address");
 
         if (!noLoading) {
           console.log("Updated initial conversation");
           setConversation(data.chatHistory);
-        } else if (address && lastMessage.address != publicKey?.toBase58()) {
+        } else if (address && lastMessage?.address != publicKey?.toBase58()) {
           console.log("Updated conversation with new user message");
           setConversation(data.chatHistory);
         }
@@ -353,7 +359,19 @@ export default function Challenge({ params }) {
   };
 
   const onChange = (e) => {
-    setPrompt(e.target.value);
+    const value = e.target.value;
+    let sanitizedValue = value;
+
+    if (challenge?.disable?.includes("special_characters")) {
+      sanitizedValue = value.replace(/[^a-zA-Z0-9 ]/g, "");
+    }
+
+    // Limit the prompt length to challenge.characterLimit
+    if (sanitizedValue.length > challenge.characterLimit) {
+      sanitizedValue = sanitizedValue.slice(0, challenge.characterLimit);
+    }
+
+    setPrompt(sanitizedValue);
   };
 
   const override = {
@@ -371,7 +389,9 @@ export default function Challenge({ params }) {
             attempts={attempts}
             price={price}
             prize={prize}
-            hiddenItems={["API", "BREAK"]}
+            usdPrice={usdPrice}
+            usdPrize={usdPrize}
+            hiddenItems={["API", "BREAK", "SOCIAL"]}
           />
           <hr />
         </div>
@@ -407,7 +427,9 @@ export default function Challenge({ params }) {
                     }}
                   >
                     <div>
-                      <h2 style={{ margin: "0px" }}>{challenge?.title}</h2>
+                      <h2 style={{ margin: "0px 0px 5px" }}>
+                        {challenge?.title}
+                      </h2>
                       <span className={`${challenge?.level} level`}>
                         {challenge?.level}
                       </span>
@@ -489,11 +511,11 @@ export default function Challenge({ params }) {
                     <h4>Message Price</h4>
                     <CountUp
                       start={0}
-                      end={price}
+                      end={usdPrice}
                       duration={2.75}
-                      decimals={3}
+                      decimals={2}
                       decimal="."
-                      suffix=" SOL"
+                      prefix="$"
                     />
                   </div>
                 </div>
@@ -511,11 +533,11 @@ export default function Challenge({ params }) {
                     <CountUp
                       style={{ color: "#09bf99" }}
                       start={0}
-                      end={prize}
+                      end={usdPrize}
                       duration={2.75}
                       decimals={2}
                       decimal="."
-                      suffix=" SOL"
+                      prefix="$"
                     />
                   </div>
                 )}
@@ -624,6 +646,7 @@ export default function Challenge({ params }) {
                     status={challenge?.status}
                     value={prompt}
                     task={challenge?.task}
+                    start_date={challenge?.start_date}
                     submit={(e) => {
                       e.preventDefault();
                       submit(e);
@@ -662,7 +685,7 @@ export default function Challenge({ params }) {
             </div>
             <MainMenu
               challenge={challenge}
-              hiddenItems={["API", "BREAK"]}
+              hiddenItems={["API", "BREAK", "SOCIAL"]}
               component="break"
             />
           </div>
