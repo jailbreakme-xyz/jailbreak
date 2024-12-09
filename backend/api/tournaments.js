@@ -23,52 +23,52 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/new-tournament", verify, async (req, res) => {
-  try {
-    const {
-      title,
-      name,
-      description,
-      image,
-      pfp,
-      task,
-      label,
-      level,
-      model,
-      system_message,
-      characterLimit,
-      contextLimit,
-      chatLimit,
-      tools,
-    } = req.body;
+// router.post("/new-tournament", verify, async (req, res) => {
+//   try {
+//     const {
+//       title,
+//       name,
+//       description,
+//       image,
+//       pfp,
+//       task,
+//       label,
+//       level,
+//       model,
+//       system_message,
+//       characterLimit,
+//       contextLimit,
+//       chatLimit,
+//       tools,
+//     } = req.body;
 
-    if (!title || !name || !description)
-      return res
-        .status(400)
-        .send("Must include at least title, name, and description");
+//     if (!title || !name || !description)
+//       return res
+//         .status(400)
+//         .send("Must include at least title, name, and description");
 
-    const savedChallenge = await DatabaseService.createTournament({
-      title,
-      name,
-      description,
-      image,
-      pfp,
-      task,
-      label,
-      level,
-      model,
-      system_message,
-      characterLimit,
-      contextLimit,
-      chatLimit,
-      tools,
-    });
+//     const savedChallenge = await DatabaseService.createTournament({
+//       title,
+//       name,
+//       description,
+//       image,
+//       pfp,
+//       task,
+//       label,
+//       level,
+//       model,
+//       system_message,
+//       characterLimit,
+//       contextLimit,
+//       chatLimit,
+//       tools,
+//     });
 
-    res.send(savedChallenge);
-  } catch (err) {
-    console.log(err);
-    return res.status(400).send(err);
-  }
-});
+//     res.send(savedChallenge);
+//   } catch (err) {
+//     console.log(err);
+//     return res.status(400).send(err);
+//   }
+// });
 
 export { router as tournamentsAPI };
