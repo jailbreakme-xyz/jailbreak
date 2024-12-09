@@ -14,7 +14,7 @@ class DataBaseService {
       return await Challenge.find({});
     } catch (error) {
       console.error("Database Service Error:", error);
-      throw error;
+      return false;
     }
   }
 
@@ -23,7 +23,7 @@ class DataBaseService {
       return await Challenge.findOne({ _id: id }, projection);
     } catch (error) {
       console.error("Database Service Error:", error);
-      throw error;
+      return false;
     }
   }
 
@@ -33,7 +33,7 @@ class DataBaseService {
       return await Challenge.findOne({ name: nameReg }, projection);
     } catch (error) {
       console.error("Database Service Error:", error);
-      throw error;
+      return false;
     }
   }
 
@@ -42,7 +42,7 @@ class DataBaseService {
       return await Challenge.updateOne({ _id: id }, { $set: updateData });
     } catch (error) {
       console.error("Database Service Error:", error);
-      throw error;
+      return false;
     }
   }
 
@@ -52,7 +52,7 @@ class DataBaseService {
       return await Chat.create(chatData);
     } catch (error) {
       console.error("Database Service Error:", error);
-      throw error;
+      return false;
     }
   }
 
@@ -64,7 +64,7 @@ class DataBaseService {
         .select("role content -_id");
     } catch (error) {
       console.error("Database Service Error:", error);
-      throw error;
+      return false;
     }
   }
 
@@ -73,7 +73,7 @@ class DataBaseService {
       return await Chat.find(query).sort(sort).limit(limit);
     } catch (error) {
       console.error("Database Service Error:", error);
-      throw error;
+      return false;
     }
   }
 
@@ -82,7 +82,7 @@ class DataBaseService {
       return await Chat.countDocuments(query);
     } catch (error) {
       console.error("Database Service Error:", error);
-      throw error;
+      return false;
     }
   }
 
@@ -91,7 +91,7 @@ class DataBaseService {
       return await Chat.findOne(query);
     } catch (error) {
       console.error("Database Service Error:", error);
-      throw error;
+      return false;
     }
   }
   async getPages() {
@@ -99,7 +99,7 @@ class DataBaseService {
       return await Pages.find({});
     } catch (error) {
       console.error("Database Service Error:", error);
-      throw error;
+      return false;
     }
   }
   // Settings-related methods
@@ -123,7 +123,7 @@ class DataBaseService {
       );
     } catch (error) {
       console.error("Database Service Error:", error);
-      throw error;
+      return false;
     }
   }
 
@@ -145,7 +145,7 @@ class DataBaseService {
         .limit(limit);
     } catch (error) {
       console.error("Database Service Error:", error);
-      throw error;
+      return false;
     }
   }
 
@@ -166,7 +166,7 @@ class DataBaseService {
         .limit(limit);
     } catch (error) {
       console.error("Database Service Error:", error);
-      throw error;
+      return false;
     }
   }
 
@@ -196,7 +196,7 @@ class DataBaseService {
       );
     } catch (error) {
       console.error("Database Service Error:", error);
-      throw error;
+      return false;
     }
   }
 
@@ -226,7 +226,7 @@ class DataBaseService {
       );
     } catch (error) {
       console.error("Database Service Error:", error);
-      throw error;
+      return false;
     }
   }
 
@@ -237,7 +237,7 @@ class DataBaseService {
       return savedChallenge;
     } catch (error) {
       console.error("Database Service Error:", error);
-      throw error;
+      return false;
     }
   }
 }

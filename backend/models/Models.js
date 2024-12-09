@@ -72,3 +72,23 @@ const pageSchema = new mongoose.Schema(
 );
 
 export const Pages = mongoose.model("Pages", pageSchema);
+
+// const chatTestSchema = new mongoose.Schema(
+//   {
+//     challenge: {
+//       type: String,
+//       ref: "Challenge",
+//       required: true,
+//     },
+//     model: String,
+//     role: { type: String, required: true },
+//     content: { type: String, required: true },
+//     tool_calls: Object,
+//     address: { type: String, required: true },
+//     txn: String,
+//     date: { type: Date, default: Date.now },
+//   },
+//   { collection: "ChatTest" }
+// );
+
+// export const Chat = mongoose.model("ChatTest", chatTestSchema);

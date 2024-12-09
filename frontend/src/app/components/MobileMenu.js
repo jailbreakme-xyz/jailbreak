@@ -49,13 +49,13 @@ const MobileMenu = (props) => {
           <FaHome size={25} /> HOME
         </Link>
         {!props.hiddenItems?.includes("BREAK") && (
-          <Link href="/break/Lumiere" className="chatMainMenuItem pointer">
+          <Link href="/break/Myrios" className="chatMainMenuItem pointer">
             <GiBreakingChain size={25} /> BREAK
           </Link>
         )}
         {!props.hiddenItems?.includes("ZYNX") && (
-          <Link href="/agent/Lumiere" className="chatMainMenuItem pointer">
-            <GiArtificialIntelligence size={25} /> LUMIERE
+          <Link href="/agent/Myrios" className="chatMainMenuItem pointer">
+            <GiArtificialIntelligence size={25} /> MYRIOS
           </Link>
         )}
         {!props.hiddenItems?.includes("API") && (

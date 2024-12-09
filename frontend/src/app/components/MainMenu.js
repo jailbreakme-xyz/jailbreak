@@ -36,7 +36,7 @@ const MainMenu = (props) => {
           <FaHome size={25} /> <span>HOME</span>
         </Link>
         {!props.hiddenItems?.includes("BREAK") && (
-          <Link href="/break/Lumiere" className="chatMainMenuItem pointer">
+          <Link href="/break/Myrios" className="chatMainMenuItem pointer">
             <GiBreakingChain size={25} /> <span>BREAK</span>
           </Link>
         )}

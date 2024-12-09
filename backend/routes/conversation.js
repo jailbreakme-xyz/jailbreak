@@ -14,7 +14,7 @@ const solanaRpc = process.env.RPC_URL;
 
 router.post("/submit/:id", async (req, res) => {
   try {
-    const { prompt, signature, walletAddress } = req.body;
+    let { prompt, signature, walletAddress } = req.body;
     const { id } = req.params;
 
     if (!prompt || !signature || !walletAddress) {
@@ -79,12 +79,13 @@ router.post("/submit/:id", async (req, res) => {
       return res.write("Entry fee not found in tournament data");
     }
 
+    prompt = prompt.replace(/[^a-zA-Z\s]/g, "");
     // Add user message to the Chat collection
     const userMessage = {
       challenge: challengeName,
       model: model,
       role: "user",
-      content: prompt.replace(/#END SESSION/g, ""),
+      content: prompt,
       address: walletAddress,
       txn: signature,
     };
