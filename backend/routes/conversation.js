@@ -193,7 +193,7 @@ router.post("/submit/:id", async (req, res) => {
               assistantMessage.content += args.evidence;
             }
           } catch (error) {
-            console.error("Error parsing JSON:", error.message);
+            console.log("Error parsing JSON:", error.message);
             if (functionName === "handleChallengeFailure") {
               // Fallback: Attempt to extract feedback and failure_reason manually
               const feedbackMatch = functionArguments.match(
@@ -258,13 +258,24 @@ router.post("/submit/:id", async (req, res) => {
                 status: "concluded",
               });
 
+              console.log("success", assistantMessage);
               res.write(successMessage);
             } else {
-              res.write(challenge.label);
+              console.log("failed", assistantMessage);
+              res.write(
+                assistantMessage.content
+                  ? assistantMessage.content
+                  : challenge.label
+              );
             }
           } else {
+            console.log("failed", assistantMessage);
             await DatabaseService.createChat(assistantMessage);
-            res.write(assistantMessage.content);
+            res.write(
+              assistantMessage.content
+                ? assistantMessage.content
+                : challenge.label
+            );
           }
         } else {
           // Save assistant message when stream ends
