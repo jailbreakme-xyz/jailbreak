@@ -72,7 +72,6 @@ router.get("/get-challenge", async (req, res) => {
 
     const allowedStatuses = ["active", "concluded"];
 
-    console.log(challenge);
     if (!allowedStatuses.includes(challenge.status)) {
       return res.status(404).send("Challenge is not active");
     }
