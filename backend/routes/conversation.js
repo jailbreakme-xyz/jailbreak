@@ -261,21 +261,24 @@ router.post("/submit/:id", async (req, res) => {
               console.log("success", assistantMessage);
               res.write(successMessage);
             } else {
+              const msg = assistantMessage?.tool_calls?.evidence
+                ? assistantMessage.tool_calls.evidence
+                : assistantMessage.content
+                ? assistantMessage.content
+                : challenge.label;
               console.log("failed", assistantMessage);
-              res.write(
-                assistantMessage.content
-                  ? assistantMessage.content
-                  : challenge.label
-              );
+              res.write(msg);
             }
           } else {
-            console.log("failed", assistantMessage);
+            const msg = assistantMessage?.tool_calls?.feedback
+              ? assistantMessage.tool_calls.feedback
+              : assistantMessage.content
+              ? assistantMessage.content
+              : challenge.label;
+
+            console.log("failed", msg);
             await DatabaseService.createChat(assistantMessage);
-            res.write(
-              assistantMessage.content
-                ? assistantMessage.content
-                : challenge.label
-            );
+            res.write(msg);
           }
         } else {
           // Save assistant message when stream ends
