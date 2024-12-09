@@ -261,24 +261,19 @@ router.post("/submit/:id", async (req, res) => {
               console.log("success:", assistantMessage);
               res.write(successMessage);
             } else {
-              if (
-                assistantMessage?.tool_calls?.evidence &&
-                !assistantMessage.content
-              ) {
+              if (assistantMessage?.tool_calls?.evidence) {
                 assistantMessage.content =
                   assistantMessage?.tool_calls?.evidence;
               }
               const msg = assistantMessage.content
                 ? assistantMessage.content
                 : challenge.label;
+
               console.log("failed:", msg);
               res.write(msg);
             }
           } else {
-            if (
-              assistantMessage?.tool_calls?.feedback &&
-              !assistantMessage.content
-            ) {
+            if (assistantMessage?.tool_calls?.feedback) {
               assistantMessage.content = assistantMessage?.tool_calls?.feedback;
             }
             const msg = assistantMessage.content
