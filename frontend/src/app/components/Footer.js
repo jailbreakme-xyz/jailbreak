@@ -3,7 +3,7 @@ import Timer from "./partials/Timer";
 export default function Footer(props) {
   return (
     <div style={{ width: "100%" }}>
-      {props.status != "active" ? (
+      {props.status === "active" ? (
         <form
           onSubmit={props.submit}
           style={{
