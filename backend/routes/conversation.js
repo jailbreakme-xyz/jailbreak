@@ -84,7 +84,8 @@ router.post("/submit/:id", async (req, res) => {
     const isValidTransaction = await blockchainService.verifyTransaction(
       signature,
       tournamentPDA,
-      entryFee
+      entryFee,
+      walletAddress
     );
 
     if (!isValidTransaction) {

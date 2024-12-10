@@ -26,7 +26,12 @@ class BlockchainService {
   }
 
   // Verify a transaction
-  async verifyTransaction(signature, tournamentPDA, expectedAmount) {
+  async verifyTransaction(
+    signature,
+    tournamentPDA,
+    expectedAmount,
+    senderWalletAddress
+  ) {
     try {
       // Fetch transaction details
       const transactionDetails = await this.connection.getTransaction(
@@ -45,6 +50,17 @@ class BlockchainService {
         key.equals(this.programId)
       );
       if (programIndex === -1) {
+        return false;
+      }
+
+      const senderPublicKey = new PublicKey(senderWalletAddress);
+      const senderIndex = transaction.message.accountKeys.findIndex((key) =>
+        key.equals(senderPublicKey)
+      );
+      if (senderIndex === -1) {
+        console.log(
+          "Transaction not made by the expected sender wallet address"
+        );
         return false;
       }
 

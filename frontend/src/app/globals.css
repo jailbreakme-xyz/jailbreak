@@ -1048,6 +1048,7 @@ margin-right: 5px;
     place-items: center;
     row-gap: 10px;
     border: 2px solid #ccc;
+    border-top: 0px;
 }
 .counters > div  > span {
   font-size: 34px;
