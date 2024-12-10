@@ -371,34 +371,19 @@ export default function Challenge({ params }) {
       sanitizedValue = sanitizedValue.slice(0, challenge.characterLimit);
     }
 
-    // New validation: Limit the total characters based on challenge.charactersPerWord
     if (challenge.charactersPerWord) {
+      const maxWordLength = challenge.charactersPerWord;
       const words = sanitizedValue.split(" ");
-      let currentLength = 0;
-      const modifiedWords = [];
-
-      words.forEach((word) => {
-        if (word.length > challenge.charactersPerWord) {
-          // Split the word if it exceeds the charactersPerWord limit
-          let start = 0;
-          while (start < word.length) {
-            modifiedWords.push(
-              word.substring(start, start + challenge.charactersPerWord)
-            );
-            start += challenge.charactersPerWord;
-          }
-          currentLength = 0; // Reset the length tracker
-        } else {
-          if (currentLength + word.length > challenge.charactersPerWord) {
-            modifiedWords.push(""); // Add a space (implicitly creates a new line context)
-            currentLength = 0;
-          }
-          modifiedWords.push(word);
-          currentLength += word.length;
+      const processedWords = words.map((word) => {
+        if (word.length > maxWordLength) {
+          // Split the word into chunks of maxWordLength and join them with spaces
+          const chunks = word.match(new RegExp(`.{1,${maxWordLength}}`, "g"));
+          return chunks.join(" ");
         }
+        return word;
       });
 
-      sanitizedValue = modifiedWords.join(" ").trim(); // Ensure clean output
+      sanitizedValue = processedWords.join(" ");
     }
 
     setPrompt(sanitizedValue);
