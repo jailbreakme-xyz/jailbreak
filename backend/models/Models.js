@@ -18,6 +18,7 @@ const ChallengeSchema = new mongoose.Schema(
     idl: Object,
     entryFee: Number,
     characterLimit: Number,
+    charactersPerWord: Number,
     contextLimit: Number,
     chatLimit: Number,
     expiry: Date,
@@ -135,6 +136,7 @@ export const Pages = mongoose.model("Pages", pageSchema);
 //     fail_function: String,
 //     tool_choice: String,
 //     start_date: Date,
+//     charactersPerWord: Number,
 //   },
 //   { collection: "challenges_test" }
 // );

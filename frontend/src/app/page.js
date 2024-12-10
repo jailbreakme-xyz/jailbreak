@@ -71,7 +71,9 @@ export default function Home() {
               href={
                 activeChallenge?.status === "active"
                   ? `/break/${activeChallenge?.name}`
-                  : `/agent/${activeChallenge?.name}`
+                  : activeChallenge
+                  ? `/agent/${activeChallenge?.name}`
+                  : "#section-3"
               }
               target="_blank"
               className="pointer"
@@ -120,7 +122,7 @@ export default function Home() {
 
           <HowItWorks />
         </div>
-        <div className="section-3">
+        <div className="section-3" id="section-3">
           <div className="diagonal-middle diagonal-middle-1"></div>
           <div className="diagonal-middle diagonal-middle-2"></div>
           <div className="diagonal-middle diagonal-middle-3"></div>

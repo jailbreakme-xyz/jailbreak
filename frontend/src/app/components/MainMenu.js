@@ -127,7 +127,18 @@ const MainMenu = (props) => {
                 <strong>Characters Per Message:</strong> ~
                 {numberWithCommas(props.challenge.characterLimit)}
               </p>
-
+              {props.challenge.charactersPerWord && (
+                <p
+                  style={{
+                    fontSize: "16px",
+                    fontWeight: "normal",
+                    margin: "8px 0px",
+                  }}
+                >
+                  <strong>Characters Per Word:</strong> ~
+                  {props.challenge.charactersPerWord}
+                </p>
+              )}
               <p
                 style={{
                   fontSize: "16px",

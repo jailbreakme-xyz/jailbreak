@@ -74,6 +74,7 @@ const Agent = ({ params }) => {
     custom_rules,
     developer_fee,
     start_date,
+    charactersPerWord,
   } = agentData?.challenge;
 
   return (
@@ -170,7 +171,15 @@ const Agent = ({ params }) => {
               The amount of characters you can send in a single message.
             </label>
           </p>
-
+          {charactersPerWord && (
+            <p>
+              <strong>Characters Per Word:</strong> {charactersPerWord}
+              <br />
+              <label style={styles.detailsLabel}>
+                The amount of characters per word.
+              </label>
+            </p>
+          )}
           <p>
             <strong>Context Window:</strong> ~{contextLimit}
             <br />

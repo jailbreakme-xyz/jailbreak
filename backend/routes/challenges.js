@@ -37,6 +37,7 @@ router.get("/get-challenge", async (req, res) => {
       custom_rules: 1,
       disable: 1,
       start_date: 1,
+      charactersPerWord: 1,
       // tools: 1,
       level: 1,
       model: 1,
