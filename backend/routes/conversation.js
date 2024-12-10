@@ -89,6 +89,7 @@ router.post("/submit/:id", async (req, res) => {
     );
 
     if (!isValidTransaction) {
+      console.log("Transaction verification failed");
       return res.write("Transaction verification failed");
     }
 

@@ -41,17 +41,6 @@ const ChallengeSchema = new mongoose.Schema(
 
 export const Challenge = mongoose.model("Challenge", ChallengeSchema);
 
-const userSchema = new mongoose.Schema(
-  {
-    api_key: String,
-    address: String,
-    date_created: { type: Date, default: Date.now },
-  },
-  { collection: "users" }
-);
-
-export const User = mongoose.model("User", userSchema);
-
 const chatSchema = new mongoose.Schema(
   {
     challenge: {
@@ -71,6 +60,17 @@ const chatSchema = new mongoose.Schema(
 );
 
 export const Chat = mongoose.model("Chat", chatSchema);
+
+const userSchema = new mongoose.Schema(
+  {
+    api_key: String,
+    address: String,
+    date_created: { type: Date, default: Date.now },
+  },
+  { collection: "users" }
+);
+
+export const User = mongoose.model("User", userSchema);
 
 const pageSchema = new mongoose.Schema(
   {

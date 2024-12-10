@@ -1429,6 +1429,7 @@ font-size: 18px;
     width: 100% !important;
     position: relative !important;
     border-radius: 20px !important;
+    border: 2px solid #ccc !important;
   }
   .counters > div:last-child {
     border-radius: 0px 0px 20px 20px !important;

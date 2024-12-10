@@ -26,6 +26,7 @@ class BlockchainService {
   }
 
   // Verify a transaction
+
   async verifyTransaction(
     signature,
     tournamentPDA,
@@ -33,98 +34,89 @@ class BlockchainService {
     senderWalletAddress
   ) {
     try {
+      let verified = false;
       // Fetch transaction details
-      const transactionDetails = await this.connection.getTransaction(
+      const transactionDetails = await this.connection.getParsedTransaction(
         signature,
         {
           commitment: "confirmed",
         }
       );
+
+      // Check if transaction exists
       if (!transactionDetails) {
-        return false;
+        console.log("Transaction not found.");
+        return verified;
       }
 
-      // Check that the transaction includes the expected program
-      const { transaction, meta } = transactionDetails;
-      const programIndex = transaction.message.accountKeys.findIndex((key) =>
-        key.equals(this.programId)
-      );
-      if (programIndex === -1) {
-        return false;
-      }
+      const { meta, transaction } = transactionDetails;
 
-      const senderPublicKey = new PublicKey(senderWalletAddress);
-      const senderIndex = transaction.message.accountKeys.findIndex((key) =>
-        key.equals(senderPublicKey)
-      );
-      if (senderIndex === -1) {
+      // Ensure the transaction was successful
+      if (meta.err) {
         console.log(
-          "Transaction not made by the expected sender wallet address"
+          `Transaction failed with error: ${JSON.stringify(meta.err)}`
         );
-        return false;
+        return verified;
       }
 
-      // Verify the submit_solution instruction
-      const discriminator = this.calculateDiscriminator("submit_solution");
-      let validInstruction = false;
+      // Extract inner instructions
+      const innerInstructions = meta.innerInstructions || [];
 
-      for (const instruction of transaction.message.instructions) {
-        if (instruction.programIdIndex === programIndex) {
-          console.log("Raw Instruction Data:", instruction.data);
-          console.log("Instruction Accounts:", instruction.accounts);
+      // Initialize variable to hold total transferred lamports
+      let totalLamportsSent = 0;
 
-          // Decode instruction data and match discriminator
-          const decodedData = bs58.decode(instruction.data);
-          if (!Buffer.from(decodedData.slice(0, 8)).equals(discriminator)) {
-            console.log("Discriminator mismatch");
-            continue;
-          }
-
-          // Resolve account indices to public keys
-          const resolvedAccounts = instruction.accounts.map(
-            (index) => transaction.message.accountKeys[index]
-          );
-
-          // Check if tournamentPDA is in resolved accounts
+      // Iterate through inner instructions to find system transfers
+      for (const innerInstruction of innerInstructions) {
+        for (const instruction of innerInstruction.instructions) {
+          // Check if the instruction is a system program transfer
           if (
-            resolvedAccounts.some((key) =>
-              key.equals(new PublicKey(tournamentPDA))
-            )
+            instruction.program === "system" &&
+            instruction.parsed &&
+            instruction.parsed.type === "transfer"
           ) {
-            validInstruction = true;
-            break;
+            const info = instruction.parsed.info;
+            const sender = info.source;
+            const recipient = info.destination;
+            const lamports = info.lamports;
+            if (recipient === tournamentPDA && sender === senderWalletAddress) {
+              verified = true;
+            }
+            // Accumulate lamports
+            totalLamportsSent += lamports;
           }
         }
       }
 
-      if (!validInstruction) {
+      // After processing all inner instructions, check if any matching transfer was found
+      if (totalLamportsSent === 0) {
+        console.log("No matching transfers found from sender to recipient.");
         return false;
       }
 
-      // Verify the amount transferred to the tournament PDA
-      const tournamentPdaIndex = transaction.message.accountKeys.findIndex(
-        (key) => key.equals(new PublicKey(tournamentPDA))
-      );
-      const preBalance = meta.preBalances[tournamentPdaIndex];
-      const postBalance = meta.postBalances[tournamentPdaIndex];
-      const amountTransferred = (postBalance - preBalance) / LAMPORTS_PER_SOL;
+      // Convert lamports to SOL (1 SOL = 1e9 lamports)
+      const amountReceivedSOL = totalLamportsSent / LAMPORTS_PER_SOL;
 
+      // Calculate tolerance
       const tolerance = expectedAmount * 0.03;
       const isWithinTolerance =
-        Math.abs(amountTransferred - expectedAmount) <= tolerance;
+        Math.abs(amountReceivedSOL - expectedAmount) <= tolerance;
 
-      console.log("Pre Balance:", preBalance);
-      console.log("Post Balance:", postBalance);
-      console.log("Amount Transferred:", amountTransferred);
-
+      // Verify amount with tolerance
       if (!isWithinTolerance) {
+        console.log(
+          `Amount mismatch. Expected: ~${expectedAmount} SOL, Received: ${amountReceivedSOL} SOL`
+        );
         return false;
       }
 
-      console.log("Transaction verification successful");
-      return true;
+      // If all verifications pass
+      console.log("Transaction verified successfully.");
+      console.log(`Sender: ${senderWalletAddress}`);
+      console.log(`Recipient: ${tournamentPDA}`);
+      console.log(`Total Amount Received: ${amountReceivedSOL} SOL`);
+      return verified;
     } catch (error) {
-      console.error("Error verifying transaction:", error);
+      console.error(`Verification failed: ${error.message}`);
       return false;
     }
   }
