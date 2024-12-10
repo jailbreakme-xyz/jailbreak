@@ -109,6 +109,14 @@ router.post("/submit/:id", async (req, res) => {
       prompt = prompt.replace(/[^a-zA-Z0-9 ]/g, "");
     }
 
+    const duplicateSignature = await DatabaseService.findOneChat({
+      txn: signature,
+    });
+
+    if (duplicateSignature) {
+      return res.write("Duplicate signature found");
+    }
+
     // Add user message to the Chat collection
     const userMessage = {
       challenge: challengeName,
