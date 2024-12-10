@@ -88,13 +88,6 @@ router.post("/submit/:id", async (req, res) => {
       walletAddress
     );
 
-    if (!isValidTransaction) {
-      console.log("Transaction verification failed");
-      return res.write("Transaction verification failed");
-    }
-
-    console.log("Transaction verified successfully for wallet:", walletAddress);
-
     // Set the entry fee regardless of expiry change
     await DatabaseService.updateChallenge(id, {
       entryFee: entryFee,
@@ -131,6 +124,18 @@ router.post("/submit/:id", async (req, res) => {
     };
 
     await DatabaseService.createChat(userMessage);
+
+    // if (!isValidTransaction) {
+    //   console.log("Transaction verification failed");
+    //   return res.write(
+    //     "Transaction verification failed, your message was saved but not processed, please reach out at dev@jailbreakme.xyz"
+    //   );
+    // } else {
+    //   console.log(
+    //     "Transaction verified successfully for wallet:",
+    //     walletAddress
+    //   );
+    // }
 
     // Fetch chat history for the challenge and address
     const chatHistory = await DatabaseService.getChatHistory(
@@ -252,21 +257,33 @@ router.post("/submit/:id", async (req, res) => {
           }
 
           if (functionName === challenge.success_function) {
-            const concluded = await blockchainService.concludeTournament(
-              tournamentPDA,
-              walletAddress
-            );
+            if (isValidTransaction) {
+              const concluded = await blockchainService.concludeTournament(
+                tournamentPDA,
+                walletAddress
+              );
 
-            const successMessage = `🥳 Congratulations! ${challenge.winning_message}.\n\n${assistantMessage.content}\nTransaction: ${concluded}`;
-            assistantMessage.content = successMessage;
-            await DatabaseService.createChat(assistantMessage);
-            await DatabaseService.updateChallenge(id, {
-              status: "concluded",
-              winning_prize: entryFee * 100,
-              expiry: new Date(),
-            });
-            console.log("success:", successMessage);
-            res.write(successMessage);
+              const successMessage = `🥳 Congratulations! ${challenge.winning_message}.\n\n${assistantMessage.content}\nTransaction: ${concluded}`;
+              assistantMessage.content = successMessage;
+              await DatabaseService.createChat(assistantMessage);
+              await DatabaseService.updateChallenge(id, {
+                status: "concluded",
+                winning_prize: entryFee * 100,
+                expiry: new Date(),
+              });
+              console.log("success:", successMessage);
+              res.write(successMessage);
+            } else {
+              const failedMessage = `🚨 Transaction verification failed, but this prompt won the tournament, we will manualy verify the transaction and reward you once we confirm the transaction`;
+              assistantMessage.content = failedMessage;
+              await DatabaseService.createChat(assistantMessage);
+              await DatabaseService.updateChallenge(id, {
+                status: "concluded",
+                winning_prize: entryFee * 100,
+                expiry: new Date(),
+              });
+              res.write(failedMessage);
+            }
           } else {
             console.log("failed:", assistantMessage.content);
             await DatabaseService.createChat(assistantMessage);

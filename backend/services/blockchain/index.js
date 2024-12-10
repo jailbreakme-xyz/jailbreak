@@ -45,7 +45,7 @@ class BlockchainService {
 
       // Check if transaction exists
       if (!transactionDetails) {
-        console.log("Transaction not found.");
+        console.log(`Transaction not found. ${signature}`);
         return verified;
       }
 
@@ -54,7 +54,9 @@ class BlockchainService {
       // Ensure the transaction was successful
       if (meta.err) {
         console.log(
-          `Transaction failed with error: ${JSON.stringify(meta.err)}`
+          `Transaction ${signature} failed with error: ${JSON.stringify(
+            meta.err
+          )}`
         );
         return verified;
       }
@@ -89,7 +91,9 @@ class BlockchainService {
 
       // After processing all inner instructions, check if any matching transfer was found
       if (totalLamportsSent === 0) {
-        console.log("No matching transfers found from sender to recipient.");
+        console.log(
+          `No matching transfers found from sender to recipient. ${signature}`
+        );
         return false;
       }
 
@@ -104,7 +108,7 @@ class BlockchainService {
       // Verify amount with tolerance
       if (!isWithinTolerance) {
         console.log(
-          `Amount mismatch. Expected: ~${expectedAmount} SOL, Received: ${amountReceivedSOL} SOL`
+          `Amount mismatch. Expected: ~${expectedAmount} SOL, Received: ${amountReceivedSOL} SOL ${signature}`
         );
         return false;
       }
@@ -116,7 +120,7 @@ class BlockchainService {
       console.log(`Total Amount Received: ${amountReceivedSOL} SOL`);
       return verified;
     } catch (error) {
-      console.error(`Verification failed: ${error.message}`);
+      console.error(`Verification failed: ${error.message} ${signature}`);
       return false;
     }
   }
