@@ -92,9 +92,9 @@ class DataBaseService {
     }
   }
 
-  async getFullChatHistory(query, sort = { date: -1 }, limit = 0) {
+  async getFullChatHistory(query, projection, sort = { date: -1 }, limit = 0) {
     try {
-      return await Chat.find(query).sort(sort).limit(limit);
+      return await Chat.find(query, projection).sort(sort).limit(limit);
     } catch (error) {
       console.error("Database Service Error:", error);
       return false;
