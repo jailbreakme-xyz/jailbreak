@@ -94,11 +94,25 @@ router.get("/get-challenge", async (req, res) => {
       role: "user",
     });
 
+    const chatProjection = {
+      challenge: 1,
+      role: 1,
+      content: 1,
+      address: 1,
+      txn: 1,
+      date: 1,
+    };
+
+    if (!challenge.tools_description) {
+      chatProjection.tool_calls = 1;
+    }
+
     const chatHistory = await DatabaseService.getFullChatHistory(
       {
         challenge: challengeName,
         role: { $ne: "system" },
       },
+      chatProjection,
       { date: -1 },
       chatLimit
     );

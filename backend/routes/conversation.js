@@ -120,6 +120,7 @@ router.post("/submit/:id", async (req, res) => {
       content: prompt,
       address: walletAddress,
       txn: signature,
+      verified: isValidTransaction,
       date: now,
     };
 

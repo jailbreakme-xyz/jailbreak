@@ -54,6 +54,7 @@ const chatSchema = new mongoose.Schema(
     tool_calls: Object,
     address: { type: String, required: true },
     txn: String,
+    verified: Boolean,
     date: { type: Date, default: Date.now },
   },
   { collection: "chats" }

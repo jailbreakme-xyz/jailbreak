@@ -73,7 +73,7 @@ export default function Home() {
                   ? `/break/${activeChallenge?.name}`
                   : activeChallenge
                   ? `/agent/${activeChallenge?.name}`
-                  : "#section-3"
+                  : "/break/echo"
               }
               target="_blank"
               className="pointer"

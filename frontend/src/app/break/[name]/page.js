@@ -307,6 +307,13 @@ export default function Challenge({ params }) {
       const signature = await sendTransaction(transaction, connection);
       console.log("Transaction sent:", signature);
 
+      // const latestBlockHash = await connection.getLatestBlockhash();
+      // await connection.confirmTransaction({
+      //   blockhash: latestBlockHash.blockhash,
+      //   lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+      //   signature: signature,
+      // });
+
       await connection.confirmTransaction(signature, "confirmed");
       console.log("Transaction confirmed");
 
