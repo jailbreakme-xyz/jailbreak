@@ -44,7 +44,7 @@ export default function RootLayout({ children }) {
           name="twitter:image"
           content="https://jailbreakme.xyz/images/x_og.jpg"
         />
-        <meta name="viewport" content="width=device-width" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#ffffff" />
         <meta name="robots" content="index, follow" />
 
