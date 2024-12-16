@@ -45,6 +45,7 @@ const ChallengeSchema = new mongoose.Schema(
     tldr: String,
     fee_multiplier: Number,
     agent_logic: String,
+    expiry_logic: String,
   },
   {
     collection:

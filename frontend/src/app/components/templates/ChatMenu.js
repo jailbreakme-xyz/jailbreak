@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { FaClock, FaChartLine } from "react-icons/fa";
+import { FaClock, FaChartLine, FaCaretRight } from "react-icons/fa";
 import CountUp from "react-countup";
 import Timer from "../partials/Timer";
 
@@ -44,28 +44,55 @@ export default function ChatMenu({ challenge, attempts, price, usdPrice }) {
           <span>{challenge?.label}</span>
         </div>
       )}
-      <div style={{ textAlign: "left" }} className="statsWrapper">
-        <h3 style={{ fontSize: "22px", margin: "5px 0px" }}>
-          <FaClock
-            style={{
-              position: "relative",
-              top: "4px",
-            }}
-          />{" "}
-          EXPIRY
-        </h3>
+      <div
+        style={{
+          textAlign: "left",
+        }}
+        className="statsWrapper"
+      >
+        <div
+          style={{
+            textAlign: "left",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <h3 style={{ fontSize: "22px", margin: "5px 0px" }}>
+            <FaClock
+              style={{
+                position: "relative",
+                top: "4px",
+              }}
+            />{" "}
+            EXPIRY
+          </h3>
+          <Timer expiryDate={challenge?.expiry} />
+        </div>
+
         <hr />
         <div className="stats">
-          <Timer expiryDate={challenge?.expiry} />
-          <p
-            style={{
-              fontSize: "14px",
-              color: "#ccc",
-              lineHeight: "10px",
-            }}
-          >
-            Last sender wins when the timer ends.
-          </p>
+          {challenge?.expiry_logic === "score" ? (
+            <p
+              style={{
+                fontSize: "14px",
+                color: "#ccc",
+                lineHeight: "1.2rem",
+              }}
+            >
+              Message with the highest score wins if the timer ends.
+            </p>
+          ) : (
+            <p
+              style={{
+                fontSize: "14px",
+                color: "#ccc",
+                lineHeight: "10px",
+              }}
+            >
+              Last sender wins when the timer ends.
+            </p>
+          )}
           <p
             style={{
               fontSize: "14px",

@@ -49,6 +49,7 @@ router.get("/get-challenge", async (req, res) => {
       tldr: 1,
       fee_multiplier: 1,
       agent_logic: 1,
+      expiry_logic: 1,
     };
 
     let challenge = await DatabaseService.getChallengeByName(name, projection);
@@ -119,11 +120,19 @@ router.get("/get-challenge", async (req, res) => {
     }
     if (chatHistory.length > 0) {
       if (expiry < now && challenge.status === "active") {
-        const lastSender = chatHistory[0].address;
+        let winner;
+        if (challenge.expiry_logic === "score") {
+          const topScoreMsg = await DatabaseService.getHighestAndLatestScore(
+            challengeName
+          );
+          winner = topScoreMsg[0].address;
+        } else {
+          winner = chatHistory[0].address;
+        }
         const blockchainService = new BlockchainService(solanaRpc, programId);
         const concluded = await blockchainService.concludeTournament(
           tournamentPDA,
-          lastSender
+          winner
         );
         const successMessage = `🥳 Tournament concluded: ${concluded}`;
         const assistantMessage = {
@@ -132,7 +141,7 @@ router.get("/get-challenge", async (req, res) => {
           role: "assistant",
           content: successMessage,
           tool_calls: {},
-          address: lastSender,
+          address: winner,
         };
 
         await DatabaseService.createChat(assistantMessage);

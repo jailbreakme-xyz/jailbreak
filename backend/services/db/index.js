@@ -489,6 +489,20 @@ class DataBaseService {
       return false;
     }
   }
+
+  async getHighestAndLatestScore(name) {
+    try {
+      return await Chat.find({
+        challenge: name,
+        "tool_calls.score": { $ne: null },
+      })
+        .sort({ "tool_calls.score": -1, date: -1 })
+        .limit(1);
+    } catch (error) {
+      console.error("Error fetching highest score:", error);
+      return false;
+    }
+  }
 }
 
 export default new DataBaseService();
