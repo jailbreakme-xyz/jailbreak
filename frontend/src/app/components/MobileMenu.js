@@ -23,7 +23,7 @@ import SolIcon from "../../assets/solIcon.png";
 import darkSlogen from "../../assets/darkSlogen.png";
 
 function numberWithCommas(x) {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return x?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 const MobileMenu = (props) => {
@@ -151,6 +151,7 @@ const MobileMenu = (props) => {
 
         {props.component === "break" && (
           <div className="chatMenu">
+            {console.log(props)}
             <div
               style={{ textAlign: "left", color: "#ccc" }}
               className="statsWrapper"
@@ -165,58 +166,48 @@ const MobileMenu = (props) => {
                 STATS
               </h3>
               <hr />
-              <div className="stats">
-                <div className="chatComingSoonMenuItem">
-                  <h4>PRIZE</h4>
-                  <CountUp
-                    start={0}
-                    end={
-                      props.usdPrize
-                        ? props.usdPrize
-                        : numberWithCommas(
-                            (props.prize * props.solPrice).toFixed(2)
-                          )
-                    }
-                    duration={2.75}
-                    decimals={2}
-                    decimal="."
-                    prefix="$"
-                  />
-                </div>
-                <div className="chatComingSoonMenuItem">
-                  <h4>Break Attempts</h4>
-                  <CountUp
-                    start={0}
-                    end={props.attempts}
-                    duration={2.75}
-                    decimals={0}
-                    decimal="."
-                  />
-                </div>
-                <div className="chatComingSoonMenuItem">
-                  <h4>Message Price</h4>
-                  <CountUp
-                    start={0}
-                    end={props.usdPrice}
-                    duration={2.75}
-                    decimals={2}
-                    decimal="."
-                    prefix="$"
-                  />
-                </div>
-                <hr />
-                <br />
-                <p
-                  style={{
-                    fontSize: "16px",
-                    fontWeight: "normal",
-                    margin: "8px 0px",
-                  }}
-                >
-                  <strong>Characters Per Message:</strong> ~
-                  {numberWithCommas(props.challenge.characterLimit)}
-                </p>
-                {props.challenge.charactersPerWord && (
+              {props.challenge && (
+                <div className="stats">
+                  <div className="chatComingSoonMenuItem">
+                    <h4>PRIZE</h4>
+                    <CountUp
+                      start={0}
+                      end={
+                        props.usdPrize
+                          ? props.usdPrize
+                          : numberWithCommas(
+                              (props.prize * props.solPrice).toFixed(2)
+                            )
+                      }
+                      duration={2.75}
+                      decimals={2}
+                      decimal="."
+                      prefix="$"
+                    />
+                  </div>
+                  <div className="chatComingSoonMenuItem">
+                    <h4>Break Attempts</h4>
+                    <CountUp
+                      start={0}
+                      end={props.attempts}
+                      duration={2.75}
+                      decimals={0}
+                      decimal="."
+                    />
+                  </div>
+                  <div className="chatComingSoonMenuItem">
+                    <h4>Message Price</h4>
+                    <CountUp
+                      start={0}
+                      end={props.usdPrice}
+                      duration={2.75}
+                      decimals={2}
+                      decimal="."
+                      prefix="$"
+                    />
+                  </div>
+                  <hr />
+                  <br />
                   <p
                     style={{
                       fontSize: "16px",
@@ -224,50 +215,21 @@ const MobileMenu = (props) => {
                       margin: "8px 0px",
                     }}
                   >
-                    <strong>Characters Per Word:</strong>{" "}
-                    {props.challenge.charactersPerWord}
+                    <strong>Characters Per Message:</strong> ~
+                    {numberWithCommas(props.challenge.characterLimit)}
                   </p>
-                )}
-                <p
-                  style={{
-                    fontSize: "16px",
-                    fontWeight: "normal",
-                    margin: "8px 0px",
-                  }}
-                >
-                  <strong>Context Window:</strong> ~
-                  {props.challenge.contextLimit}
-                </p>
-                <p
-                  style={{
-                    fontSize: "16px",
-                    fontWeight: "normal",
-                    margin: "8px 0px",
-                  }}
-                >
-                  <strong>UI Chat Limit:</strong> ~
-                  {props.challenge.chatLimit || "Unlimited"}
-                </p>
-                <p
-                  style={{
-                    fontSize: "16px",
-                    fontWeight: "normal",
-                    margin: "8px 0px",
-                  }}
-                >
-                  <strong>Developer Fee: </strong>
-                  {props.challenge.developer_fee}%
-                </p>
-                <p
-                  style={{
-                    fontSize: "16px",
-                    fontWeight: "normal",
-                    margin: "8px 0px",
-                  }}
-                >
-                  Message fees increase the prize pool.
-                </p>
-                {props.challenge?.custom_rules && (
+                  {props.challenge.charactersPerWord && (
+                    <p
+                      style={{
+                        fontSize: "16px",
+                        fontWeight: "normal",
+                        margin: "8px 0px",
+                      }}
+                    >
+                      <strong>Characters Per Word:</strong>{" "}
+                      {props.challenge.charactersPerWord}
+                    </p>
+                  )}
                   <p
                     style={{
                       fontSize: "16px",
@@ -275,22 +237,63 @@ const MobileMenu = (props) => {
                       margin: "8px 0px",
                     }}
                   >
-                    {props.challenge?.custom_rules}
+                    <strong>Context Window:</strong> ~
+                    {props.challenge.contextLimit}
                   </p>
-                )}
-                <a
-                  href={`/agent/${props.challenge?.name}`}
-                  target="_blank"
-                  className="pointer"
-                  style={{
-                    color: "#09bf99",
-                    fontSize: "16px",
-                    fontWeight: "normal",
-                  }}
-                >
-                  Read More →
-                </a>
-              </div>
+                  <p
+                    style={{
+                      fontSize: "16px",
+                      fontWeight: "normal",
+                      margin: "8px 0px",
+                    }}
+                  >
+                    <strong>UI Chat Limit:</strong> ~
+                    {props.challenge.chatLimit || "Unlimited"}
+                  </p>
+                  <p
+                    style={{
+                      fontSize: "16px",
+                      fontWeight: "normal",
+                      margin: "8px 0px",
+                    }}
+                  >
+                    <strong>Developer Fee: </strong>
+                    {props.challenge.developer_fee}%
+                  </p>
+                  <p
+                    style={{
+                      fontSize: "16px",
+                      fontWeight: "normal",
+                      margin: "8px 0px",
+                    }}
+                  >
+                    Message fees increase the prize pool.
+                  </p>
+                  {props.challenge?.custom_rules && (
+                    <p
+                      style={{
+                        fontSize: "16px",
+                        fontWeight: "normal",
+                        margin: "8px 0px",
+                      }}
+                    >
+                      {props.challenge?.custom_rules}
+                    </p>
+                  )}
+                  <a
+                    href={`/agent/${props.challenge?.name}`}
+                    target="_blank"
+                    className="pointer"
+                    style={{
+                      color: "#09bf99",
+                      fontSize: "16px",
+                      fontWeight: "normal",
+                    }}
+                  >
+                    Read More →
+                  </a>
+                </div>
+              )}
             </div>
           </div>
         )}

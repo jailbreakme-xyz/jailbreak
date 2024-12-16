@@ -108,7 +108,7 @@ export default function Challenge({ params }) {
   const chatRef = useRef(null);
   // const shouldScrollRef = useRef(false);
 
-  const { publicKey, sendTransaction, connected, disconnet } = useWallet();
+  const { publicKey, sendTransaction, connected } = useWallet();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({
@@ -118,7 +118,7 @@ export default function Challenge({ params }) {
 
   useEffect(() => {
     if (publicKey) {
-      localStorage.setItem("address", publicKey.toString());
+      localStorage.setItem("address", publicKey?.toString());
     }
   }, [publicKey]);
 
