@@ -1,5 +1,4 @@
 import React from "react";
-import "../../../styles/Carousel.css";
 import Timer from "../partials/Timer";
 import { GiPayMoney } from "react-icons/gi";
 import CountUp from "react-countup";

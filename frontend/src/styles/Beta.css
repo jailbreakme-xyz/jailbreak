@@ -148,7 +148,7 @@ padding: 5px;
 
   .agentCard {
     position: relative;
-    width: 320px;
+    width: 300px;
     background-color:#181726;
     border-radius: 20px;
     padding: 20px;
@@ -324,7 +324,7 @@ text-align: center;
 
   
   .beta-agents {
-    padding: 20px 0px;
+    padding: 20px 30px;
   }
 
   .beta-agents-list {
@@ -364,7 +364,7 @@ text-align: center;
     padding: 20px;
     text-align: center;
     border: 2px solid #ccc;
-    width: 320px;
+    width: 300px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -562,5 +562,12 @@ margin: 5px 0px;
   .beta-agents, .beta-breakers {
     width: 90% !important;
     margin: auto !important;
+  }
+  .beta-breakers {
+    padding: 20px 0px 30px !important;
+  }
+
+  .beta-agents {
+    padding: 20px 0px !important;
   }
   }

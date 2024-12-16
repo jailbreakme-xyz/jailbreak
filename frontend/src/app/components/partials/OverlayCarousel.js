@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "../../../styles/Carousel.css";
 
 const Carousel = (props) => {
   const characters = props.challenges;
