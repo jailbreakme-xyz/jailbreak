@@ -377,6 +377,7 @@ export default function Challenge({ params }) {
       <div className="chatPageWrapper">
         <div className="chatHeader">
           <Header
+            solPrice={solPrice}
             challenge={challenge}
             attempts={attempts}
             price={price}
@@ -384,6 +385,7 @@ export default function Challenge({ params }) {
             usdPrice={usdPrice}
             usdPrize={usdPrize}
             hiddenItems={["API", "BREAK", "SOCIAL"]}
+            component={"break"}
           />
         </div>
         <hr

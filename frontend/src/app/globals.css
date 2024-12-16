@@ -1081,6 +1081,8 @@ margin-right: 5px;
 .counters > div  > span {
   font-size: 34px;
 }
+
+
 @media screen and (max-width:768px) {
   .chatHeader .beta-header {
     width: 90% !important;
@@ -1240,6 +1242,7 @@ margin-right: 5px;
   overflow-wrap: break-word !important;
   margin: 10px auto 20px !important;
   padding: 20px !important;
+  width: 80% !important;
 }
     .notConnected {
       width: 50%;

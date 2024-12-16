@@ -15,7 +15,7 @@ const Header = (props) => {
         <Image
           alt="logo"
           src={logo}
-          width="35"
+          width="40"
           className="pointer mainLogo"
           style={{ backgroundColor: "#ebebeb" }}
           onClick={() => {
@@ -69,8 +69,19 @@ const Header = (props) => {
             width="40"
             className="pointer"
             style={{ backgroundColor: "#ebebeb" }}
+            onClick={() => {
+              window.location.href = "/";
+            }}
           />
-          <Image alt="logo" src={lightSlogen} width="100" className="pointer" />
+          <Image
+            alt="logo"
+            src={lightSlogen}
+            width="100"
+            className="pointer"
+            onClick={() => {
+              window.location.href = "/";
+            }}
+          />
         </div>
         <div className="beta-mobile-header-right">
           <MobileMenu
@@ -82,6 +93,8 @@ const Header = (props) => {
             usdPrice={props.usdPrice}
             usdPrize={props.usdPrize}
             activeChallenge={props.activeChallenge}
+            component={props.component}
+            solPrice={props.solPrice}
           />
         </div>
       </div>

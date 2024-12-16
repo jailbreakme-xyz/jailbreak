@@ -149,7 +149,7 @@ const MobileMenu = (props) => {
           </div>
         )}
 
-        {props.usdPrize && (
+        {props.component === "break" && (
           <div className="chatMenu">
             <div
               style={{ textAlign: "left", color: "#ccc" }}
@@ -170,7 +170,13 @@ const MobileMenu = (props) => {
                   <h4>PRIZE</h4>
                   <CountUp
                     start={0}
-                    end={props.usdPrize}
+                    end={
+                      props.usdPrize
+                        ? props.usdPrize
+                        : numberWithCommas(
+                            (props.prize * props.solPrice).toFixed(2)
+                          )
+                    }
                     duration={2.75}
                     decimals={2}
                     decimal="."

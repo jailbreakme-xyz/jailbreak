@@ -324,7 +324,7 @@ text-align: center;
 
   
   .beta-agents {
-    padding: 20px;
+    padding: 20px 0px;
   }
 
   .beta-agents-list {
@@ -347,7 +347,7 @@ text-align: center;
   } */
 
   .beta-breakers {
-    padding: 20px 20px 30px;
+    padding: 20px 0px 30px;
   }
 
   .beta-breakers-list {
@@ -435,6 +435,10 @@ margin: 5px 0px;
     .desktop {
       display: none;
     }
+    .beta-footer {
+      justify-content: center !important;
+      margin: auto !important;
+    }
     .beta-header {
       width: 85% !important;
       padding: 15px 20px 5px !important;
@@ -449,7 +453,7 @@ margin: 5px 0px;
       padding-bottom: 20px;
     }
     .beta-container {
-      width: 90%;
+      width: 100%;
     }
     .beta-mobile-header-left {
       display: flex;
@@ -504,6 +508,7 @@ margin: 5px 0px;
         align-items: center;
   }
   .agentCard.hero {
+    width: 320px;
     max-width: fit-content;
   }
   .beta-content {
@@ -518,6 +523,7 @@ margin: 5px 0px;
   }
   .beta-content-right {
     width: 100% !important;
+    justify-items: center;
   }
   .beta-content-left h1 {
     font-size: 28px;
@@ -552,5 +558,9 @@ margin: 5px 0px;
   }
   .chatPageMain {
     width: 100% !important;
+  }
+  .beta-agents, .beta-breakers {
+    width: 90% !important;
+    margin: auto !important;
   }
   }

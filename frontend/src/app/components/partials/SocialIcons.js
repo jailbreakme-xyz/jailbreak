@@ -13,14 +13,14 @@ export default function SocialIcons() {
         target="_blank"
         className="pointer"
       >
-        <FaXTwitter size={30} className="pointer" />
+        <FaXTwitter size={25} className="pointer" />
       </a>
       <a
         href="https://t.me/jailbreakme_xyz"
         target="_blank"
         className="pointer"
       >
-        <FaTelegramPlane size={30} className="pointer" />
+        <FaTelegramPlane size={25} className="pointer" />
       </a>
       <a
         href="https://solscan.io/account/B1XbZeQYZxv5ezBpBgomEUqDvTbM8HwSYfktcpBGkgjg"
@@ -30,8 +30,8 @@ export default function SocialIcons() {
         <Image
           src={SolIcon}
           alt="Solana"
-          width={30}
-          height={30}
+          width={25}
+          height={25}
           className="pointer"
         />
       </a>
@@ -40,14 +40,14 @@ export default function SocialIcons() {
         target="_blank"
         className="pointer"
       >
-        <SiGitbook size={30} className="pointer" />
+        <SiGitbook size={25} className="pointer" />
       </a>
       <a
         href="https://github.com/probonodev/jailbreak"
         target="_blank"
         className="pointer"
       >
-        <SiGithub size={30} className="pointer" />
+        <SiGithub size={25} className="pointer" />
       </a>
     </div>
   );

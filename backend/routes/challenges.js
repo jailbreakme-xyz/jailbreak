@@ -57,7 +57,7 @@ router.get("/get-challenge", async (req, res) => {
     }
 
     let fee_multiplier = challenge.fee_multiplier || 100;
-    let message_price = Number(req.query.price);
+    let message_price = challenge.entryFee;
     let prize = message_price * fee_multiplier;
 
     const challengeName = challenge.name;
@@ -136,13 +136,9 @@ router.get("/get-challenge", async (req, res) => {
         };
 
         await DatabaseService.createChat(assistantMessage);
-        await DatabaseService.updateChallenge(
-          challengeId,
-          {
-            status: "concluded",
-          },
-          true
-        );
+        await DatabaseService.updateChallenge(challengeId, {
+          status: "concluded",
+        });
       }
 
       message_price = challenge.entryFee;
@@ -179,6 +175,16 @@ router.get("/get-challenge", async (req, res) => {
 
     const usdMessagePrice = message_price * solPrice;
     const usdPrize = prize * solPrice;
+
+    if (
+      challenge.start_date > now &&
+      expiry < now &&
+      challenge.status === "upcoming"
+    ) {
+      await DatabaseService.updateChallenge(challengeId, {
+        status: "active",
+      });
+    }
 
     return res.status(200).json({
       challenge,

@@ -123,10 +123,12 @@ const Agent = ({ params }) => {
               JAILBREAK ME →
             </button>
           ) : (
-            <div>
-              <p>Tournament starts in</p>
-              <Timer expiryDate={start_date} />
-            </div>
+            status === "upcoming" && (
+              <div>
+                <p>Tournament starts in</p>
+                <Timer expiryDate={start_date} />
+              </div>
+            )
           )}
           <hr />
 
@@ -199,7 +201,7 @@ const Agent = ({ params }) => {
               <strong>UI Chat Limit:</strong> ~{chatLimit || "Unlimited"}
               <br />
               <label style={styles.detailsLabel}>
-                The amount of messages that the chat disaplays in the UI.
+                The amount of messages that the chat displays in the UI.
               </label>
             </p>
             <p>
@@ -259,7 +261,7 @@ const styles = {
     borderRadius: "10px",
     maxWidth: "600px",
     margin: "20px auto",
-    padding: "20px 0px 100px 0px",
+    padding: "20px",
     backgroundColor: "#181726",
     boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
   },

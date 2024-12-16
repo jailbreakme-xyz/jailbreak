@@ -218,4 +218,7 @@ border: 3px double #ebebeb;
       .chat-message {
         max-width: 100%;
       }
+      .chat-text {
+        word-break: break-word !important;
+      }
   }
