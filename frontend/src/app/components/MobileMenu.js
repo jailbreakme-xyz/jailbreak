@@ -21,6 +21,7 @@ import {
 import Image from "next/image";
 import SolIcon from "../../assets/solIcon.png";
 import darkSlogen from "../../assets/darkSlogen.png";
+import Jdenticon from "react-jdenticon";
 
 function numberWithCommas(x) {
   return x?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -93,6 +94,21 @@ const MobileMenu = (props) => {
         >
           <GiTwoCoins size={25} /> $JAIL TOKENS
         </Link>
+        {props.address && (
+          <Link
+            href={`/breaker/${props.address}`}
+            className="chatMainMenuItem pointer"
+            onClick={() => setMenuOpen(false)}
+          >
+            <Jdenticon
+              value={props.address}
+              className="pointer"
+              size={"30"}
+              style={{ border: "3px double #0BBF99" }}
+            />{" "}
+            MY PROFILE
+          </Link>
+        )}
         {!props.hiddenItems?.includes("SOCIAL") && (
           <div className="chatMainMenuItem chatPageSocialMenu">
             <span className="">

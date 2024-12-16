@@ -1,11 +1,12 @@
 import React from "react";
-import { FaTelegramPlane } from "react-icons/fa";
+import { FaTelegramPlane, FaUserSecret } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { SiGitbook, SiGithub } from "react-icons/si";
 import Image from "next/image";
 import SolIcon from "../../../assets/solIcon.png";
+import Jdenticon from "react-jdenticon";
 
-export default function SocialIcons() {
+export default function SocialIcons(props) {
   return (
     <div className="socialIcons">
       <a
@@ -49,6 +50,23 @@ export default function SocialIcons() {
       >
         <SiGithub size={25} className="pointer" />
       </a>
+      {props.component === "break" && props.address && (
+        <a
+          href={`/breaker/${props.address}`}
+          target="_blank"
+          className="pointer userIcon"
+          style={{
+            marginLeft: "20px",
+          }}
+        >
+          <Jdenticon
+            value={props.address}
+            className="pointer"
+            size={"30"}
+            style={{ border: "3px double #0BBF99" }}
+          />
+        </a>
+      )}
     </div>
   );
 }

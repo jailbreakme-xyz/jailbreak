@@ -386,6 +386,7 @@ export default function Challenge({ params }) {
             usdPrize={usdPrize}
             hiddenItems={["API", "BREAK", "SOCIAL"]}
             component={"break"}
+            address={publicKey}
           />
         </div>
         <hr

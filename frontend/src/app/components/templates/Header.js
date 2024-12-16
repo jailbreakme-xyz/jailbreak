@@ -59,7 +59,7 @@ const Header = (props) => {
         </a>
       </div>
       <div className="beta-header-right desktop">
-        <SocialIcons />
+        <SocialIcons component={props.component} address={props.address} />
       </div>
       <div className="mobile">
         <div className="beta-mobile-header-left">
@@ -95,6 +95,7 @@ const Header = (props) => {
             activeChallenge={props.activeChallenge}
             component={props.component}
             solPrice={props.solPrice}
+            address={props.address}
           />
         </div>
       </div>

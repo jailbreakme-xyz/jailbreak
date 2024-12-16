@@ -973,6 +973,11 @@ fill: #ccc;
 .socialIcons img:hover {
   background-color: #0BBF99;
 }
+.socialIcons .userIcon svg {
+  background-color: #1E1A39;
+  border: 3px double #0BBF99;
+}
+
 .pies {
   margin-top: 1rem;
 }
