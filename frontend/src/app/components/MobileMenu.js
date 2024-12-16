@@ -151,7 +151,6 @@ const MobileMenu = (props) => {
 
         {props.component === "break" && (
           <div className="chatMenu">
-            {console.log(props)}
             <div
               style={{ textAlign: "left", color: "#ccc" }}
               className="statsWrapper"
