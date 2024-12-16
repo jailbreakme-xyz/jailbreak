@@ -14,8 +14,10 @@ export default function Beta() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const getContent = async () => {
-    setLoading(true);
+  const getContent = async (initial) => {
+    if (initial) {
+      setLoading(true);
+    }
     const data = await axios
       .get(`/api/settings`)
       .then((res) => res.data)
@@ -25,7 +27,9 @@ export default function Beta() {
   };
 
   useEffect(() => {
-    getContent();
+    getContent(true);
+    const interval = setInterval(() => getContent(false), 5000);
+    return () => clearInterval(interval);
   }, []);
 
   return (

@@ -1,5 +1,5 @@
 import DatabaseService from "../services/db/index.js";
-const staticSolPrice = 230;
+const staticSolPrice = 220;
 async function getSolPriceInUSDT() {
   try {
     const tokenPage = await DatabaseService.getPages({ name: "jail-token" });
