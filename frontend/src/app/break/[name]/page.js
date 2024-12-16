@@ -127,6 +127,10 @@ export default function Challenge({ params }) {
   }, [pageLoading]);
 
   useEffect(() => {
+    scrollToBottom();
+  }, [attempts]);
+
+  useEffect(() => {
     if (writing) {
       scrollToBottom();
     }
@@ -248,11 +252,7 @@ export default function Challenge({ params }) {
           setConversation(data.chatHistory);
         } else if (address && lastMessage?.address != publicKey?.toBase58()) {
           console.log("Updated conversation with new user message");
-          // setConversation(data.chatHistory);
-          setChallenge((prev) => ({
-            ...prev,
-            chatHistory: data.chatHistory,
-          }));
+          setConversation(data.chatHistory);
         }
       }
 
