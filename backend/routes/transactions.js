@@ -28,6 +28,7 @@ router.post("/get-transaction", async (req, res) => {
       return res.status(404).json({ error: "Challenge not found." });
     }
 
+    const challengeName = challenge.name;
     const tournamentPDA = challenge.tournamentPDA;
     const solutionHash = hashString(solution);
 
@@ -81,6 +82,7 @@ router.post("/get-transaction", async (req, res) => {
     const transactionId = crypto.randomUUID();
 
     const transactionData = {
+      challengeName,
       transactionId,
       tournamentPDA,
       solutionHash,

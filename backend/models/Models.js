@@ -114,6 +114,7 @@ const transactionSchema = new mongoose.Schema(
     // holdings: Array,
     scored: Boolean,
     transactions_data: Object,
+    challengeName: String,
     // accountCreationDate: { type: Date, default: Date.now },
     // accountTransactionFrequency: Number,
   },

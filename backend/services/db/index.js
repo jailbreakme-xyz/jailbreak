@@ -260,6 +260,18 @@ class DataBaseService {
     }
   }
 
+  async getLastTransaction(challengeName) {
+    try {
+      const transactions = await Transaction.find({
+        challengeName: challengeName,
+      }).sort({ createdAt: -1 });
+      return transactions[0];
+    } catch (error) {
+      console.error("Error fetching transaction:", error);
+      return null;
+    }
+  }
+
   async getTransactionByAddress(address) {
     try {
       const transaction = await Transaction.findOne({

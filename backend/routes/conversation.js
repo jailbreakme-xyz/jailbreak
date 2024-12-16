@@ -52,11 +52,31 @@ router.post("/submit/:id", async (req, res) => {
     }
 
     const blockchainService = new BlockchainService(solanaRpc, programId);
-
-    const entryFee = transaction.entryFee;
     const currentExpiry = challenge.expiry;
     const now = new Date();
     const oneHourInMillis = 3600000;
+
+    const isValidTransaction =
+      await blockchainService.verifyTransactionSignature(
+        signature,
+        transaction
+      );
+
+    console.log("isValidTransaction:", isValidTransaction);
+
+    const lastTransaction = await DatabaseService.getLastTransaction(
+      challengeName
+    );
+
+    if (transaction.entryFee < lastTransaction.entryFee) {
+      return res.write("INVALID TRANSACTION");
+    }
+
+    const tournamentData = await blockchainService.getTournamentData(
+      tournamentPDA
+    );
+
+    const entryFee = tournamentData.entryFee;
 
     await DatabaseService.updateChallenge(
       id,
@@ -68,14 +88,6 @@ router.post("/submit/:id", async (req, res) => {
       },
       true
     );
-
-    const isValidTransaction =
-      await blockchainService.verifyTransactionSignature(
-        signature,
-        transaction
-      );
-
-    console.log("isValidTransaction:", isValidTransaction);
 
     let thread;
     let isInitialThread = true;
