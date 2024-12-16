@@ -162,6 +162,9 @@ router.get("/get-challenge", async (req, res) => {
         highestScore,
         chatHistory: chatHistory.reverse(),
       });
+    } else if (initial != "true") {
+      message_price = challenge.entryFee;
+      prize = message_price * fee_multiplier;
     }
 
     if (initial === "true") {
