@@ -34,20 +34,20 @@ export default function SocialIcons() {
           height={30}
           className="pointer"
         />
-        <a
-          href="https://jailbreak.gitbook.io/jailbreakme.xyz"
-          target="_blank"
-          className="pointer"
-        >
-          <SiGitbook size={30} className="pointer" />
-        </a>
-        <a
-          href="https://github.com/probonodev/jailbreak"
-          target="_blank"
-          className="pointer"
-        >
-          <SiGithub size={30} className="pointer" />
-        </a>
+      </a>
+      <a
+        href="https://jailbreak.gitbook.io/jailbreakme.xyz"
+        target="_blank"
+        className="pointer"
+      >
+        <SiGitbook size={30} className="pointer" />
+      </a>
+      <a
+        href="https://github.com/probonodev/jailbreak"
+        target="_blank"
+        className="pointer"
+      >
+        <SiGithub size={30} className="pointer" />
       </a>
     </div>
   );

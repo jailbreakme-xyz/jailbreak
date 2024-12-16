@@ -1,7 +1,9 @@
 "use client";
 import React, { useEffect, useState, use } from "react";
-import Header from "../../components/Header";
+import Header from "../../components/templates/Header";
 import Timer from "../../components/partials/Timer";
+import Footer from "../../components/templates/Footer";
+import PageLoader from "../../components/templates/PageLoader";
 async function getAgentData(name) {
   const response = await fetch(`/api/challenges/get-challenge?name=${name}`);
   if (!response.ok) {
@@ -31,14 +33,7 @@ const Agent = ({ params }) => {
   }, [name]);
 
   if (loading) {
-    return (
-      <div>
-        <Header />
-        <div style={styles.noDataContainer}>
-          <p style={styles.loading}>Loading {name}...</p>
-        </div>
-      </div>
-    );
+    return <PageLoader />;
   }
 
   if (!agentData) {
@@ -72,159 +67,188 @@ const Agent = ({ params }) => {
     tools,
     tools_description,
     custom_rules,
+    tldr,
+    fee_multiplier,
     developer_fee,
     start_date,
     charactersPerWord,
+    disable,
+    language,
   } = agentData?.challenge;
 
   return (
-    <div>
-      <Header />
-      <div style={styles.container} className="agent-page">
-        {/* Profile Section */}
-        <div style={styles.profileSection}>
-          <img
-            className="pointer"
-            src={pfp}
-            alt={`${name} Profile`}
-            style={styles.profileImage}
-            onClick={() => {
-              window.open(`/break/${name}`, "_blank");
-            }}
-          />
-          <div style={styles.infoSection}>
-            <h2
-              style={styles.name}
+    <div className="beta-container">
+      <Header activeChallenge={agentData?.challenge} />
+      {loading ? (
+        <PageLoader />
+      ) : (
+        <div style={styles.container} className="agent-page">
+          {/* Profile Section */}
+          <div style={styles.profileSection}>
+            <img
               className="pointer"
+              src={pfp}
+              alt={`${name} Profile`}
+              style={styles.profileImage}
               onClick={() => {
                 window.open(`/break/${name}`, "_blank");
               }}
+            />
+            <div style={styles.infoSection}>
+              <h2
+                style={styles.name}
+                className="pointer"
+                onClick={() => {
+                  window.open(`/break/${name}`, "_blank");
+                }}
+              >
+                {name}
+              </h2>
+              <p style={styles[status]} className={status}>
+                {status}
+              </p>
+              <p style={styles.level} className={`${level} level`}>
+                {level}
+              </p>
+            </div>
+          </div>
+          {/* Description */}
+          <p style={styles.description}>{label}</p>
+          {status === "active" ? (
+            <button
+              className="pointer"
+              onClick={() => window.open(`/break/${name}`, "_blank")}
+              style={styles.breakButton}
             >
-              {name}
-            </h2>
-            <p style={styles[status]} className={status}>
-              {status}
-            </p>
-            <p style={styles.level} className={`${level} level`}>
-              {level}
-            </p>
-          </div>
-        </div>
-        {/* Description */}
-        <p style={styles.description}>{label}</p>
-        {status === "active" ? (
-          <button
-            className="pointer"
-            onClick={() => window.open(`/break/${name}`, "_blank")}
-            style={styles.breakButton}
-          >
-            JAILBREAK ME →
-          </button>
-        ) : (
-          <div>
-            <p>Tournament starts in</p>
-            <Timer expiryDate={start_date} />
-          </div>
-        )}
-        <hr />
-
-        {/* Task */}
-        <div style={styles.taskSection}>
-          <p style={styles.task}>🏁 {task}</p>
-          {((tools && tools.length > 0) || tools_description) && (
-            <div style={styles.toolsSection}>
-              <h4 style={styles.toolsTitle}>🛠️ Available Tools:</h4>
-              {tools_description ? (
-                <span style={styles.toolsDescription}>{tools_description}</span>
-              ) : (
-                <ul style={styles.toolsList}>
-                  {tools.map((tool, index) => (
-                    <li key={index} style={styles.toolItem}>
-                      <span style={styles.toolName}>{tool.name}</span>
-                      <br />
-                      <label style={styles.detailsLabel}>
-                        {tool.description}
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-              )}
+              JAILBREAK ME →
+            </button>
+          ) : (
+            <div>
+              <p>Tournament starts in</p>
+              <Timer expiryDate={start_date} />
             </div>
           )}
           <hr />
-        </div>
-        {custom_rules && (
-          <>
-            <h4 style={styles.customRulesTitle}>📜 Settings & Rules</h4>
-            <p style={styles.customRules}>{custom_rules}</p>
+
+          {/* Task */}
+          <div style={styles.taskSection}>
+            {/* <p style={styles.task}>🏁 {task}</p> */}
+            {((tools && tools.length > 0) || tools_description) && (
+              <div style={styles.toolsSection}>
+                <h4 style={styles.toolsTitle}>🛠️ Available Tools:</h4>
+                {tools_description ? (
+                  <span style={styles.toolsDescription}>
+                    {tools_description}
+                  </span>
+                ) : (
+                  <ul style={styles.toolsList}>
+                    {tools.map((tool, index) => (
+                      <li key={index} style={styles.toolItem}>
+                        <span style={styles.toolName}>{tool.name}</span>
+                        <br />
+                        <label style={styles.detailsLabel}>
+                          {tool.description}
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
             <hr />
-          </>
-        )}
-        {/* Details Section */}
-        <div style={styles.details}>
-          <h4 style={styles.toolsTitle}>💬 Chat Details:</h4>
-          <p>
-            <strong>Characters Per Message:</strong> ~
-            {numberWithCommas(characterLimit)}
-            <br />
-            <label style={styles.detailsLabel}>
-              The amount of characters you can send in a single message.
-            </label>
-          </p>
-          {charactersPerWord && (
+          </div>
+          {custom_rules && (
+            <>
+              <h4 style={styles.customRulesTitle}>📜 Settings & Rules</h4>
+              <p style={styles.customRules}>{tldr ? tldr : custom_rules}</p>
+              <hr />
+            </>
+          )}
+          {/* Details Section */}
+          <div style={styles.details}>
+            <h4 style={styles.toolsTitle}>💬 Chat Details:</h4>
+            <strong style={{ textTransform: "capitalize" }}>
+              Language: {language}
+            </strong>
             <p>
-              <strong>Characters Per Word:</strong> {charactersPerWord}
+              <strong>Characters Per Message:</strong> ~
+              {numberWithCommas(characterLimit)}
               <br />
               <label style={styles.detailsLabel}>
-                The amount of characters per word.
+                The amount of characters you can send in a single message.
               </label>
             </p>
-          )}
-          <p>
-            <strong>Context Window:</strong> ~{contextLimit}
-            <br />
-            <label style={styles.detailsLabel}>
-              The amount of messages sent to the agent, including the agent
-              responses (your messages only).
-            </label>
-          </p>
-          <p>
-            <strong>UI Chat Limit:</strong> ~{chatLimit || "Unlimited"}
-            <br />
-            <label style={styles.detailsLabel}>
-              The amount of messages that the chat disaplays in the UI.
-            </label>
-          </p>
-          <hr />
-          <p>
-            <strong>Expiry:</strong> {new Date(expiry).toDateString()}
-          </p>
-          <p>
-            <strong>Initial Pool Size:</strong>{" "}
-            {initial_pool_size
-              ? `$${numberWithCommas(
-                  initial_pool_size.toFixed(2) * agentData.solPrice
-                )}`
-              : "N/A"}
-          </p>
-          <p>
-            <strong>Entry Fee:</strong>{" "}
-            {entryFee
-              ? `$${numberWithCommas(entryFee.toFixed(2) * agentData.solPrice)}`
-              : "Free"}
-          </p>
-          <p>
-            <strong>Developer Fee:</strong> {developer_fee}%
-          </p>
-          <p>
-            <strong>Model:</strong> {model || "Unknown"}
-          </p>
-          <p>
-            <strong>Contract Address:</strong>{" "}
-            {agentData?.challenge?.idl?.address || "N/A"}
-          </p>
+            {charactersPerWord && (
+              <p>
+                <strong>Characters Per Word:</strong> {charactersPerWord}
+                <br />
+                <label style={styles.detailsLabel}>
+                  The amount of characters per word.
+                </label>
+              </p>
+            )}
+            <p>
+              <strong>Context Window:</strong> ~{contextLimit}
+              <br />
+              <label style={styles.detailsLabel}>
+                The amount of messages sent to the agent, including the agent
+                responses (your messages only).
+              </label>
+            </p>
+            <p>
+              <strong>UI Chat Limit:</strong> ~{chatLimit || "Unlimited"}
+              <br />
+              <label style={styles.detailsLabel}>
+                The amount of messages that the chat disaplays in the UI.
+              </label>
+            </p>
+            <p>
+              <strong>Special Characters:</strong>{" "}
+              {disable.includes("special_characters") ? "Disabled" : "Allowed"}
+            </p>
+            <hr />
+            <p>
+              <strong>Expiry:</strong> {new Date(expiry).toDateString()}
+            </p>
+            <p>
+              <strong>Initial Pool Size:</strong>{" "}
+              {initial_pool_size
+                ? `$${numberWithCommas(
+                    (initial_pool_size * agentData.solPrice).toFixed(2)
+                  )}`
+                : "N/A"}
+            </p>
+            <p>
+              <strong>Entry Fee:</strong>{" "}
+              {entryFee
+                ? `$${numberWithCommas(
+                    (entryFee * agentData.solPrice).toFixed(2)
+                  )}`
+                : "Free"}
+            </p>
+            <p>
+              <strong>Fee Multiplier:</strong> {fee_multiplier}
+              <br />
+              <label style={styles.detailsLabel}>
+                The multiplier for the entry fee - e.g if the multiplier is 100,
+                the pool prize is 100x the base entry fee. (e.g if the entry fee
+                is $100, the pool prize is $10,000)
+              </label>
+            </p>
+            <p>
+              <strong>Developer Fee:</strong> {developer_fee}%
+            </p>
+            <p>
+              <strong>Model:</strong> {model || "Unknown"}
+            </p>
+            <p>
+              <strong>Tournament PDA:</strong>{" "}
+              {agentData?.challenge?.idl?.address || "N/A"}
+            </p>
+          </div>
         </div>
-      </div>
+      )}
+      <Footer />
     </div>
   );
 };
@@ -235,8 +259,8 @@ const styles = {
     borderRadius: "10px",
     maxWidth: "600px",
     margin: "20px auto",
-    padding: "20px",
-    backgroundColor: "#f9f9f9",
+    padding: "20px 0px 100px 0px",
+    backgroundColor: "#181726",
     boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
   },
   noDataContainer: {
@@ -245,7 +269,7 @@ const styles = {
     maxWidth: "600px",
     margin: "20px auto",
     padding: "20px",
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#181726",
     boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
     minHeight: "80vh",
     display: "flex",
@@ -268,7 +292,7 @@ const styles = {
     height: "100px",
     borderRadius: "50%",
     marginRight: "20px",
-    border: "3px solid #555",
+    border: "6px double #0bbf99",
   },
   breakButton: {
     backgroundColor: "#0bbf99",
@@ -288,7 +312,7 @@ const styles = {
   },
   name: {
     fontSize: "24px",
-    color: "#555",
+    color: "#0BBF99",
     margin: "0px",
     textTransform: "uppercase",
   },
@@ -296,6 +320,7 @@ const styles = {
     fontSize: "14px",
     margin: "5px 0px",
     width: "fit-content",
+    fontWeight: "bold",
   },
   active: {
     fontSize: "16px",
@@ -347,7 +372,7 @@ const styles = {
   loading: {
     fontSize: "18px",
     textAlign: "center",
-    color: "#666",
+    color: "#ebebeb",
     padding: "20px",
   },
   error: {
@@ -357,7 +382,7 @@ const styles = {
     padding: "20px",
   },
   detailsLabel: {
-    color: "#666",
+    color: "#888",
     fontSize: "12px",
     margin: "0px",
   },

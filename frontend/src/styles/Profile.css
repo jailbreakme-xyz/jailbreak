@@ -1,0 +1,221 @@
+.profile-box {
+    padding: 20px;
+}
+
+.profile-info svg {
+  border: 6px double #0bbd99;
+  border-radius: 50%;
+}
+.profile-info-header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    column-gap: 10px;
+    margin-bottom: 20px;
+}
+.beta-breaker-address svg {
+  border: 0px;
+  position: relative;
+  top: 2px;
+  margin-right: 5px;
+}
+
+.profile-info-stats {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-info-stats div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #0bbd99;
+  border: 1px solid #0bbd99;
+  border-radius: 10px;
+  padding: 10px;
+  width: 150px;
+  text-transform: uppercase;
+  font-weight: bold;
+  text-align: center;
+}
+
+.profile-info-stats p {
+    margin: 5px auto;
+}
+
+.profile-info-stats span {
+    font-size: 22px;
+    margin: 5px auto;
+}
+
+.profile-info-stats hr {
+    width: 90%;
+    border: 1px solid #0bbd99;
+    margin: 0;
+}
+
+.beta-breaker-address {
+    background-color: #181726;
+    padding: 10px;
+    border-radius: 10px;
+    width: fit-content;
+}
+
+.tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start; 
+    margin: 10px 0; 
+    gap: 5px;
+    padding: 10px;
+  }
+  
+  .tab {
+    background-color: #000; 
+    border: 1px solid #0BBF99; 
+    border-radius: 5px; 
+    padding: 10px 15px; 
+    cursor: pointer;
+    transition: background-color 0.3s; 
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    text-transform: uppercase;
+    font-weight: bold;
+    column-gap: 5px;
+    color: #0BBF99;
+  }
+  
+  .tab:hover {
+    background-color: #0BBF99; 
+    color: #000;
+  }
+  
+  .tab.active {
+    background-color: #0BBF99; 
+    color: black; 
+    border: 1px solid #0BBF99; 
+  }
+
+  .tab img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 3px double #000;
+  }
+.chat-role img, .chat-role svg {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 3px double #0BBF99;
+}
+.chat-role img {
+border: 3px double #ebebeb;
+}
+
+.assistant > div, .system > div, .user > div {
+    width: unset;
+}
+/* Chat container styling */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    overflow-y: auto; 
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #000;
+    /* border: 2px solid #0BBF99; */
+  }
+  
+  /* Individual chat message styling */
+  .chat-message {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
+    max-width: 70%; /* Limit message width */
+    border-radius: 10px;
+    padding: 10px;
+    position: relative;
+    color: #0BBF99;
+    padding: 10px 20px;
+    column-gap: 10px;
+  }
+
+  .chat-message.user .chat-text {
+    border: 2px solid #0BBF99;
+    background-color: #000;
+    border-radius: 0px 20px 20px 20px;
+  }
+  
+  .chat-message.assistant .chat-text {
+    border: 2px solid #ebebeb;
+    background-color: #000;
+    color: #ebebeb;
+    border-radius: 20px 0px 20px 20px;
+  }
+
+  .chat-text  {
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+
+.chat-message.user  {
+    margin-right: auto; 
+  }
+  
+  .chat-message.assistant {
+    margin-left: auto;
+    display: flex;
+    flex-direction: row-reverse;
+  }
+  
+  /* Chat role styling */
+  .chat-role.user {
+    margin-right: 10px; 
+  }
+
+  .chat-role.assistant {
+    margin-left: 10px; 
+  }
+  
+  /* Chat text styling */
+  .chat-text {
+    font-size: 14px; /* Adjust font size */
+    line-height: 1.4; 
+    margin-top: 15px;
+  }
+  
+  /* Optional: Add a small avatar size */
+  .chat-role img,
+  .chat-role .jdenticon {
+    border-radius: 50%; /* Circular avatars */
+    width: 30px; /* Avatar size */
+    height: 30px; /* Avatar size */
+  }
+  
+  /* Optional: Add a timestamp (if needed) */
+  .chat-message::after {
+    content: attr(data-time); /* Use data attribute for time */
+    font-size: 10px; /* Smaller font for timestamp */
+    color: #888; /* Grey color for timestamp */
+    position: absolute;
+    bottom: -15px; /* Position below the message */
+    right: 10px; /* Align to the right */
+  }
+
+  @media (max-width: 768px) {
+    .chat-message.user .chat-text {
+        border-radius: 0px 20px 20px 20px;
+      }
+      
+      .chat-message.assistant .chat-text {
+        border-radius: 20px 0px 20px 20px;
+      }
+      .chat-message {
+        max-width: 100%;
+      }
+  }

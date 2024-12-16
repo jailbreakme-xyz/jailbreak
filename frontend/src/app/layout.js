@@ -16,7 +16,7 @@ export const metadata = {
       "JailbreakMe is the first open-source decentralized app where organizations test their AI models and agents while users earn rewards for jailbreaking them.",
     images: [
       {
-        url: "https://jailbreakme.xyz/images/stoneLogo.png",
+        url: "https://jailbreakme.xyz/images/stone_logo.png",
         width: 800,
         height: 800,
         alt: "Jailbreak Logo",
@@ -38,7 +38,7 @@ export default function RootLayout({ children }) {
       <head>
         <meta
           property="og:image"
-          content="https://jailbreakme.xyz/images/stoneLogo.png"
+          content="https://jailbreakme.xyz/images/stone_logo.png"
         />
         <meta
           name="twitter:image"
@@ -51,7 +51,7 @@ export default function RootLayout({ children }) {
         <link rel="icon" href="./favicon.ico" sizes="any" />
         <link rel="icon" type="image/svg+xml" href="./favicon.ico" />
         <link rel="apple-touch-icon" href="./images/192.png" />
-        <link rel="manifest" href="./manifest.json" />
+        <link rel="manifest" href="/manifest.json" />
       </head>
       {/* Global Site Tag (gtag.js) - Google Analytics */}
       <Script

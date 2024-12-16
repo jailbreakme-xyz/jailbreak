@@ -45,3 +45,5 @@ next-env.d.ts
 /secrets
 /data
 /test
+/jailbreak-pool-dev
+/hooks/degenScore.js

@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import stoneLogo from "../../assets/stoneLogo.png";
+import stoneLogo from "../../assets/stone_logo.png";
 import { FaKey } from "react-icons/fa";
 import Link from "next/link";
 

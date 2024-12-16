@@ -53,11 +53,6 @@ const MobileMenu = (props) => {
         >
           <FaHome size={25} /> HOME
         </Link>
-        {!props.hiddenItems?.includes("BREAK") && (
-          <Link href="/break/Myrios" className="chatMainMenuItem pointer">
-            <GiBreakingChain size={25} /> BREAK
-          </Link>
-        )}
         {props.activeChallenge && (
           <Link
             href={`/agent/${props.activeChallenge?.name}`}

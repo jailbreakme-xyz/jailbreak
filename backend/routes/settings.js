@@ -7,28 +7,43 @@ router.get("/", async (req, res) => {
   try {
     const challenges = await DatabaseService.getSettings();
     const pages = await DatabaseService.getPages({});
+    const topBreakersAndChatters =
+      await DatabaseService.getTopBreakersAndChatters();
+
     const endpoints = pages.find((page) => page.name === "api-endpoints")
       ?.content?.endpoints;
     const faq = pages.find((page) => page.name === "faq")?.content?.faq;
     const jailToken = pages.find((page) => page.name === "jail-token")?.content;
+    const beta = pages.find((page) => page.name === "beta")?.content;
 
-    const display_conditions = ["active", "upcoming"];
-    const activeChallenge = challenges.find((challenge) =>
-      display_conditions.includes(challenge.status)
+    let activeChallenge = challenges?.find(
+      (challenge) => challenge.status === "active"
     );
+
+    if (!activeChallenge) {
+      const upcomingChallenge = challenges?.find(
+        (challenge) => challenge.status === "upcoming"
+      );
+      if (upcomingChallenge) {
+        activeChallenge = upcomingChallenge;
+      } else {
+        activeChallenge = challenges?.sort(
+          (a, b) => a.start_date - b.start_date
+        )[0];
+      }
+    }
 
     const solPrice = await getSolPriceInUSDT();
 
     const totalWinningPrize = challenges
-      .filter((challenge) => challenge.winning_prize)
-      .map((challenge) => {
-        const treasury =
-          challenge.winning_prize * (challenge.developer_fee / 100);
-        const total_payout = challenge.winning_prize - treasury;
+      ?.filter((challenge) => challenge.usd_prize)
+      ?.map((challenge) => {
+        const treasury = challenge.usd_prize * (challenge.developer_fee / 100);
+        const total_payout = challenge.usd_prize - treasury;
 
         return {
-          treasury: treasury * solPrice,
-          total_payout: total_payout * solPrice,
+          treasury: treasury,
+          total_payout: total_payout,
         };
       });
 
@@ -41,10 +56,12 @@ router.get("/", async (req, res) => {
       0
     );
 
+    // console.log(JSON.stringify(topBreakers, null, 2));
     const breakAttempts = await DatabaseService.getChatCount({ role: "user" });
     const response = {
       endpoints: endpoints,
       faq: faq,
+      beta: beta,
       challenges: challenges,
       jailToken: jailToken,
       activeChallenge: activeChallenge,
@@ -52,6 +69,8 @@ router.get("/", async (req, res) => {
       total_payout: totalPayout,
       breakAttempts: breakAttempts,
       solPrice: solPrice,
+      topBreakers: topBreakersAndChatters.topBreakers,
+      topChatters: topBreakersAndChatters.topChatters,
     };
 
     res.send(response);

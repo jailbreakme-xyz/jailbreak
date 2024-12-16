@@ -1,23 +1,23 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
-import stoneLogo from "../../assets/stoneLogo.png";
-import MainMenu from "../components/MainMenu";
-import MobileMenu from "../components/MobileMenu";
-import lightSlogen from "../../assets/lightSlogen.png";
 import JailTokensSection from "../components/partials/JailTokensSection";
 import "../../styles/FAQ.css";
 import axios from "axios";
+import Header from "../components/templates/Header";
+import Footer from "../components/templates/Footer";
+import PageLoader from "../components/templates/PageLoader";
 
 const Token = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
+  const [activeChallenge, setActiveChallenge] = useState(null);
 
   const fetchData = async () => {
     setLoading(true);
     try {
       const response = await axios.get(`/api/settings`);
       setData(response.data?.jailToken);
+      setActiveChallenge(response.data?.activeChallenge);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -31,40 +31,21 @@ const Token = () => {
 
   return (
     <main>
-      <MobileMenu absolute={true} />
-      <div
-        style={{ textAlign: "center", display: "grid", placeItems: "center" }}
-      >
-        <Image
-          alt="logo"
-          src={stoneLogo}
-          width="80"
-          style={{
-            borderRadius: "0px 0px 150px 150px",
-            marginBottom: "10px",
-          }}
-          className="pointer"
-          onClick={() => {
-            window.location.href = "/";
-          }}
-        />
-        <Image
-          className="pointer"
-          onClick={() => {
-            window.location.href = "/";
-          }}
-          alt="logo"
-          src={lightSlogen}
-          width="120"
-        />
-        <h2 className="faq-title">$JAIL Tokens</h2>
+      <div className="beta-container" style={{ paddingBottom: "100px" }}>
+        <Header activeChallenge={activeChallenge} />
+        {loading ? (
+          <PageLoader />
+        ) : (
+          <div className="docsPage">
+            <div style={{ textAlign: "left" }}>
+              <h2 className="faq-title">$JAIL Tokens</h2>
+            </div>
+            <hr />
+            <JailTokensSection data={data} />
+          </div>
+        )}
       </div>
-      <hr />
-      <div className="docsPage">
-        <MainMenu />
-
-        <JailTokensSection data={data} loading={loading} />
-      </div>
+      <Footer />
     </main>
   );
 };

@@ -62,9 +62,7 @@ const Carousel = (props) => {
               <hr style={{ width: "90%", borderStyle: "dashed" }} />
               <p>{char.label}</p>
               <p className={`level ${char.level}`}>{char.level}</p>
-              {/* <button className="grayed" style={{ cursor: "not-allowed" }}>
-                COMING SOON
-              </button> */}
+              <button className="pointer">VIEW CHAT →</button>
             </div>
           </div>
         ))}

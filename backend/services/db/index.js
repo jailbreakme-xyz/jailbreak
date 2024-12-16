@@ -1,4 +1,10 @@
-import { Chat, Challenge, Pages } from "../../models/Models.js";
+import {
+  Chat,
+  Challenge,
+  Pages,
+  Transaction,
+  Breaker,
+} from "../../models/Models.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -6,40 +12,6 @@ dotenv.config();
 class DataBaseService {
   constructor() {
     // Constructor remains empty as we don't need initialization logic
-  }
-
-  // Challenge-related methods
-  async getAllChallenges() {
-    try {
-      return await Challenge.find(
-        {},
-        {
-          _id: 1,
-          title: 1,
-          label: 1,
-          task: 1,
-          level: 1,
-          model: 1,
-          image: 1,
-          pfp: 1,
-          status: 1,
-          name: 1,
-          deployed: 1,
-          idl: 1,
-          tournamentPDA: 1,
-          entryFee: 1,
-          characterLimit: 1,
-          contextLimit: 1,
-          chatLimit: 1,
-          initial_pool_size: 1,
-          expiry: 1,
-          developer_fee: 1,
-        }
-      );
-    } catch (error) {
-      console.error("Database Service Error:", error);
-      return false;
-    }
   }
 
   async getChallengeById(id, projection = {}) {
@@ -61,9 +33,16 @@ class DataBaseService {
     }
   }
 
-  async updateChallenge(id, updateData) {
+  async updateChallenge(id, updateData, increment = false) {
     try {
-      return await Challenge.updateOne({ _id: id }, { $set: updateData });
+      if (increment) {
+        return await Challenge.updateOne(
+          { _id: id },
+          { $set: updateData, $inc: { break_attempts: 1 } }
+        );
+      } else {
+        return await Challenge.updateOne({ _id: id }, { $set: updateData });
+      }
     } catch (error) {
       console.error("Database Service Error:", error);
       return false;
@@ -80,19 +59,7 @@ class DataBaseService {
     }
   }
 
-  async getChatHistory(query, sort = { date: -1 }, limit = 0) {
-    try {
-      return await Chat.find(query)
-        .sort(sort)
-        .limit(limit)
-        .select("role content -_id");
-    } catch (error) {
-      console.error("Database Service Error:", error);
-      return false;
-    }
-  }
-
-  async getFullChatHistory(query, projection, sort = { date: -1 }, limit = 0) {
+  async getChatHistory(query, projection, sort = { date: -1 }, limit = 0) {
     try {
       return await Chat.find(query, projection).sort(sort).limit(limit);
     } catch (error) {
@@ -146,6 +113,9 @@ class DataBaseService {
           winning_prize: 1,
           developer_fee: 1,
           start_date: 1,
+          usd_prize: 1,
+          break_attempts: 1,
+          fee_multiplier: 1,
         }
       );
 
@@ -266,6 +236,256 @@ class DataBaseService {
       return savedChallenge;
     } catch (error) {
       console.error("Database Service Error:", error);
+      return false;
+    }
+  }
+
+  // New method to save a transaction
+  async saveTransaction(transactionData) {
+    try {
+      return await Transaction.create(transactionData);
+    } catch (error) {
+      console.error("Database Service Error:", error);
+      return false;
+    }
+  }
+
+  async getTransactionById(transactionId) {
+    try {
+      const transaction = await Transaction.findOne({ transactionId });
+      return transaction;
+    } catch (error) {
+      console.error("Error fetching transaction:", error);
+      return null;
+    }
+  }
+
+  async getTransactionByAddress(address) {
+    try {
+      const transaction = await Transaction.findOne({
+        userWalletAddress: address,
+      });
+      return transaction;
+    } catch (error) {
+      console.error("Error fetching transaction:", error);
+      return null;
+    }
+  }
+
+  async updateTransactionStatus(transactionId, status) {
+    try {
+      await Transaction.updateOne({ transactionId }, { status });
+    } catch (error) {
+      console.error("Error updating transaction status:", error);
+    }
+  }
+
+  async getTopBreakersAndChatters() {
+    try {
+      // Aggregation for Top Breakers from the 'challenges' collection
+      const topBreakers = await Challenge.aggregate([
+        {
+          $match: {
+            winner: { $ne: null },
+          },
+        },
+        {
+          $group: {
+            _id: "$winner",
+            winCount: { $sum: 1 },
+            totalUsdPrize: { $sum: "$usd_prize" },
+            developerFee: { $first: "$developer_fee" },
+          },
+        },
+        {
+          $lookup: {
+            from:
+              process.env.NODE_ENV === "development" ? "chats_test" : "chats",
+            let: { challengeId: "$_id" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ["$address", "$$challengeId"] },
+                      { $eq: ["$role", "user"] },
+                    ],
+                  },
+                },
+              },
+            ],
+            as: "userChats",
+          },
+        },
+        {
+          $addFields: {
+            chatCount: { $size: "$userChats" },
+            netUsdPrize: {
+              $multiply: [
+                "$totalUsdPrize",
+                { $subtract: [1, { $divide: ["$developerFee", 100] }] },
+              ],
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            address: "$_id",
+            winCount: 1,
+            chatCount: 1,
+            totalUsdPrize: "$netUsdPrize",
+          },
+        },
+        { $sort: { totalUsdPrize: -1 } },
+        { $limit: 10 },
+      ]);
+
+      // Aggregation for Top Chatters from the 'chats' collection
+      const topChatters = await Chat.aggregate([
+        { $match: { role: "user" } },
+        {
+          $group: {
+            _id: "$address",
+            chatCount: { $sum: 1 },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            address: "$_id",
+            chatCount: 1,
+          },
+        },
+        { $sort: { chatCount: -1 } },
+        { $limit: 11 },
+      ]);
+
+      // Exclude top breakers from top chatters
+      const breakerAddresses = topBreakers.map((breaker) => breaker.address);
+      const filteredTopChatters = topChatters.filter(
+        (chatter) => !breakerAddresses.includes(chatter.address)
+      );
+
+      return {
+        topBreakers,
+        topChatters: filteredTopChatters,
+      };
+    } catch (error) {
+      console.error("Error fetching top breakers and chatters:", error);
+      return false;
+    }
+  }
+
+  async getBreaker(address) {
+    try {
+      // Fetch conversations grouped by challenge
+      const conversations = await Chat.aggregate([
+        { $match: { address } },
+        { $group: { _id: "$challenge", conversations: { $push: "$$ROOT" } } },
+        {
+          $lookup: {
+            from:
+              process.env.NODE_ENV === "development"
+                ? "challenges_test"
+                : "challenges",
+            localField: "_id",
+            foreignField: "name",
+            as: "challengeDetails",
+          },
+        },
+        {
+          $unwind: "$challengeDetails",
+        },
+        {
+          $project: {
+            _id: 0,
+            name: "$challengeDetails.name",
+            pfp: "$challengeDetails.pfp",
+            conversations: 1,
+          },
+        },
+      ]);
+
+      // Calculate total USD prize the user has won
+      const challenges = await Challenge.aggregate([
+        { $match: { winner: address } },
+        {
+          $group: {
+            _id: null,
+            totalWins: { $sum: 1 },
+            totalUsdPrize: {
+              $sum: {
+                $multiply: [
+                  "$usd_prize",
+                  { $subtract: [1, { $divide: ["$developer_fee", 100] }] },
+                ],
+              },
+            },
+          },
+        },
+      ]);
+
+      return { conversations, challenges };
+    } catch (error) {
+      console.error("Error fetching user conversation count:", error);
+      return false;
+    }
+  }
+
+  async getBreakers(query) {
+    try {
+      const breakers = await Breaker.find(query);
+      return breakers;
+    } catch (error) {
+      console.error("Error fetching breakers:", error);
+      return false;
+    }
+  }
+
+  async getBreakerByAddress(address) {
+    try {
+      return await Breaker.findOne(address);
+    } catch (error) {
+      console.error("Error fetching breaker:", error);
+      return false;
+    }
+  }
+
+  async updateBreakers(query, update) {
+    try {
+      return await Breaker.updateMany(query, update);
+    } catch (error) {
+      console.error("Error updating breakers:", error);
+      return false;
+    }
+  }
+
+  async saveBreakerIfNotExists(breaker) {
+    try {
+      const existingBreaker = await Breaker.findOne({
+        address: breaker.address,
+      });
+      if (!existingBreaker) {
+        return await Breaker.create(breaker);
+      }
+      return existingBreaker;
+    } catch (error) {
+      console.error("Error saving breaker:", error);
+      return false;
+    }
+  }
+
+  async getHighestScore(name) {
+    try {
+      return await Chat.find({
+        challenge: name,
+        "tool_calls.score": { $ne: null },
+      })
+        .sort({ "tool_calls.score": -1 })
+        .limit(1);
+    } catch (error) {
+      console.error("Error fetching highest score:", error);
       return false;
     }
   }

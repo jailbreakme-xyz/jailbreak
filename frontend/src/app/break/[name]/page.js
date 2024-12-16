@@ -1,20 +1,15 @@
 "use client";
 import React, { useState, useEffect, useRef, use } from "react";
 import axios from "axios";
-import { FaSadCry, FaClock } from "react-icons/fa";
-import { FaChartLine } from "react-icons/fa6";
-
+import { FaSadCry } from "react-icons/fa";
 import RingLoader from "react-spinners/RingLoader";
 import BarLoader from "react-spinners/BarLoader";
-
 import Image from "next/image";
 import Footer from "../../components/Footer";
-import Header from "../../components/Header";
+import Header from "../../components/templates/Header";
 import "../../../styles/Chat.css";
-import MainMenu from "../../components/MainMenu";
 import { PiPaperPlaneRightFill } from "react-icons/pi";
-import { createHash } from "crypto";
-
+import PageLoader from "../../components/templates/PageLoader";
 import TimeAgo from "react-timeago";
 import CountUp from "react-countup";
 import Jdenticon from "react-jdenticon";
@@ -27,10 +22,14 @@ import {
   SystemProgram,
   TransactionInstruction,
 } from "@solana/web3.js";
-import Timer from "../../components/partials/Timer";
+import AgentInfo from "../../components/templates/AgentInfo";
+import ChatMenu from "../../components/templates/ChatMenu";
+import ScoreCircle from "../../components/partials/ScoreCircle";
 
 const SOLANA_RPC =
-  "https://special-cold-shard.solana-mainnet.quiknode.pro/2e94b18cb7833ffd1e49b6e452de98cfef68a753";
+  process.env.NODE_ENV === "development"
+    ? "https://brande-ffqoic-fast-devnet.helius-rpc.com"
+    : "https://rosette-xbrug1-fast-mainnet.helius-rpc.com";
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -86,17 +85,6 @@ export function ParsedText({ message }) {
   );
 }
 
-const hashString = (str) => {
-  return createHash("sha256").update(str, "utf-8").digest();
-};
-
-const calculateDiscriminator = (instructionName) => {
-  const hash = createHash("sha256")
-    .update(`global:${instructionName}`, "utf-8")
-    .digest();
-  return hash.slice(0, 8); // Extract first 8 bytes
-};
-
 export default function Challenge({ params }) {
   const name = use(params).name;
   const [pageLoading, setPageLoading] = useState(true);
@@ -114,12 +102,13 @@ export default function Challenge({ params }) {
   const [usdPrice, setUsdPrice] = useState(0);
   const [usdPrize, setUsdPrize] = useState(0);
   const [expiry, setExpiry] = useState(null);
-
+  const [solPrice, setSolPrice] = useState(0);
+  const [highestScore, setHighestScore] = useState(0);
   const messagesEndRef = useRef(null);
   const chatRef = useRef(null);
   // const shouldScrollRef = useRef(false);
 
-  const { publicKey, sendTransaction, connected } = useWallet();
+  const { publicKey, sendTransaction, connected, disconnet } = useWallet();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({
@@ -186,7 +175,7 @@ export default function Challenge({ params }) {
       return messagesCopy;
     });
 
-    await delay(150);
+    await delay(100);
     return read(reader);
   }
 
@@ -247,6 +236,10 @@ export default function Challenge({ params }) {
         setUsdPrize((prev) => (prev !== data.usdPrize ? data.usdPrize : prev));
         setExpiry((prev) => (prev !== data.expiry ? data.expiry : prev));
 
+        setHighestScore((prev) =>
+          prev !== data.highestScore ? data.highestScore : prev
+        );
+        setSolPrice((prev) => (prev !== data.solPrice ? data.solPrice : prev));
         const lastMessage = data.chatHistory[data.chatHistory?.length - 1];
         const address = localStorage.getItem("address");
 
@@ -255,7 +248,11 @@ export default function Challenge({ params }) {
           setConversation(data.chatHistory);
         } else if (address && lastMessage?.address != publicKey?.toBase58()) {
           console.log("Updated conversation with new user message");
-          setConversation(data.chatHistory);
+          // setConversation(data.chatHistory);
+          setChallenge((prev) => ({
+            ...prev,
+            chatHistory: data.chatHistory,
+          }));
         }
       }
 
@@ -267,57 +264,35 @@ export default function Challenge({ params }) {
     }
   };
 
-  const processPayment = async () => {
-    if (!connected || !publicKey) {
-      setError("Please connect your wallet first");
-      return false;
-    }
-
+  const getTransaction = async () => {
     try {
       const connection = new Connection(SOLANA_RPC, "confirmed");
-      const tournamentAccountInfo = await connection.getAccountInfo(
-        new PublicKey(challenge.tournamentPDA)
-      );
-      if (!tournamentAccountInfo) {
-        throw new Error("Tournament account not found");
-      }
-
-      const solutionHash = hashString(prompt);
-      const discriminator = calculateDiscriminator("submit_solution");
-
-      const data = Buffer.concat([discriminator, solutionHash]);
-
-      const keys = [
-        {
-          pubkey: new PublicKey(challenge.tournamentPDA),
-          isSigner: false,
-          isWritable: true,
-        },
-        { pubkey: publicKey, isSigner: true, isWritable: true },
-        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
-      ];
-
-      const instruction = new TransactionInstruction({
-        keys,
-        programId: new PublicKey(challenge.idl.address),
-        data,
+      const response = await axios.post("/api/transactions/get-transaction", {
+        solution: prompt,
+        userWalletAddress: publicKey.toString(),
+        id: challenge._id,
       });
 
-      const transaction = new Transaction().add(instruction);
-      const signature = await sendTransaction(transaction, connection);
-      console.log("Transaction sent:", signature);
+      const { serializedTransaction, transactionId } = response.data;
+      const transaction = Transaction.from(
+        Buffer.from(serializedTransaction, "base64")
+      );
+      const signedTransaction = await sendTransaction(transaction, connection);
 
-      // const latestBlockHash = await connection.getLatestBlockhash();
-      // await connection.confirmTransaction({
-      //   blockhash: latestBlockHash.blockhash,
-      //   lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-      //   signature: signature,
-      // });
+      console.log("Transaction sent:", signedTransaction);
+      const confirmation = await connection.confirmTransaction({
+        signature: signedTransaction,
+        commitment: "confirmed",
+      });
 
-      await connection.confirmTransaction(signature, "confirmed");
-      console.log("Transaction confirmed");
+      if (confirmation.value.err) {
+        setError(
+          "Transaction failed: " + JSON.stringify(confirmation.value.err)
+        );
+        return false;
+      }
 
-      return signature;
+      return { signedTransaction, transactionId };
     } catch (err) {
       console.error("Error processing payment:", err);
       setError("Payment failed. Please try again.");
@@ -330,8 +305,8 @@ export default function Challenge({ params }) {
     try {
       setWriting(true);
       setLoadingPayment(true);
-      const signature = await processPayment();
-      if (!signature) return;
+      const { signedTransaction, transactionId } = await getTransaction();
+      if (!signedTransaction || !transactionId) return;
       setLoadingPayment(false);
       setConversation((prevMessages) => [
         ...prevMessages,
@@ -347,7 +322,8 @@ export default function Challenge({ params }) {
       const body = {
         prompt,
         walletAddress: publicKey.toString(),
-        signature,
+        signature: signedTransaction,
+        transactionId,
       };
 
       setPrompt("");
@@ -396,12 +372,6 @@ export default function Challenge({ params }) {
     setPrompt(sanitizedValue);
   };
 
-  const override = {
-    display: "block",
-    margin: "0 auto",
-    width: "200px",
-  };
-
   return (
     <main className="main">
       <div className="chatPageWrapper">
@@ -415,138 +385,58 @@ export default function Challenge({ params }) {
             usdPrize={usdPrize}
             hiddenItems={["API", "BREAK", "SOCIAL"]}
           />
-          <hr />
         </div>
+        <hr
+          style={{ border: "1px solid #ebebeb", margin: "0px" }}
+          className="desktopOnly"
+        />
         {pageLoading ? (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "100%",
-              height: "75vh",
-            }}
-          >
-            <div className="page-loader">
-              <BarLoader color="#ccc" size={150} cssOverride={override} />
-              <br />
-              <span style={{ textTransform: "capitalize" }}>
-                Loading {name} Interface...
-              </span>
-            </div>
-          </div>
+          <PageLoader />
         ) : (
           <div className="chatPageMain">
-            <div className="chatMenu desktopChatMenu">
-              {challenge?.title && (
-                <div className="challengeTitle">
-                  <div
-                    style={{
-                      display: "inline-flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      width: "100%",
-                    }}
-                  >
-                    <div>
-                      <h2 style={{ margin: "0px 0px 5px" }}>
-                        {challenge?.title}
-                      </h2>
-                      <span className={`${challenge?.level} level`}>
-                        {challenge?.level}
-                      </span>
-                    </div>
-                    <div>
-                      <Image
-                        onClick={() => {
-                          window.open(`/agent/${challenge?.name}`, "_blank");
-                        }}
-                        alt="logo"
-                        src={challenge?.pfp}
-                        width="40"
-                        height="40"
-                        className="pfp pointer"
-                      />
-                    </div>
-                  </div>
-                  <hr />
-                  <span>{challenge?.label}</span>
-                </div>
-              )}
-              <div style={{ textAlign: "left" }} className="statsWrapper">
-                <h3 style={{ fontSize: "22px", margin: "5px 0px" }}>
-                  <FaClock
-                    style={{
-                      position: "relative",
-                      top: "4px",
-                    }}
-                  />{" "}
-                  EXPIRY
-                </h3>
-                <hr />
-                <div className="stats">
-                  <Timer expiryDate={expiry} />
-                  <p
-                    style={{
-                      fontSize: "14px",
-                      color: "#ccc",
-                      lineHeight: "10px",
-                    }}
-                  >
-                    Last sender wins when the timer ends.
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "14px",
-                      color: "#ccc",
-                      lineHeight: "1.2rem",
-                    }}
-                  >
-                    Each message rounds the timer up to 1 hour if less than 1
-                    hour remains.
-                  </p>
-                </div>
-              </div>
-              <div style={{ textAlign: "left" }} className="statsWrapper">
-                <h3 style={{ fontSize: "22px", margin: "5px 0px" }}>
-                  <FaChartLine
-                    style={{
-                      position: "relative",
-                      top: "4px",
-                    }}
-                  />{" "}
-                  STATS
-                </h3>
-                <hr />
-                <div className="stats">
-                  <div className="chatComingSoonMenuItem">
-                    <h4>Break Attempts</h4>
-                    <CountUp
-                      start={0}
-                      end={attempts}
-                      duration={2.75}
-                      decimals={0}
-                      decimal="."
-                    />
-                  </div>
-                  <div className="chatComingSoonMenuItem">
-                    <h4>Message Price</h4>
-                    <CountUp
-                      start={0}
-                      end={usdPrice}
-                      duration={2.75}
-                      decimals={2}
-                      decimal="."
-                      prefix="$"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
+            {challenge?.name && (
+              <ChatMenu
+                challenge={challenge}
+                attempts={attempts}
+                price={price}
+                usdPrice={usdPrice}
+              />
+            )}
+
             <div className="conversationSection">
               <div className="chat-container">
                 {challenge?.name && (
-                  <div className="poolDiv">
+                  <div className="poolDiv" style={{ position: "relative" }}>
+                    <div
+                      className="status-container"
+                      style={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        alignItems: "center",
+                        columnGap: "1px",
+                      }}
+                    >
+                      <div
+                        className={`status-bulb ${
+                          challenge?.status === "active"
+                            ? "live"
+                            : challenge?.status === "upcoming"
+                            ? "upcoming"
+                            : "inactive"
+                        }`}
+                      ></div>
+                      <div
+                        style={{
+                          fontSize: "12px",
+                          fontWeight: "bold",
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        {challenge?.status === "active"
+                          ? "LIVE"
+                          : challenge?.status}
+                      </div>
+                    </div>
                     <h3
                       style={{ textTransform: "uppercase", color: "#09bf99" }}
                     >
@@ -555,12 +445,15 @@ export default function Challenge({ params }) {
                     <CountUp
                       style={{ color: "#09bf99" }}
                       start={0}
-                      end={usdPrize}
+                      end={challenge.usd_prize ? challenge.usd_prize : usdPrize}
                       duration={2.75}
                       decimals={2}
                       decimal="."
                       prefix="$"
                     />
+                    {challenge.agent_logic === "scoring" && (
+                      <ScoreCircle score={highestScore} />
+                    )}
                   </div>
                 )}
                 <div className="challengeTitle mobileOnly">
@@ -596,7 +489,7 @@ export default function Challenge({ params }) {
                           {item.role === "user" ? (
                             <>
                               <div
-                                className="avatar"
+                                className="avatar pointer"
                                 style={{
                                   width: "25px",
                                   height: "25px",
@@ -607,13 +500,28 @@ export default function Challenge({ params }) {
                                   justifyContent: "center",
                                   alignItems: "center",
                                   color: "#1A0047",
-                                  border: "1px solid #ccc",
+                                  border: "2px solid #ebebeb",
                                   fontSize: "12px",
                                   lineHeight: "12px",
                                   overflow: "hidden",
                                 }}
+                                onClick={() => {
+                                  window.open(
+                                    `/breaker/${item.address}`,
+                                    "_blank"
+                                  );
+                                }}
                               >
-                                <Jdenticon value={item.address} size={"30"} />
+                                <Jdenticon
+                                  value={item.address}
+                                  size={"30"}
+                                  onClick={() => {
+                                    window.open(
+                                      `/breaker/${item.address}`,
+                                      "_blank"
+                                    );
+                                  }}
+                                />
                               </div>
 
                               <div className="message">
@@ -634,6 +542,9 @@ export default function Challenge({ params }) {
                                   width="30"
                                   height="30"
                                   className="avatar-image"
+                                  style={{
+                                    border: "2px solid #09bf99",
+                                  }}
                                 />
                               </div>
                             </>
@@ -705,11 +616,7 @@ export default function Challenge({ params }) {
                 </div>
               </div>
             </div>
-            <MainMenu
-              challenge={challenge}
-              hiddenItems={["API", "BREAK", "SOCIAL"]}
-              component="break"
-            />
+            {challenge?.name && <AgentInfo challenge={challenge} />}
           </div>
         )}
       </div>

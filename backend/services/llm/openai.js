@@ -56,6 +56,69 @@ class OpenAIService {
       return false;
     }
   }
+
+  async createThread() {
+    const thread = await this.openai.beta.threads.create();
+    return thread;
+  }
+
+  async getThread(threadId) {
+    const thread = await this.openai.beta.threads.retrieve(threadId);
+    return thread;
+  }
+
+  async getThreadMessages(threadId, limit) {
+    const threadMessages = await this.openai.beta.threads.messages.list(
+      threadId,
+      {
+        limit: limit,
+      }
+    );
+    return threadMessages.data;
+  }
+
+  async addMessageToThread(threadId, content) {
+    const message = await this.openai.beta.threads.messages.create(threadId, {
+      role: "user",
+      content: content,
+    });
+    return message;
+  }
+
+  async createRun(threadId, assistantId, tool_choice) {
+    const run = await this.openai.beta.threads.runs.create(threadId, {
+      assistant_id: assistantId,
+      tool_choice: tool_choice,
+      parallel_tool_calls: false,
+      stream: true,
+    });
+    return run;
+  }
+
+  async submitRun(threadId, runId, tool_outputs) {
+    const run = await this.openai.beta.threads.runs.submitToolOutputs(
+      threadId,
+      runId,
+      {
+        tool_outputs,
+      }
+    );
+    return run;
+  }
+
+  async createThreadAndRun(assistantId, messages, tool_choice) {
+    const run = await this.openai.beta.threads.createAndRun({
+      assistant_id: assistantId,
+      tool_choice: "auto",
+      stream: true,
+      parallel_tool_calls: false,
+      thread: {
+        messages: messages,
+      },
+    });
+
+    return run;
+  }
 }
 
 export default new OpenAIService();

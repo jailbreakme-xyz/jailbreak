@@ -22,9 +22,9 @@ app.use(express.json());
 app.use(function (req, res, next) {
   // Origin to allow
   const allowedOrigins = [
+    "http://localhost",
     "http://localhost:3000",
     "http://localhost:8001",
-    "http://18.157.122.205",
     "https://jailbreakme.xyz",
   ];
 
@@ -66,19 +66,20 @@ app.set("trust proxy", true);
 import { challengesRoute } from "./routes/challenges.js";
 import { conversationRoute } from "./routes/conversation.js";
 import { settingsRoute } from "./routes/settings.js";
-
+import { transactionsRoute } from "./routes/transactions.js";
 // TEST:
 // import { testRoute } from "./test/conversation.js";
 
 // API:
-import { tournamentsAPI } from "./api/tournaments.js";
-import { conversationsAPI } from "./api/conversation.js";
+// import { tournamentsAPI } from "./api/tournaments.js";
+// import { conversationsAPI } from "./api/conversation.js";
 
 app.use("/api/challenges", challengesRoute);
 app.use("/api/conversation", conversationRoute);
 app.use("/api/settings", settingsRoute);
-app.use("/api/json/v1/tournaments", tournamentsAPI);
-app.use("/api/json/v1/conversations", conversationsAPI);
+app.use("/api/transactions", transactionsRoute);
+// app.use("/api/json/v1/tournaments", tournamentsAPI);
+// app.use("/api/json/v1/conversations", conversationsAPI);
 
 // if (dev) {
 //   app.use("/api/test", testRoute);

@@ -28,7 +28,9 @@ const Card = ({ char, data }) => {
         {data && (
           <strong style={{ color: "#0bbf99" }}>
             PRIZE POOL: $
-            {numberWithCommas((char.entryFee * 100 * data.solPrice).toFixed(2))}
+            {numberWithCommas(
+              (char.entryFee * char.fee_multiplier * data.solPrice).toFixed(2)
+            )}
           </strong>
         )}
         <hr />
@@ -36,7 +38,11 @@ const Card = ({ char, data }) => {
         <p className={`level ${char.level}`}>{char.level}</p>
         {char.status === "upcoming" ? (
           <div className="upcoming-timer">
-            <p>Starts in</p>
+            <p
+              style={{ fontSize: "14px", color: "#0bbf99", fontWeight: "bold" }}
+            >
+              Starts in
+            </p>
             <Timer expiryDate={char.start_date} />
           </div>
         ) : (

@@ -1,8 +1,12 @@
 services:
   back-end:
     command: npm run start
+    # environment:
+    #   - NODE_ENV=production
     volumes:
       - /home/ec2-user/docker-secrets/solana-keypair.json:/usr/src/app/backend/secrets/solana-keypair.json:ro
 
   front-end:
     command: npm run start
+    # environment:
+    #   - NODE_ENV=production

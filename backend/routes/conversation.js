@@ -1,62 +1,47 @@
 import express from "express";
 import dotenv from "dotenv";
 dotenv.config();
-import { Challenge, Chat } from "../models/Models.js";
 import OpenAIService from "../services/llm/openai.js";
 import BlockchainService from "../services/blockchain/index.js";
 import DatabaseService from "../services/db/index.js";
 import TelegramBotService from "../services/bots/telegram.js";
+import validatePrompt from "../hooks/validatePrompt.js";
+import getSolPriceInUSDT from "../hooks/solPrice.js";
+function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
 
 const router = express.Router();
 const model = "gpt-4o-mini";
-
-const solanaRpc = process.env.RPC_URL;
+const RPC_ENV = process.env.NODE_ENV === "development" ? "devnet" : "mainnet";
+const solanaRpc = `https://${RPC_ENV}.helius-rpc.com/?api-key=${process.env.RPC_KEY}`;
 
 router.post("/submit/:id", async (req, res) => {
   try {
-    let { prompt, signature, walletAddress } = req.body;
+    let { prompt, signature, walletAddress, transactionId } = req.body;
     const { id } = req.params;
 
-    if (!prompt || !signature || !walletAddress) {
+    if (!prompt || !signature || !walletAddress || !transactionId) {
       return res.write("Missing required fields");
     }
 
-    // Find the challenge
     const challenge = await DatabaseService.getChallengeById(id);
     if (!challenge) return res.write("Challenge not found");
+
+    const transaction = await DatabaseService.getTransactionById(transactionId);
+    if (!transaction) return res.write("Transaction not found");
+
+    const fee_multiplier = challenge.fee_multiplier || 100;
+    const programId = challenge.idl?.address;
+    const tournamentPDA = challenge.tournamentPDA;
+
+    if (!programId || !tournamentPDA)
+      return res.write("Program ID or Tournament PDA not found");
+
     const challengeName = challenge.name;
     const contextLimit = challenge.contextLimit;
-    const characterLimit = challenge.characterLimit;
-    const charactersPerWord = challenge.charactersPerWord;
 
-    const programId = challenge.idl?.address;
-    if (!programId) return res.write("Program ID not found");
-
-    if (prompt.length > characterLimit) {
-      prompt = prompt.slice(0, characterLimit);
-    }
-
-    if (charactersPerWord) {
-      const words = prompt.split(" ");
-      const trimmedWords = [];
-
-      words.forEach((word) => {
-        if (word.length > charactersPerWord) {
-          let start = 0;
-          while (start < word.length) {
-            trimmedWords.push(word.slice(start, start + charactersPerWord));
-            start += charactersPerWord;
-          }
-        } else {
-          trimmedWords.push(word);
-        }
-      });
-
-      prompt = trimmedWords.join(" ");
-    }
-
-    const systemPrompt = challenge.system_message;
-    if (!systemPrompt) return res.write("System prompt not found");
+    prompt = await validatePrompt(prompt, challenge);
 
     if (challenge.status === "upcoming") {
       return res.write(`Tournament starts in ${challenge.start_date}`);
@@ -66,53 +51,81 @@ router.post("/submit/:id", async (req, res) => {
       return res.write("Tournament is not active");
     }
 
-    const tournamentPDA = challenge.tournamentPDA;
-    if (!tournamentPDA) return res.write("Tournament PDA not found");
-
     const blockchainService = new BlockchainService(solanaRpc, programId);
-    const tournamentData = await blockchainService.getTournamentData(
-      tournamentPDA
-    );
 
-    if (!tournamentData) return res.write("Tournament data not found");
-
-    const entryFee = tournamentData.entryFee;
+    const entryFee = transaction.entryFee;
     const currentExpiry = challenge.expiry;
     const now = new Date();
     const oneHourInMillis = 3600000;
 
-    const isValidTransaction = await blockchainService.verifyTransaction(
-      signature,
-      tournamentPDA,
-      entryFee,
-      walletAddress
+    await DatabaseService.updateChallenge(
+      id,
+      {
+        entryFee: entryFee,
+        ...(currentExpiry - now < oneHourInMillis && {
+          expiry: new Date(now.getTime() + oneHourInMillis),
+        }),
+      },
+      true
     );
 
-    // Set the entry fee regardless of expiry change
-    await DatabaseService.updateChallenge(id, {
-      entryFee: entryFee,
-      ...(currentExpiry - now < oneHourInMillis && {
-        expiry: new Date(now.getTime() + oneHourInMillis),
-      }),
-    });
+    const isValidTransaction =
+      await blockchainService.verifyTransactionSignature(
+        signature,
+        transaction
+      );
 
-    if (!entryFee) {
-      return res.write("Entry fee not found in tournament data");
+    console.log("isValidTransaction:", isValidTransaction);
+
+    let thread;
+    let isInitialThread = true;
+    if (contextLimit > 1) {
+      const chatHistory = await DatabaseService.getChatHistory(
+        {
+          challenge: challengeName,
+          address: walletAddress,
+        },
+        {
+          _id: 0,
+          role: 1,
+          content: 1,
+          thread_id: 1,
+        },
+        { date: -1 },
+        contextLimit
+      );
+
+      if (chatHistory.length > 0) {
+        const threadCounts = {};
+        chatHistory.forEach((chat) => {
+          threadCounts[chat.thread_id] =
+            (threadCounts[chat.thread_id] || 0) + 1;
+        });
+
+        let existingThread = null;
+        for (const [threadId, count] of Object.entries(threadCounts)) {
+          if (count < contextLimit) {
+            existingThread = threadId;
+            break;
+          }
+        }
+
+        if (existingThread) {
+          isInitialThread = false;
+          console.log("found existing thread");
+          thread = await OpenAIService.getThread(existingThread);
+        } else {
+          console.log("all threads are full, creating new thread");
+          thread = await OpenAIService.createThread();
+        }
+      } else {
+        console.log("created initial thread");
+        thread = await OpenAIService.createThread();
+      }
+    } else {
+      thread = await OpenAIService.createThread();
     }
 
-    if (challenge.disable?.includes("special_characters")) {
-      prompt = prompt.replace(/[^a-zA-Z0-9 ]/g, "");
-    }
-
-    const duplicateSignature = await DatabaseService.findOneChat({
-      txn: signature,
-    });
-
-    if (duplicateSignature) {
-      return res.write("Duplicate signature found");
-    }
-
-    // Add user message to the Chat collection
     const userMessage = {
       challenge: challengeName,
       model: model,
@@ -120,50 +133,11 @@ router.post("/submit/:id", async (req, res) => {
       content: prompt,
       address: walletAddress,
       txn: signature,
-      verified: isValidTransaction,
+      fee: entryFee,
       date: now,
+      thread_id: thread.id,
     };
 
-    await DatabaseService.createChat(userMessage);
-
-    // if (!isValidTransaction) {
-    //   console.log("Transaction verification failed");
-    //   return res.write(
-    //     "Transaction verification failed, your message was saved but not processed, please reach out at dev@jailbreakme.xyz"
-    //   );
-    // } else {
-    //   console.log(
-    //     "Transaction verified successfully for wallet:",
-    //     walletAddress
-    //   );
-    // }
-
-    // Fetch chat history for the challenge and address
-    const chatHistory = await DatabaseService.getChatHistory(
-      {
-        challenge: challengeName,
-        address: walletAddress,
-      },
-      { date: -1 },
-      contextLimit
-    );
-
-    const messages = [{ role: "system", content: systemPrompt }];
-
-    chatHistory.reverse().map((chat) => {
-      messages.push({
-        role: chat.role,
-        content: chat.content,
-      });
-    });
-
-    const stream = await OpenAIService.createChatCompletion(
-      messages,
-      challenge.tools,
-      challenge.tool_choice
-    );
-
-    if (!stream) return res.write("Failed to generate response");
     const assistantMessage = {
       challenge: challengeName,
       model: model,
@@ -171,138 +145,146 @@ router.post("/submit/:id", async (req, res) => {
       content: "",
       tool_calls: {},
       address: walletAddress,
+      thread_id: thread.id,
       date: new Date(),
     };
+
+    if (challenge.suffix && isInitialThread) {
+      const suffix = JSON.stringify(transaction[challenge.suffix]);
+      prompt += `\n${suffix}`;
+    }
+
+    await DatabaseService.createChat(userMessage);
+    await DatabaseService.updateTransactionStatus(transactionId, "confirmed");
+    await OpenAIService.addMessageToThread(thread.id, prompt);
+
+    const run = await OpenAIService.createRun(
+      thread.id,
+      challenge.assistant_id,
+      challenge.tool_choice
+    );
 
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Access-Control-Allow-Origin", "*");
 
-    let functionArguments = "";
-    let functionName = "";
-    let isCollectingFunctionArgs = false;
-    let end_msg = "";
+    for await (const chunk of run) {
+      const event = chunk.event;
+      if (event === "thread.message.delta") {
+        const delta = chunk.data.delta.content[0].text.value;
+        assistantMessage.content += delta;
+        res.write(delta);
+      } else if (event === "thread.message.completed") {
+        await DatabaseService.createChat(assistantMessage);
+      } else if (event === "thread.run.requires_action") {
+        const required_action = chunk.data.required_action;
+        const toolCalls = required_action.submit_tool_outputs.tool_calls[0];
+        const functionName = toolCalls.function.name;
+        const functionArguments = toolCalls.function.arguments;
+        const jsonArgs = JSON.parse(functionArguments);
+        const results = jsonArgs.results;
+        const score = jsonArgs.score;
 
-    // const message = `💉 New prompt injection attempt 🦾
-
-    // Prize Pool: ${entryFee * 100} SOL
-    // Message Price: ${entryFee} SOL
-
-    // Check it out: https://jailbreakme.xyz/break/${challengeName}`;
-
-    // await TelegramBotService.sendMessageToGroup(message);
-
-    for await (const chunk of stream) {
-      const delta = chunk.choices[0].delta;
-      const finishReason = chunk.choices[0].finish_reason;
-
-      if (chunk && !finishReason) {
-        // Handle content
-        if (delta.content) {
-          assistantMessage.content += delta.content;
-          res.write(delta.content);
+        if (required_action.type === "submit_tool_outputs") {
+          const tool_outputs = [
+            {
+              tool_call_id: toolCalls.id,
+              output: results,
+            },
+          ];
+          await OpenAIService.submitRun(thread.id, chunk.data.id, tool_outputs);
         }
 
-        // Handle tool calls
-        if (delta.tool_calls) {
-          isCollectingFunctionArgs = true;
-          const toolCall = delta.tool_calls[0];
+        assistantMessage.tool_calls = {
+          results: results,
+          function_name: functionName,
+          score: score,
+        };
+        assistantMessage.content += results;
+        assistantMessage.content += `\n🎯 Degen Score: ${score}`;
 
-          if (toolCall.function?.name) {
-            functionName = toolCall.function.name;
-          }
-
-          if (toolCall.function?.arguments) {
-            functionArguments += toolCall.function.arguments;
-          }
-        }
-      } else {
-        const allowedFinishReasons = ["tool_calls", "stop"];
-        const finishReasonObj = OpenAIService.finish_reasons.find(
-          (reason) => reason.name === finishReason
-        );
-
-        if (!finishReasonObj) {
-          end_msg = "The conversation was ended for an unspecified reason.";
-          res.write(end_msg);
-          res.end();
-        } else if (!allowedFinishReasons.includes(finishReason)) {
-          end_msg = finishReasonObj.description;
-          res.write(end_msg);
-          res.end();
-        } else if (isCollectingFunctionArgs) {
-          // Save assistant message when stream ends with function args
-          try {
-            const args = JSON.parse(functionArguments);
-            assistantMessage.tool_calls = args;
-            assistantMessage.tool_calls.function_name = functionName;
-            assistantMessage.content += args.results;
-          } catch (error) {
-            console.log("Error parsing JSON:", error.message);
-            const resultsMatch = functionArguments.match(
-              /"results":\s*"([^"]+)"/
+        if (functionName === challenge.success_function) {
+          if (isValidTransaction) {
+            const concluded = await blockchainService.concludeTournament(
+              tournamentPDA,
+              walletAddress
             );
-            const results = resultsMatch ? resultsMatch[1] : "Unknown results";
-            assistantMessage.content += results;
-            assistantMessage.tool_calls = {
-              results: results,
-              function_name: functionName,
-            };
-          }
+            const solPrice = await getSolPriceInUSDT();
 
-          if (assistantMessage?.tool_calls?.results) {
-            assistantMessage.content = assistantMessage?.tool_calls?.results;
-          } else if (assistantMessage.content) {
-            assistantMessage.content = assistantMessage.content;
-          } else {
-            assistantMessage.content = challenge.label;
-          }
+            const winningPrize = entryFee * fee_multiplier;
+            const usdPrize = winningPrize * solPrice;
 
-          if (functionName === challenge.success_function) {
-            if (isValidTransaction) {
-              const concluded = await blockchainService.concludeTournament(
-                tournamentPDA,
-                walletAddress
-              );
-
-              const successMessage = `🥳 Congratulations! ${challenge.winning_message}.\n\n${assistantMessage.content}\nTransaction: ${concluded}`;
-              assistantMessage.content = successMessage;
-              await DatabaseService.createChat(assistantMessage);
-              await DatabaseService.updateChallenge(id, {
-                status: "concluded",
-                winning_prize: entryFee * 100,
-                expiry: new Date(),
-              });
-              console.log("success:", successMessage);
-              res.write(successMessage);
-            } else {
-              const failedMessage = `🚨 Transaction verification failed, but this prompt won the tournament, we will manualy verify the transaction and reward you once we confirm the transaction`;
-              assistantMessage.content = failedMessage;
-              await DatabaseService.createChat(assistantMessage);
-              await DatabaseService.updateChallenge(id, {
-                status: "concluded",
-                winning_prize: entryFee * 100,
-                expiry: new Date(),
-              });
-              res.write(failedMessage);
-            }
-          } else {
-            console.log("failed:", assistantMessage.content);
+            const successMessage = `🥳 Congratulations! ${
+              challenge.winning_message
+            } and won $${numberWithCommas(usdPrize)}.\n\n${
+              assistantMessage.content
+            }\nTransaction: ${concluded}`;
+            assistantMessage.content = successMessage;
+            assistantMessage.win = true;
             await DatabaseService.createChat(assistantMessage);
-            res.write(assistantMessage.content);
+            await DatabaseService.updateChallenge(id, {
+              status: "concluded",
+              expiry: new Date(),
+              winning_prize: winningPrize,
+              usd_prize: usdPrize,
+              winner: walletAddress,
+            });
+            console.log("success:", successMessage);
+            res.write(successMessage);
+          } else {
+            const failedMessage = `🚨 Transaction verification failed, but this prompt won the tournament, we will manualy verify the transaction and reward you once we confirm the transaction`;
+            assistantMessage.content = failedMessage;
+
+            await DatabaseService.createChat(assistantMessage);
+            await DatabaseService.updateChallenge(id, {
+              status: "concluded",
+              expiry: new Date(),
+            });
+            res.write(failedMessage);
           }
         } else {
-          // Save assistant message when stream ends
           await DatabaseService.createChat(assistantMessage);
-          return res.end();
+          res.write(assistantMessage.content);
         }
       }
-
-      res.flushHeaders();
     }
     res.end();
   } catch (error) {
     console.error("Error handling submit:", error);
     return res.write(error?.error?.message || "Server error");
+  }
+});
+
+router.get("/breakers/:address", async (req, res) => {
+  try {
+    const { address } = req.params;
+    const result = await DatabaseService.getBreaker(address);
+    const chatCount = await DatabaseService.getChatCount({
+      address: address,
+      role: "user",
+    });
+    const challenges = await DatabaseService.getSettings();
+
+    let activeChallenge = challenges.find(
+      (challenge) => challenge.status === "active"
+    );
+
+    if (!activeChallenge) {
+      const upcomingChallenge = challenges.find(
+        (challenge) => challenge.status === "upcoming"
+      );
+      if (upcomingChallenge) {
+        activeChallenge = upcomingChallenge;
+      } else {
+        activeChallenge = challenges.sort(
+          (a, b) => a.start_date - b.start_date
+        )[0];
+      }
+    }
+
+    return res.json({ ...result, chatCount, activeChallenge });
+  } catch (error) {
+    console.error("Error fetching user conversations:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 });
 

@@ -1,0 +1,556 @@
+.page-loader div {
+    display: grid;
+        place-content: center;
+        margin-bottom: 30px;
+        text-align: center;
+        justify-items: center;
+    }
+
+.beta-container {
+    width: 80%;
+    max-width: 1460px;
+    margin: 0 auto;
+    color: #ebebeb;
+}
+.beta-header {
+    /* background-color: #ebebeb; */
+    border-radius: 0px 0px 50px 50px;
+    padding: 30px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;    
+    width: 95%;
+    margin: 0px auto;
+    border: 2px solid #ccc;
+    border-top: none;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+.beta-header  .socialIcons {
+    justify-content: flex-end !important;
+}
+.separator {
+    width: 2px;
+    height: 25px;
+    background-color: #707070;
+    margin: 0 10px 0 20px;
+}
+.beta-header-left img:first-child {
+border-radius: 100px;
+border: 6px double #000;
+padding: 5px;
+}
+
+.beta-header-right {
+    width: 30%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    column-gap: 10px;
+}
+
+.beta-header-link {
+    color: #ccc;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.2rem;
+    padding: 10px;
+    margin: 0px 2px;
+    border-radius: 10px;
+}
+
+.beta-header-link:hover {
+    background-color: white;
+    color: black;
+}   
+
+.beta-header-left {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 5px;
+}
+.beta-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 95%;
+    padding: 20px 30px;
+    margin: 0px auto;
+}
+
+.beta-content-left {
+    width: 55%;
+}
+
+.beta-content-left p {
+    font-size: 1.5rem;
+    line-height: 1.5;
+}
+
+.beta-counters {
+    margin: 0px;
+    max-width: 660px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    column-gap: 10px;
+  }
+  
+  .beta-counters h4 {
+    margin: 0px;
+  }
+  
+  .beta-counters hr {
+    width: 90%;
+    margin: 0px auto;
+    border: 1px solid #0BBF99;
+  }
+  
+  .beta-counters > div {
+    color: #0BBF99;
+    background-color: black;
+      border-radius: 20px;
+      padding: 20px 5px;
+      width: 33%;
+      display: grid;
+      place-items: center;
+      row-gap: 10px;
+      border: 2px solid #ccc;
+      text-align: center;
+  }
+  .beta-counters > div > svg {
+    border: 6px double #0BBF99;
+    border-radius: 50%;
+    padding: 10px;
+    color: #0BBF99;
+  }
+  .beta-counters > div  > span {
+    font-size: 30px;
+  }
+
+  .beta-content .styledBtn {
+    background-color: black;
+    color: #0BBF99;
+    margin-top: 20px;
+    border: 2px solid #ccc;
+    width: 250px;
+    font-size: 20px;
+    padding: 15px;
+    border-radius: 0px 50px 50px 50px;
+  }
+
+  .beta-content .styledBtn:hover {
+    background-color: #0BBF99;
+    color: black;
+    border: 2px solid black;
+  }
+
+  .agentCard {
+    position: relative;
+    width: 320px;
+    background-color:#181726;
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    border: 2px solid #ccc;
+    min-height: 400px;
+  }
+.agentCard.hero {
+  width: 300px;
+  min-height: auto;
+}
+.agentCard.hero .agent-card-content-bottom {
+  position: relative;
+  bottom: auto;
+  left: auto;
+  transform: none;
+  width: 100%;
+}
+.agent-card-content-top {
+  display: block;
+}
+.agent-card-content-top .challenge-card-info {
+padding: 0px;
+}
+  .agentCard img {
+    width: 80px;    
+    height: 80px;
+    border: 6px double #ebebeb;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+.agentCard .level {
+    width: fit-content;
+    padding: 3px 20px;
+margin: 0px auto 5px;
+min-width: 60px;
+font-size: 14px;
+font-weight: bold;
+text-align: center;
+}
+.agent-card-counters {
+  margin: 0px auto 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 10px;
+}
+.agent-card-counters > div {
+  background-color: black;
+  color: #0BBF99;
+  border-radius: 20px;
+  padding: 15px 5px;
+  width: 50%;
+  display: grid;
+  place-items: center;
+  row-gap: 10px;
+  border: 2px solid #ccc;
+  text-align: center;
+}
+.agent-card-counters span {
+  font-size: 14px;
+  font-weight: bold;
+}
+.agent-card-counters > div hr {
+  width: 90%;
+  margin: 0px auto;
+  border: 1px dashed #0BBF99;
+}
+.agent-card-prize-pool {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  column-gap: 10px;
+  background-color: black;
+  color: #0BBF99;
+  border-radius: 20px;
+  padding: 3px 10px;
+  width: fit-content;
+  margin: 0px auto;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.agent-card-content-bottom {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+}
+
+.agentCard button {
+    background-color: black;
+    color: #ccc;
+    border: 2px solid black;
+    width: 100%;
+    padding: 10px;
+    border-radius: 20px;
+    font-size: 16px;
+}
+.agentCard button:hover {
+    background-color: #ccc;
+    color: black;
+    border: 2px solid black;
+}
+.status-container {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    /* display: flex;
+    align-items: center;
+    column-gap: 10px; */
+}
+.status-container p {
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+.status-bulb {
+    width: 20px;
+    height: 20px; 
+    border-radius: 50%;
+    margin: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .status-bulb.live {
+    background-color: #35fd92c9;
+    box-shadow: 0 0 20px 5px rgba(26, 253, 136, 0.7);
+    animation: pulse 2s infinite;
+  }
+  
+  .status-bulb.inactive {
+    background-color: #f44336; 
+    box-shadow: none;
+    opacity: 0.6;
+  }
+
+  .status-bulb.upcoming {
+    background-color: #cde404;
+    opacity: 0.6;
+    animation: bluePulse 2s ease-in-out infinite; /* Smooth easing */
+  }
+  
+  @keyframes bluePulse {
+    0% {
+      box-shadow: 0 0 10px 5px rgba(238, 255, 0, 0.7);
+    }
+    50% {
+      box-shadow: 0 0 30px 8px rgba(238, 255, 0, 1);
+    }
+    100% {
+      box-shadow: 0 0 10px 5px rgba(238, 255, 0, 0.7);
+    }
+  }
+  
+
+  /* Pulse Animation */
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 10px 5px rgba(76, 175, 80, 0.7);
+    }
+    50% {
+      box-shadow: 0 0 30px 8px rgba(76, 175, 80, 1);
+    }
+    100% {
+      box-shadow: 0 0 10px 5px rgba(76, 175, 80, 0.7);
+    }
+  }
+
+
+  
+  .beta-agents {
+    padding: 20px;
+  }
+
+  .beta-agents-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  /* .beta-agents-list > .agentCard {
+    padding-bottom: 50px;
+  }
+
+  .beta-agents-list > .agentCard button {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+  } */
+
+  .beta-breakers {
+    padding: 20px 20px 30px;
+  }
+
+  .beta-breakers-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .beta-breaker {
+    background-color: #181726;
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    border: 2px solid #ccc;
+    width: 320px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .beta-breaker p {
+margin: 5px 0px;
+  }
+
+  .beta-breaker span {
+    font-size: 24px;
+    font-weight: bold;
+    color: #0BBF99;
+  }
+  .beta-breaker svg {
+    border: 6px double #ebebeb;
+    border-radius: 50%;
+    padding: 10px;
+    color: #0BBF99;
+  }
+  .beta-breaker-address {
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    background-color: black;
+    color: #0BBF99;
+    padding: 2px 10px;
+    border-radius: 50px;
+  }
+
+  .beta-breaker-separator {
+    height: 100px;
+    width: 2px;
+    background-color: #ebebeb;
+  }
+
+  .beta-footer {
+    display: grid;
+    border-top: 2px solid #ccc;
+    padding: 20px;
+    place-items: center;
+    text-align: center;
+  }
+
+  .beta-footer .mainLogo {
+    width: 60px;
+    height: 60px;
+    border-radius: 80px;
+    border: 6px double #ebebeb;
+    margin-bottom: 10px;
+  }
+  .beta-footer-links {
+    margin-top: 20px;
+  }
+
+  .live {
+    animation: pulse 2s infinite;
+  }
+
+  @media screen and (min-width:768px) {
+    .mobile {
+      display: none;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .desktop {
+      display: none;
+    }
+    .beta-header {
+      width: 85% !important;
+      padding: 15px 20px 5px !important;
+      margin: 0px auto !important;
+    }
+    .beta-header .mobile {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 20px;
+    }
+    .beta-container {
+      width: 90%;
+    }
+    .beta-mobile-header-left {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      column-gap: 10px;
+      width: 85%;
+    }
+    .beta-mobile-header-right {
+      width: 15%;
+    }
+    .beta-mobile-header-left img:first-child {
+      width: 40px;
+      height: 40px;
+      border-radius: 50px;
+      border: 6px double #000;
+      padding: 5px;
+    }
+    .beta-mobile-header-left img:last-child {
+      width: 140px;
+      height: auto;
+    }
+   .mainMenu .chatMainMenuItem {
+    background-color: #000;
+    color: #ebebeb;
+    border: 2px solid #ebebeb;
+    padding: 10px;
+    border-radius: 20px;
+   }
+
+   .chatPageSocialMenu {
+    width: 90% !important;
+    height: auto !important;
+  }
+
+   .chatPageSocialIcons {
+    margin-top: 20px;
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    column-gap: 5px !important;
+  }
+  .chatPageSocialIcons a {
+    margin: 0px 5px;
+    border-radius: 100px;
+    background-color: #ccc;
+    color: #1E1A39;
+    padding: 5px;
+    border: 2px solid #ccc;
+    display: flex;
+        justify-content: center;
+        align-items: center;
+  }
+  .agentCard.hero {
+    max-width: fit-content;
+  }
+  .beta-content {
+    padding-top: 0px;
+    width: 90% !important;
+    flex-direction: column;
+    padding: 0px;
+    margin: 0px auto;
+  }
+  .beta-content-left {
+    width: 100% !important;
+  }
+  .beta-content-right {
+    width: 100% !important;
+  }
+  .beta-content-left h1 {
+    font-size: 28px;
+  }
+  .beta-counters div {
+    width: 50% !important;
+  }
+  .beta-counters div:last-child {
+    display: none;
+  }
+  /* .beta-counters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    column-gap: 10px;
+    row-gap: 10px;
+  } */
+  /* .beta-counters > div {
+    width: 44%;
+  }
+  .beta-counters > div:first-child {
+    width: 100%;
+  } */
+  .beta-content .styledBtn {
+    width: 100%;
+    margin-bottom: 20px;
+    border-radius: 50px !important;
+  }
+  .chatInfoSection {
+    display: none !important;
+  }
+  .chatPageMain {
+    width: 100% !important;
+  }
+  }

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import stoneLogo from "../../assets/stoneLogo.png";
+import stoneLogo from "../../assets/stone_logo.png";
 import MobileMenu from "./MobileMenu";
 import lightSlogen from "../../assets/lightSlogen.png";
 import "../globals.css";

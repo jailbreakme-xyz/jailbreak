@@ -1,11 +1,15 @@
 services:
   back-end:
     command: npm run dev
+    environment:
+      - NODE_ENV=development
     volumes:
       - ./backend:/usr/src/app/backend
       - ~/docker-secrets/solana-keypair:/usr/src/app/backend/secrets/solana-keypair.json:ro
 
   front-end:
     command: npm run dev
+    environment:
+      - NODE_ENV=development
     volumes:
       - ./frontend:/usr/src/app/frontend

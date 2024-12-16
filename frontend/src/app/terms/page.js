@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
-import stoneLogo from "../../assets/stoneLogo.png";
+import stoneLogo from "../../assets/stone_logo.png";
 import lightSlogen from "../../assets/lightSlogen.png";
 import MainMenu from "../components/MainMenu";
 import MobileMenu from "../components/MobileMenu";
@@ -11,7 +11,6 @@ const Terms = () => {
 
   return (
     <main>
-      <MobileMenu absolute={true} />
       <div
         style={{ textAlign: "center", display: "grid", placeItems: "center" }}
       >

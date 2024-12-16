@@ -1,5 +1,4 @@
 import express from "express";
-import { Challenge, Chat } from "../models/Models.js";
 import BlockchainService from "../services/blockchain/index.js";
 import dotenv from "dotenv";
 import DatabaseService from "../services/db/index.js";
@@ -8,26 +7,16 @@ import getSolPriceInUSDT from "../hooks/solPrice.js";
 dotenv.config();
 
 const router = express.Router();
-const solanaRpc = process.env.RPC_URL;
-const model = "gpt-4o-mini";
+const RPC_ENV = process.env.NODE_ENV === "development" ? "devnet" : "mainnet";
 
-// router.get("/", async (req, res) => {
-//   try {
-//     const challenges = await DatabaseService.getAllChallenges();
-//     res.send(challenges);
-//   } catch (err) {
-//     console.log(err);
-//     return res.status(400).send(err);
-//   }
-// });
+const solanaRpc = `https://${RPC_ENV}.helius-rpc.com/?api-key=${process.env.RPC_KEY}`;
+
+const model = "gpt-4o-mini";
 
 router.get("/get-challenge", async (req, res) => {
   try {
     const name = req.query.name;
     const initial = req.query.initial;
-    let message_price = Number(req.query.price);
-    let prize = message_price * 100;
-
     const projection = {
       _id: 1,
       title: 1,
@@ -38,7 +27,6 @@ router.get("/get-challenge", async (req, res) => {
       disable: 1,
       start_date: 1,
       charactersPerWord: 1,
-      // tools: 1,
       level: 1,
       model: 1,
       image: 1,
@@ -55,20 +43,23 @@ router.get("/get-challenge", async (req, res) => {
       initial_pool_size: 1,
       expiry: 1,
       developer_fee: 1,
+      usd_prize: 1,
+      break_attempts: 1,
+      language: 1,
+      tldr: 1,
+      fee_multiplier: 1,
+      agent_logic: 1,
     };
-
-    const challengeInitialized = await DatabaseService.findOneChat({
-      challenge: { $regex: name, $options: "i" },
-    });
-
-    if (!challengeInitialized) {
-      projection.system_message = 1;
-    }
 
     let challenge = await DatabaseService.getChallengeByName(name, projection);
     if (!challenge) {
       return res.status(404).send("Challenge not found");
     }
+
+    let fee_multiplier = challenge.fee_multiplier || 100;
+    let message_price = Number(req.query.price);
+    let prize = message_price * fee_multiplier;
+
     const challengeName = challenge.name;
     const challengeId = challenge._id;
     const chatLimit = challenge.chatLimit;
@@ -89,10 +80,7 @@ router.get("/get-challenge", async (req, res) => {
     const tournamentPDA = challenge.tournamentPDA;
     if (!tournamentPDA) return res.write("Tournament PDA not found");
 
-    const break_attempts = await DatabaseService.getChatCount({
-      challenge: challengeName,
-      role: "user",
-    });
+    const break_attempts = challenge.break_attempts;
 
     const chatProjection = {
       challenge: 1,
@@ -107,7 +95,7 @@ router.get("/get-challenge", async (req, res) => {
       chatProjection.tool_calls = 1;
     }
 
-    const chatHistory = await DatabaseService.getFullChatHistory(
+    const chatHistory = await DatabaseService.getChatHistory(
       {
         challenge: challengeName,
         role: { $ne: "system" },
@@ -120,7 +108,15 @@ router.get("/get-challenge", async (req, res) => {
     const now = new Date();
     const expiry = challenge.expiry;
     const solPrice = await getSolPriceInUSDT();
-
+    let highestScore = 0;
+    if (challenge.agent_logic === "scoring") {
+      const highestScoreMessage = await DatabaseService.getHighestScore(
+        challenge.name
+      );
+      if (highestScoreMessage?.length > 0) {
+        highestScore = highestScoreMessage[0]?.tool_calls.score;
+      }
+    }
     if (chatHistory.length > 0) {
       if (expiry < now && challenge.status === "active") {
         const lastSender = chatHistory[0].address;
@@ -140,13 +136,17 @@ router.get("/get-challenge", async (req, res) => {
         };
 
         await DatabaseService.createChat(assistantMessage);
-        await DatabaseService.updateChallenge(challengeId, {
-          status: "concluded",
-        });
+        await DatabaseService.updateChallenge(
+          challengeId,
+          {
+            status: "concluded",
+          },
+          true
+        );
       }
 
       message_price = challenge.entryFee;
-      prize = message_price * 100;
+      prize = message_price * fee_multiplier;
 
       const usdMessagePrice = message_price * solPrice;
       const usdPrize = prize * solPrice;
@@ -159,29 +159,19 @@ router.get("/get-challenge", async (req, res) => {
         usdPrize,
         expiry,
         solPrice,
+        highestScore,
         chatHistory: chatHistory.reverse(),
       });
     }
 
-    if (!challengeInitialized) {
-      const firstPrompt = challenge.system_message;
-      await DatabaseService.createChat({
-        challenge: challengeName,
-        model: model,
-        role: "system",
-        content: firstPrompt,
-        address: challenge.tournamentPDA,
-      });
-    }
-
-    if (initial) {
+    if (initial === "true") {
       const blockchainService = new BlockchainService(solanaRpc, programId);
       const tournamentData = await blockchainService.getTournamentData(
         tournamentPDA
       );
 
       message_price = tournamentData.entryFee;
-      prize = message_price * 100;
+      prize = message_price * fee_multiplier;
     }
 
     const usdMessagePrice = message_price * solPrice;
@@ -197,6 +187,7 @@ router.get("/get-challenge", async (req, res) => {
       chatHistory,
       expiry,
       solPrice,
+      highestScore,
     });
   } catch (err) {
     console.error(err);

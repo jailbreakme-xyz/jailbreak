@@ -22,18 +22,28 @@ const JailTokensSection = ({ data, loading }) => {
         >
           <div style={{ display: "block" }}>
             <div className="page-loader" style={{ textAlign: "center" }}>
-              <BarLoader color="black" size={150} cssOverride={override} />
+              <BarLoader color="#ebebeb" size={150} cssOverride={override} />
               <br />
-              <span style={{ color: "black" }}>Loading...</span>
+              <span style={{ color: "#ebebeb" }}>Loading...</span>
             </div>
           </div>
         </div>
       ) : (
-        <>
+        <div style={{ padding: "20px" }}>
           <h1 style={styles.title}>
             $JAIL Tokens: The Future of the JailbreakMe Ecosystem
           </h1>
-          <span style={styles.address}>Token Address: {data?.address}</span>
+          <span style={styles.address}>
+            Token Address:{" "}
+            <a
+              className="pointer"
+              style={{ color: "#007BFF" }}
+              href="https://dexscreener.com/solana/card131dsufcqfky9ciczd4qj5hbazsqlklsekjjmadp"
+              target="_blank"
+            >
+              {data?.address}
+            </a>
+          </span>
           <hr />
           {/* Overview Section */}
           <section style={styles.section}>
@@ -109,7 +119,7 @@ const JailTokensSection = ({ data, loading }) => {
               </li>
             </ul>
           </section>
-        </>
+        </div>
       )}
     </div>
   );
@@ -121,28 +131,28 @@ const styles = {
     fontFamily: "'Arial', sans-serif",
     lineHeight: "1.6",
     color: "#333",
-    width: "70%",
     margin: "0",
-    padding: "0px 20px 20px 20px",
-    backgroundColor: "#f9f9f9",
+    padding: "0px",
+    backgroundColor: "#181726",
     borderRadius: "10px",
     boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
   },
   title: {
     fontSize: "28px",
     fontWeight: "bold",
-    color: "#007BFF",
+    color: "#0bbf99",
     textAlign: "left",
     marginBottom: "0px",
   },
   subtitle: {
     fontSize: "22px",
     fontWeight: "bold",
-    color: "#444",
+    color: "#ebebeb",
     marginBottom: "10px",
   },
   section: {
     marginBottom: "20px",
+    color: "#ebebeb",
   },
   list: {
     listStyleType: "none",
@@ -154,7 +164,8 @@ const styles = {
   },
   address: {
     fontSize: "16px",
-    color: "#666",
+    color: "#ebebeb",
+    overflowWrap: "break-word",
   },
 };
 

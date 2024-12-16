@@ -1,18 +1,17 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
-import stoneLogo from "../../assets/stoneLogo.png";
+
 import axios from "axios";
-import MainMenu from "../components/MainMenu";
-import MobileMenu from "../components/MobileMenu";
 import "../../styles/FAQ.css";
-import lightSlogen from "../../assets/lightSlogen.png";
+import Header from "../components/templates/Header";
+import PageLoader from "../components/templates/PageLoader";
+import Footer from "../components/templates/Footer";
 
 const FAQ = (props) => {
   const [faqData, setFaqData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState(null);
-
+  const [activeChallenge, setActiveChallenge] = useState(null);
   const toggleFAQ = (index) => {
     setActiveIndex(activeIndex === index ? null : index);
   };
@@ -24,6 +23,7 @@ const FAQ = (props) => {
       .then((res) => res.data)
       .catch((err) => err);
     setFaqData(data.faq);
+    setActiveChallenge(data.activeChallenge);
     setLoading(false);
   };
 
@@ -37,73 +37,40 @@ const FAQ = (props) => {
 
   return (
     <main>
-      <MobileMenu absolute={true} />
-      <div
-        style={{ textAlign: "center", display: "grid", placeItems: "center" }}
-      >
-        <Image
-          className="pointer"
-          onClick={() => {
-            window.location.href = "/";
-          }}
-          alt="logo"
-          src={stoneLogo}
-          width="80"
-          style={{
-            borderRadius: "0px 0px 150px 150px",
-            marginBottom: "10px",
-          }}
-        />
-        <Image
-          className="pointer"
-          onClick={() => {
-            window.location.href = "/";
-          }}
-          alt="logo"
-          src={lightSlogen}
-          width="120"
-        />
-        <h2 className="faq-title">Frequently Asked Questions</h2>
-      </div>
-      <hr />
-      {loading ? (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            width: "100%",
-            height: "75vh",
-            color: "#ccc",
-          }}
-        >
-          Loading FAQ...
-        </div>
-      ) : (
-        <div className="docsPage">
-          <MainMenu />
-          <div className="faq-container">
-            <div className="faq-items">
-              {faqData.map((item, index) => (
-                <div key={index} className="faq-item">
-                  <div
-                    className="faq-question"
-                    onClick={() => toggleFAQ(index)}
-                  >
-                    {item.question}
-                    <span className="faq-toggle-icon">
-                      {activeIndex === index ? "-" : "+"}
-                    </span>
+      <div className="beta-container" style={{ paddingBottom: "100px" }}>
+        <Header activeChallenge={activeChallenge} />
+        {loading ? (
+          <PageLoader />
+        ) : (
+          <div className="docsPage">
+            <div style={{ textAlign: "left" }}>
+              <h2 className="faq-title">Frequently Asked Questions</h2>
+            </div>
+            <hr />
+            <div className="faq-container">
+              <div className="faq-items">
+                {faqData.map((item, index) => (
+                  <div key={index} className="faq-item">
+                    <div
+                      className="faq-question pointer"
+                      onClick={() => toggleFAQ(index)}
+                    >
+                      {item.question}
+                      <span className="faq-toggle-icon pointer">
+                        {activeIndex === index ? "-" : "+"}
+                      </span>
+                    </div>
+                    {activeIndex === index && (
+                      <div className="faq-answer">{item.answer}</div>
+                    )}
                   </div>
-                  {activeIndex === index && (
-                    <div className="faq-answer">{item.answer}</div>
-                  )}
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
+      <Footer />
     </main>
   );
 };
