@@ -194,7 +194,6 @@ router.post("/submit/:id", async (req, res) => {
         const functionArguments = toolCalls.function.arguments;
         const jsonArgs = JSON.parse(functionArguments);
         const results = jsonArgs.results;
-        const score = jsonArgs.score;
 
         if (required_action.type === "submit_tool_outputs") {
           const tool_outputs = [
@@ -209,10 +208,8 @@ router.post("/submit/:id", async (req, res) => {
         assistantMessage.tool_calls = {
           results: results,
           function_name: functionName,
-          score: score,
         };
         assistantMessage.content += results;
-        assistantMessage.content += `\n🎯 Degen Score: ${score}`;
 
         if (functionName === challenge.success_function) {
           if (isValidTransaction) {
