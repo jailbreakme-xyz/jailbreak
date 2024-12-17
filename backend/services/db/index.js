@@ -414,7 +414,22 @@ class DataBaseService {
             _id: 0,
             name: "$challengeDetails.name",
             pfp: "$challengeDetails.pfp",
-            conversations: 1,
+            conversations: {
+              $map: {
+                input: "$conversations",
+                as: "conversation",
+                in: {
+                  address: "$$conversation.address",
+                  challenge: "$$conversation.challenge",
+                  role: "$$conversation.role",
+                  content: "$$conversation.content",
+                  date: "$$conversation.date",
+                  fee: "$$conversation.fee",
+                  txn: "$$conversation.txn",
+                  thread_id: "$$conversation.thread_id",
+                },
+              },
+            },
           },
         },
       ]);
