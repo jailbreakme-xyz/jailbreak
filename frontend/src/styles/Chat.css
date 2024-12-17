@@ -298,12 +298,14 @@ border: 0px;
       padding-bottom: 60px;   */
     }
     .chat-bubble.assistant, .chat-bubble.system {
-      padding-left: 50px;
-      align-self: flex-end;
+      align-self: flex-start;
+      padding-right: 20px;
       /* float: right; */
       /* justify-content: flex-end; */
     }
-
+    .chat-bubble.user {
+      padding-left: 50px;
+    }
     .chat-footer {
       padding: 10px 0px;
       position: fixed;
