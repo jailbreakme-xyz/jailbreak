@@ -106,6 +106,8 @@ export default function Challenge({ params }) {
   const [highestScore, setHighestScore] = useState(0);
   const messagesEndRef = useRef(null);
   const chatRef = useRef(null);
+  const writingRef = useRef(writing);
+
   // const shouldScrollRef = useRef(false);
 
   const { publicKey, sendTransaction, connected } = useWallet();
@@ -115,6 +117,10 @@ export default function Challenge({ params }) {
       behavior: "smooth",
     });
   };
+
+  useEffect(() => {
+    writingRef.current = writing;
+  }, [writing]);
 
   useEffect(() => {
     if (publicKey) {
@@ -138,7 +144,11 @@ export default function Challenge({ params }) {
 
   useEffect(() => {
     getChallenge(false);
-    const interval = setInterval(() => getChallenge(true), 3000);
+    const interval = setInterval(() => {
+      if (!writingRef.current) {
+        getChallenge(true);
+      }
+    }, 3000);
     return () => clearInterval(interval);
   }, [name]);
 
@@ -160,9 +170,7 @@ export default function Challenge({ params }) {
         messagesCopy[messagesCopy.length - 1] = {
           ...lastMessage,
           content: lastMessage.content + chunk,
-          date: messagesCopy.date
-            ? messagesCopy.date
-            : new Date().toISOString(),
+          date: new Date().toISOString(),
         };
       } else {
         messagesCopy = [
@@ -170,9 +178,7 @@ export default function Challenge({ params }) {
           {
             role: "assistant",
             content: chunk,
-            date: messagesCopy.date
-              ? messagesCopy.date
-              : new Date().toISOString(),
+            date: new Date().toISOString(),
           },
         ];
       }
@@ -491,6 +497,10 @@ export default function Challenge({ params }) {
                         <div className={`chat-bubble ${item.role}`} key={index}>
                           {item.role === "user" ? (
                             <>
+                              <div className="message">
+                                <p>{item.content}</p>
+                                <TimeAgo date={new Date(item.date)} />
+                              </div>
                               <div
                                 className="avatar pointer"
                                 style={{
@@ -526,18 +536,9 @@ export default function Challenge({ params }) {
                                   }}
                                 />
                               </div>
-
-                              <div className="message">
-                                <p>{item.content}</p>
-                                <TimeAgo date={new Date(item.date)} />
-                              </div>
                             </>
                           ) : (
                             <>
-                              <div className="message">
-                                <ParsedText message={item.content} />
-                                <TimeAgo date={new Date(item.date)} />
-                              </div>
                               <div className="avatar">
                                 <Image
                                   alt="pfp"
@@ -549,6 +550,10 @@ export default function Challenge({ params }) {
                                     border: "2px solid #09bf99",
                                   }}
                                 />
+                              </div>
+                              <div className="message">
+                                <ParsedText message={item.content} />
+                                <TimeAgo date={new Date(item.date)} />
                               </div>
                             </>
                           )}

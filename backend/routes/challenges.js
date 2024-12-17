@@ -108,6 +108,17 @@ router.get("/get-challenge", async (req, res) => {
 
     const now = new Date();
     const expiry = challenge.expiry;
+
+    if (
+      challenge.start_date > now &&
+      expiry < now &&
+      challenge.status === "upcoming"
+    ) {
+      await DatabaseService.updateChallenge(challengeId, {
+        status: "active",
+      });
+    }
+
     const solPrice = await getSolPriceInUSDT();
     let highestScore = 0;
     if (challenge.agent_logic === "scoring") {
@@ -118,6 +129,7 @@ router.get("/get-challenge", async (req, res) => {
         highestScore = highestScoreMessage[0]?.tool_calls.score;
       }
     }
+
     if (chatHistory.length > 0) {
       if (expiry < now && challenge.status === "active") {
         let winner;
@@ -184,16 +196,6 @@ router.get("/get-challenge", async (req, res) => {
 
     const usdMessagePrice = message_price * solPrice;
     const usdPrize = prize * solPrice;
-
-    if (
-      challenge.start_date > now &&
-      expiry < now &&
-      challenge.status === "upcoming"
-    ) {
-      await DatabaseService.updateChallenge(challengeId, {
-        status: "active",
-      });
-    }
 
     return res.status(200).json({
       challenge,

@@ -30,8 +30,12 @@ function Timer({ expiryDate }) {
               color: "#09bf99",
               padding: "10px",
               borderRadius: "10px",
-              width: "25px",
               textAlign: "center",
+              width: "18px",
+              fontSize: "14px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
             <span>{days < 10 ? `0${days}` : days}</span>
@@ -39,7 +43,7 @@ function Timer({ expiryDate }) {
         )}
         {days > 0 && (
           <span
-            style={{ fontSize: "20px", fontWeight: "bold", color: "#09bf99" }}
+            style={{ fontSize: "12px", fontWeight: "bold", color: "#09bf99" }}
           >
             :
           </span>
@@ -51,14 +55,18 @@ function Timer({ expiryDate }) {
             color: "#09bf99",
             padding: "10px",
             borderRadius: "10px",
-            width: "25px",
             textAlign: "center",
+            width: "18px",
+            fontSize: "14px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
           <span>{hours < 10 ? `0${hours}` : hours}</span>
         </div>
         <span
-          style={{ fontSize: "20px", fontWeight: "bold", color: "#09bf99" }}
+          style={{ fontSize: "12px", fontWeight: "bold", color: "#09bf99" }}
         >
           :
         </span>
@@ -68,14 +76,18 @@ function Timer({ expiryDate }) {
             color: "#09bf99",
             padding: "10px",
             borderRadius: "10px",
-            width: "25px",
             textAlign: "center",
+            width: "18px",
+            fontSize: "14px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
           <span>{minutes < 10 ? `0${minutes}` : minutes}</span>
         </div>
         <span
-          style={{ fontSize: "20px", fontWeight: "bold", color: "#09bf99" }}
+          style={{ fontSize: "12px", fontWeight: "bold", color: "#09bf99" }}
         >
           :
         </span>
@@ -85,8 +97,12 @@ function Timer({ expiryDate }) {
             color: "#09bf99",
             padding: "10px",
             borderRadius: "10px",
-            width: "25px",
             textAlign: "center",
+            width: "18px",
+            fontSize: "14px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
           <span>{seconds < 10 ? `0${seconds}` : seconds}</span>

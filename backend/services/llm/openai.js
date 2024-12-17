@@ -109,7 +109,7 @@ class OpenAIService {
   async createThreadAndRun(assistantId, messages, tool_choice) {
     const run = await this.openai.beta.threads.createAndRun({
       assistant_id: assistantId,
-      tool_choice: "auto",
+      tool_choice: tool_choice,
       stream: true,
       parallel_tool_calls: false,
       thread: {

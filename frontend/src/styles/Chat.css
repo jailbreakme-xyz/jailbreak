@@ -35,14 +35,15 @@
   
   .chat-bubble.user {
     /* flex-direction: row-reverse; */
-    align-self: flex-start; 
+    padding-left: 150px;
+    align-self: flex-end; 
     text-align: left;
     /* float: left; */
   }
   
   .chat-bubble.assistant, .chat-bubble.system {
-    padding-left: 150px;
-    align-self: flex-end;
+    align-self: flex-start;
+    column-gap: 5px;
     /* float: right; */
     /* justify-content: flex-end; */
     /* flex-direction: row-reverse; */
@@ -66,7 +67,8 @@ height: 30px;
   }
 
   .chat-bubble.assistant .avatar, .chat-bubble.system .avatar {
-    width: 8%;
+    width: 40px;
+    margin-right: 0px;
   }
   .chat-bubble .avatar-image {
     border-radius: 50%;
@@ -74,7 +76,7 @@ height: 30px;
   }
   
   .chat-bubble .message {
-    max-width: 85%;
+    max-width: 80%;
     width: fit-content;
     padding: 10px 15px;
     border-radius: 15px;
@@ -88,22 +90,18 @@ height: 30px;
     word-break: break-word;
   }
 
-  .chat-bubble.assistant .message,  .chat-bubble.system .message  {
-    max-width: 95%;
-    width: fit-content;
-  }
 
   .chat-bubble.user .message {
     background-color: #dcf8c6;
     color: #000;
-    border-radius: 0px 20px 20px 20px !important;
+    border-radius: 20px 0px 20px 20px !important;
   }
   
   .chat-bubble:not(.user) .message {
     background-color: #fff;
     color: #000;
     border: 1px solid #ddd;
-    border-radius: 20px 0px 20px 20px !important;
+    border-radius: 0px 20px 20px 20px !important;
   }
   
   .message p {
