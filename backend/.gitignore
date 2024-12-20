@@ -47,3 +47,5 @@ next-env.d.ts
 /test
 /jailbreak-pool-dev
 /hooks/degenScore.js
+/services/llm/characters
+/services/llm/logs

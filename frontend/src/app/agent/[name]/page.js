@@ -77,12 +77,12 @@ const Agent = ({ params }) => {
   } = agentData?.challenge;
 
   return (
-    <div className="beta-container">
+    <div className="fullWidthPage">
       <Header activeChallenge={agentData?.challenge} />
       {loading ? (
         <PageLoader />
       ) : (
-        <div style={styles.container} className="agent-page">
+        <div style={styles.container} className="agent-page beta-container">
           {/* Profile Section */}
           <div style={styles.profileSection}>
             <img

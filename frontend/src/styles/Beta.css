@@ -12,6 +12,47 @@
     margin: 0 auto;
     color: #ebebeb;
 }
+.fullWidthPage .beta-header {
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+    border: none;
+    box-shadow: none;
+    border-radius: 0px;
+    border-bottom: 2px solid #ebebeb;
+}
+.fullWidthPage .beta-container {
+  width: 90%;
+}
+.fullWidthPage .beta-header .beta-header-left {
+  width: 60%;
+  justify-content: flex-start;
+  padding: 20px;
+}
+.fullWidthPage .beta-header .beta-header-right {
+  width: 40%;
+  justify-content: flex-end;
+  padding: 20px;
+}
+.fullWidthPage .beta-header .beta-header-right .socialIcons {
+  width: auto;
+}
+.fullWidthPage .beta-header .beta-header-right .socialIcons a {
+  display: flex;
+}
+.wallet-adapter-button {
+  background-color: #0BBF99;
+  color: #000;
+  border: 2px solid #000;
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-size: 16px;
+}
+.wallet-adapter-button:hover {
+  background-color: #000;
+  color: #0BBF99;
+  border: 2px solid #0BBF99;
+}
 .beta-header {
     /* background-color: #ebebeb; */
     border-radius: 0px 0px 50px 50px;
@@ -33,6 +74,9 @@
     height: 25px;
     background-color: #707070;
     margin: 0 10px 0 20px;
+}
+.socialIcons .separator {
+  margin: 0 10px;
 }
 .beta-header-left img:first-child {
 border-radius: 100px;
@@ -87,12 +131,17 @@ padding: 5px;
     font-size: 1.5rem;
     line-height: 1.5;
 }
+.beta-content-left strong {
+    color: #0BBF99;
+    font-weight: bold;
+    font-size: 2.5rem;
+}
 
 .beta-counters {
     margin: 0px;
     max-width: 660px;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     column-gap: 10px;
   }
@@ -111,11 +160,11 @@ padding: 5px;
     color: #0BBF99;
     background-color: black;
       border-radius: 20px;
-      padding: 20px 5px;
-      width: 33%;
+      padding: 10px;
+      width: 50%;
       display: grid;
       place-items: center;
-      row-gap: 10px;
+      row-gap: 8px;
       border: 2px solid #ccc;
       text-align: center;
   }
@@ -127,6 +176,26 @@ padding: 5px;
   }
   .beta-counters > div  > span {
     font-size: 30px;
+  }
+
+  #heroTopWinners svg {
+    border: 6px double #0BBF99;
+    border-radius: 50%;
+    color: #0BBF99;
+  }
+  #heroTopWinners > div {
+    gap: 0px;
+  }
+  #heroTopWinners p {
+    font-size: 16px;
+    font-weight: normal;
+    margin: 5px 0px 0px;
+  }
+
+  #heroTopWinners span {
+    font-size: 20px;
+    color: #0BBF99;
+    font-weight: bold;
   }
 
   .beta-content .styledBtn {
@@ -148,7 +217,8 @@ padding: 5px;
 
   .agentCard {
     position: relative;
-    width: 300px;
+    /* width: 300px; */
+    /* max-width: 255px; */
     background-color:#181726;
     border-radius: 20px;
     padding: 20px;
@@ -159,6 +229,13 @@ padding: 5px;
 .agentCard.hero {
   width: 300px;
   min-height: auto;
+}
+.beta-agents-list .agentCard, .beta-breakers-list .beta-breaker {
+  flex: 1 1 255px;
+  max-width: 300px;
+}
+.beta-agents-list, .beta-breakers-list {
+  justify-content: center;
 }
 .agentCard.hero .agent-card-content-bottom {
   position: relative;
@@ -330,8 +407,7 @@ text-align: center;
   .beta-agents-list {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    gap: 5px;
+    gap: 10px;
     margin-top: 20px;
   }
 
@@ -353,8 +429,7 @@ text-align: center;
   .beta-breakers-list {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    gap: 5px;
+    gap: 10px;
     margin-top: 20px;
   }
 
@@ -364,7 +439,8 @@ text-align: center;
     padding: 20px;
     text-align: center;
     border: 2px solid #ccc;
-    width: 300px;
+    /* width: 320px; */
+    /* max-width: 255px; */
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -373,6 +449,7 @@ text-align: center;
 
   .beta-breaker p {
 margin: 5px 0px;
+font-size: 12px;
   }
 
   .beta-breaker span {
@@ -404,8 +481,7 @@ margin: 5px 0px;
 
   .beta-footer {
     display: grid;
-    border-top: 2px solid #ccc;
-    padding: 20px;
+    padding: 40px 20px 20px;
     place-items: center;
     text-align: center;
   }
@@ -425,6 +501,39 @@ margin: 5px 0px;
     animation: pulse 2s infinite;
   }
 
+  .deploy-program-container {
+    display: grid;
+    place-items: center;
+    width: 720px;
+    margin: 0px auto;
+    padding: 20px;
+    text-align: center;
+    color: #ebebeb;
+    background-color: #181726;
+    border-radius: 20px;
+    border: 2px solid #ccc;
+  }
+  .deploy-program-container hr {
+    width: 100%;
+    margin: 20px auto;
+  }
+
+  .deploy-program-container p {
+    font-size: 1.3rem;
+  }
+  .deploy-program-container button {
+    background-color: #0BBF99;
+    color: #000;
+    border: 2px solid #000;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-size: 16px;
+  }
+  .deploy-program-container button:hover {
+    background-color: #000;
+    color: #0BBF99;
+    border: 2px solid #0BBF99;
+  }
   @media screen and (min-width:768px) {
     .mobile {
       display: none;
@@ -508,7 +617,7 @@ margin: 5px 0px;
         align-items: center;
   }
   .agentCard.hero {
-    width: 320px;
+    width: 300px;
     max-width: fit-content;
   }
   .beta-content {
@@ -528,11 +637,21 @@ margin: 5px 0px;
   .beta-content-left h1 {
     font-size: 28px;
   }
+  .beta-content-left p {
+    font-size: 1.2rem;
+  }
   .beta-counters div {
     width: 50% !important;
   }
-  .beta-counters div:last-child {
+  .beta-counters div:nth-child(2) {
     display: none;
+  }
+  .deploy-program-container {
+    width: 80% !important;
+  }
+
+  .deploy-program-container p {
+    font-size: 1rem;
   }
   /* .beta-counters {
     display: flex;
@@ -569,5 +688,10 @@ margin: 5px 0px;
 
   .beta-agents {
     padding: 20px 0px !important;
+  }
+
+  #heroTopWinners {
+    padding: 10px 0px 20px !important;
+    justify-content: center !important;
   }
   }

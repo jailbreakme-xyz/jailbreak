@@ -12,6 +12,9 @@ input,textarea, p, span, h1, h2, h3, h4, h5, h6, strong {
 cursor: auto;
 }
 
+.error {
+color: red;
+}
 /* ::-webkit-scrollbar {
   width: 10px;
 }
@@ -54,13 +57,13 @@ body {
   padding-bottom: 5px;
 }
 
-.chatHeader .beta-header {
+/* .chatHeader .beta-header {
   width: 95% !important;
   margin: auto !important;
   border: 0px !important;
   border-radius: 0px !important;
   padding: 25px 25px 15px !important;
-}
+} */
 
 
 .chatPageSocialMenu {
@@ -1089,9 +1092,9 @@ margin-right: 5px;
 
 
 @media screen and (max-width:768px) {
-  .chatHeader .beta-header {
+  /* .chatHeader .beta-header {
     width: 90% !important;
-  }
+  } */
   .applyButton, .applyButton:hover {
     width: 100%;
   }
@@ -1332,8 +1335,8 @@ margin-right: 5px;
 }
 /* Hamburger Icon */
 .hamburgerIcon {
-  width: 25px;
-  height: 25px;
+  width: 20px;
+  height: 20px;
   cursor: pointer;
   z-index: 1100;
   background-color: #000;
@@ -1347,7 +1350,9 @@ margin-right: 5px;
   z-index: 9999999;
   position: relative;
 }
-
+.fullWidthPage .beta-header {
+  border-bottom: 0px !important;
+}
 .mainMenu .chatMainMenuItem {
   background-color: #000;
   color: #ebebeb;

@@ -39,6 +39,17 @@ services:
       - back-end
       - front-end
 
+  # eliza:
+  #   build:
+  #     context: eliza
+  #   container_name: eliza
+  #   working_dir: /usr/src/app/eliza
+  #   networks:
+  #     - node-network
+  #   tty: true
+  #   ports:
+  #     - "3030:3030"
+
 networks:
   node-network:
     driver: bridge

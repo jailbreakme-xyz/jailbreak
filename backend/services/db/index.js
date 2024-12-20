@@ -93,6 +93,15 @@ class DataBaseService {
       return false;
     }
   }
+
+  async updatePage(query, update) {
+    try {
+      return await Pages.updateOne(query, update);
+    } catch (error) {
+      console.error("Database Service Error:", error);
+      return false;
+    }
+  }
   // Settings-related methods
   async getSettings() {
     try {
@@ -294,6 +303,7 @@ class DataBaseService {
 
   async getTopBreakersAndChatters() {
     try {
+      const limit = 16;
       // Aggregation for Top Breakers from the 'challenges' collection
       const topBreakers = await Challenge.aggregate([
         {
@@ -350,12 +360,13 @@ class DataBaseService {
           },
         },
         { $sort: { totalUsdPrize: -1 } },
-        { $limit: 10 },
       ]);
 
+      const usersToFilter = topBreakers.map((breaker) => breaker.address);
+      const topChattersLimit = limit - topBreakers.length;
       // Aggregation for Top Chatters from the 'chats' collection
       const topChatters = await Chat.aggregate([
-        { $match: { role: "user" } },
+        { $match: { role: "user", address: { $nin: usersToFilter } } },
         {
           $group: {
             _id: "$address",
@@ -370,7 +381,7 @@ class DataBaseService {
           },
         },
         { $sort: { chatCount: -1 } },
-        { $limit: 11 },
+        { $limit: topChattersLimit },
       ]);
 
       // Exclude top breakers from top chatters

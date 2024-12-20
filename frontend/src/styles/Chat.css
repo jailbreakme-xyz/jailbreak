@@ -68,11 +68,11 @@ height: 30px;
 
   .chat-bubble.assistant .avatar, .chat-bubble.system .avatar {
     width: 40px;
-    margin-right: 0px;
   }
   .chat-bubble .avatar-image {
     border-radius: 50%;
     background-color: #ddd;
+    
   }
   
   .chat-bubble .message {
@@ -299,12 +299,12 @@ border: 0px;
     }
     .chat-bubble.assistant, .chat-bubble.system {
       align-self: flex-start;
-      padding-right: 20px;
+      padding-right: 15px;
       /* float: right; */
       /* justify-content: flex-end; */
     }
     .chat-bubble.user {
-      padding-left: 50px;
+      padding-left: 15px;
     }
     .chat-footer {
       padding: 10px 0px;

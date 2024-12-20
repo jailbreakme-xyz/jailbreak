@@ -50,6 +50,7 @@ router.get("/get-challenge", async (req, res) => {
       fee_multiplier: 1,
       agent_logic: 1,
       expiry_logic: 1,
+      custom_user_img: 1,
     };
 
     let challenge = await DatabaseService.getChallengeByName(name, projection);
@@ -110,8 +111,8 @@ router.get("/get-challenge", async (req, res) => {
     const expiry = challenge.expiry;
 
     if (
-      challenge.start_date > now &&
-      expiry < now &&
+      challenge.start_date <= now &&
+      expiry >= now &&
       challenge.status === "upcoming"
     ) {
       await DatabaseService.updateChallenge(challengeId, {
@@ -119,7 +120,7 @@ router.get("/get-challenge", async (req, res) => {
       });
     }
 
-    const solPrice = await getSolPriceInUSDT();
+    const solPrice = await getSolPriceInUSDT(initial === "true");
     let highestScore = 0;
     if (challenge.agent_logic === "scoring") {
       const highestScoreMessage = await DatabaseService.getHighestScore(
@@ -131,7 +132,16 @@ router.get("/get-challenge", async (req, res) => {
     }
 
     if (chatHistory.length > 0) {
+      message_price = challenge.entryFee;
+      prize = message_price * fee_multiplier;
+
+      const usdMessagePrice = message_price * solPrice;
+      const usdPrize = prize * solPrice;
       if (expiry < now && challenge.status === "active") {
+        await DatabaseService.updateChallenge(challengeId, {
+          status: "concluded",
+        });
+
         let winner;
         if (challenge.expiry_logic === "score") {
           const topScoreMsg = await DatabaseService.getHighestAndLatestScore(
@@ -158,15 +168,13 @@ router.get("/get-challenge", async (req, res) => {
 
         await DatabaseService.createChat(assistantMessage);
         await DatabaseService.updateChallenge(challengeId, {
-          status: "concluded",
+          expiry: new Date(),
+          winning_prize: prize,
+          usd_prize: usdPrize,
+          winner: winner,
         });
       }
 
-      message_price = challenge.entryFee;
-      prize = message_price * fee_multiplier;
-
-      const usdMessagePrice = message_price * solPrice;
-      const usdPrize = prize * solPrice;
       return res.status(200).json({
         challenge,
         break_attempts,

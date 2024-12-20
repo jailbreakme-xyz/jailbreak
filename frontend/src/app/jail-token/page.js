@@ -31,12 +31,12 @@ const Token = () => {
 
   return (
     <main>
-      <div className="beta-container" style={{ paddingBottom: "100px" }}>
+      <div className="fullWidthPage" style={{ paddingBottom: "100px" }}>
         <Header activeChallenge={activeChallenge} />
         {loading ? (
           <PageLoader />
         ) : (
-          <div className="docsPage">
+          <div className="docsPage beta-container">
             <div style={{ textAlign: "left" }}>
               <h2 className="faq-title">$JAIL Tokens</h2>
             </div>

@@ -42,7 +42,6 @@ router.post("/get-transaction", async (req, res) => {
     );
 
     const entryFee = tournamentData.entryFee;
-
     const { serializedTransaction } =
       await blockchainService.createSubmitSolutionTransaction(
         tournamentPDA,
@@ -54,31 +53,31 @@ router.post("/get-transaction", async (req, res) => {
       return res.status(500).json({ error: "Failed to create transaction." });
     }
 
-    const mainnetBlockchainService = new BlockchainService(
-      mainSolanaRpc,
-      challenge.idl.address
-    );
+    // const mainnetBlockchainService = new BlockchainService(
+    //   mainSolanaRpc,
+    //   challenge.idl.address
+    // );
 
-    let holdings, accountCreationTimestamp;
-    const foundHoldings = await DataBaseService.getTransactionByAddress(
-      userWalletAddress
-    );
+    // let holdings, accountCreationTimestamp;
+    // const foundHoldings = await DataBaseService.getTransactionByAddress(
+    //   userWalletAddress
+    // );
 
-    if (foundHoldings && foundHoldings.transactions_data) {
-      holdings = foundHoldings.transactions_data.holdings;
-      accountCreationTimestamp =
-        foundHoldings.transactions_data.accountCreationDate;
-    } else {
-      holdings = await mainnetBlockchainService.fetchUserTokenHoldings(
-        userWalletAddress,
-        100,
-        true
-      );
-      accountCreationTimestamp =
-        await mainnetBlockchainService.getAccountCreationTimestamp(
-          userWalletAddress
-        );
-    }
+    // if (foundHoldings && foundHoldings.transactions_data) {
+    //   holdings = foundHoldings.transactions_data.holdings;
+    //   accountCreationTimestamp =
+    //     foundHoldings.transactions_data.accountCreationDate;
+    // } else {
+    //   holdings = await mainnetBlockchainService.fetchUserTokenHoldings(
+    //     userWalletAddress,
+    //     100,
+    //     true
+    //   );
+    //   accountCreationTimestamp =
+    //     await mainnetBlockchainService.getAccountCreationTimestamp(
+    //       userWalletAddress
+    //     );
+    // }
     const transactionId = crypto.randomUUID();
 
     const transactionData = {
@@ -91,10 +90,10 @@ router.post("/get-transaction", async (req, res) => {
       createdAt: new Date(),
       status: "pending",
       entryFee,
-      transactions_data: {
-        holdings: holdings,
-        accountCreationDate: new Date(accountCreationTimestamp * 1000),
-      },
+      // transactions_data: {
+      //   holdings: holdings,
+      //   accountCreationDate: new Date(accountCreationTimestamp * 1000),
+      // },
     };
 
     const savedTransaction = await DataBaseService.saveTransaction(

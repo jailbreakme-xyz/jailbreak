@@ -7,8 +7,10 @@ import lightSlogen from "../../../assets/lightSlogen.png";
 import SocialIcons from "../partials/SocialIcons";
 import MobileMenu from "../MobileMenu";
 import "../../../styles/Beta.css";
-
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { useWallet } from "@solana/wallet-adapter-react";
 const Header = (props) => {
+  const { publicKey } = useWallet();
   return (
     <div className="beta-header">
       <div className="beta-header-left desktop">
@@ -59,7 +61,11 @@ const Header = (props) => {
         </a>
       </div>
       <div className="beta-header-right desktop">
-        <SocialIcons component={props.component} address={props.address} />
+        <SocialIcons
+          component={props.component}
+          address={publicKey?.toString()}
+        />
+        <WalletMultiButton />
       </div>
       <div className="mobile">
         <div className="beta-mobile-header-left">

@@ -203,6 +203,7 @@ export default function Challenge({ params }) {
       });
 
       if (response.ok) {
+        setLoading(false);
         setError("");
         const reader = response.body.getReader();
         return read(reader);
@@ -380,7 +381,7 @@ export default function Challenge({ params }) {
 
   return (
     <main className="main">
-      <div className="chatPageWrapper">
+      <div className="chatPageWrapper fullWidthPage">
         <div className="chatHeader">
           <Header
             solPrice={solPrice}
@@ -395,10 +396,6 @@ export default function Challenge({ params }) {
             address={publicKey}
           />
         </div>
-        <hr
-          style={{ border: "1px solid #ebebeb", margin: "0px" }}
-          className="desktopOnly"
-        />
         {pageLoading ? (
           <PageLoader />
         ) : (
@@ -501,41 +498,64 @@ export default function Challenge({ params }) {
                                 <p>{item.content}</p>
                                 <TimeAgo date={new Date(item.date)} />
                               </div>
-                              <div
-                                className="avatar pointer"
-                                style={{
-                                  width: "25px",
-                                  height: "25px",
-                                  padding: "5px",
-                                  borderRadius: "50%",
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  justifyContent: "center",
-                                  alignItems: "center",
-                                  color: "#1A0047",
-                                  border: "2px solid #ebebeb",
-                                  fontSize: "12px",
-                                  lineHeight: "12px",
-                                  overflow: "hidden",
-                                }}
-                                onClick={() => {
-                                  window.open(
-                                    `/breaker/${item.address}`,
-                                    "_blank"
-                                  );
-                                }}
-                              >
-                                <Jdenticon
-                                  value={item.address}
-                                  size={"30"}
+                              {challenge?.custom_user_img ? (
+                                <div
+                                  className="avatar pointer"
                                   onClick={() => {
                                     window.open(
                                       `/breaker/${item.address}`,
                                       "_blank"
                                     );
                                   }}
-                                />
-                              </div>
+                                >
+                                  <Image
+                                    alt="pfp"
+                                    src={challenge?.custom_user_img}
+                                    width="40"
+                                    height="40"
+                                    className="avatar-image pointer"
+                                    style={{
+                                      border: "2px solid red",
+                                    }}
+                                  />
+                                </div>
+                              ) : (
+                                <div
+                                  className="avatar pointer"
+                                  style={{
+                                    width: "30px",
+                                    height: "30px",
+                                    padding: "5px",
+                                    borderRadius: "50%",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    color: "#1A0047",
+                                    border: "2px solid #ebebeb",
+                                    fontSize: "12px",
+                                    lineHeight: "12px",
+                                    overflow: "hidden",
+                                  }}
+                                  onClick={() => {
+                                    window.open(
+                                      `/breaker/${item.address}`,
+                                      "_blank"
+                                    );
+                                  }}
+                                >
+                                  <Jdenticon
+                                    value={item.address}
+                                    size={"30"}
+                                    onClick={() => {
+                                      window.open(
+                                        `/breaker/${item.address}`,
+                                        "_blank"
+                                      );
+                                    }}
+                                  />
+                                </div>
+                              )}
                             </>
                           ) : (
                             <>
@@ -543,8 +563,8 @@ export default function Challenge({ params }) {
                                 <Image
                                   alt="pfp"
                                   src={challenge?.pfp}
-                                  width="30"
-                                  height="30"
+                                  width="40"
+                                  height="40"
                                   className="avatar-image"
                                   style={{
                                     border: "2px solid #09bf99",

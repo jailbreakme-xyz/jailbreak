@@ -96,13 +96,13 @@ export default function Breaker({ params }) {
   }
 
   return (
-    <div className="beta-page">
-      <div className="beta-container">
+    <div className="fullWidthPage">
+      <div>
         <Header activeChallenge={data?.activeChallenge} />
         {loading ? (
           <PageLoader />
         ) : (
-          <>
+          <div className="beta-container">
             <div className="profile-box">
               <div className="profile-info">
                 <div className="profile-info-header">
@@ -206,7 +206,7 @@ export default function Breaker({ params }) {
                 </div>
               ))}
             </div>
-          </>
+          </div>
         )}
       </div>
     </div>

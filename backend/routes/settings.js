@@ -16,9 +16,11 @@ router.get("/", async (req, res) => {
     const jailToken = pages.find((page) => page.name === "jail-token")?.content;
     const beta = pages.find((page) => page.name === "beta")?.content;
 
-    let activeChallenge = challenges?.find(
-      (challenge) => challenge.status === "active"
-    );
+    const activeChallenges = challenges
+      ?.filter((challenge) => challenge.status === "active")
+      ?.sort((a, b) => b.start_date - a.start_date);
+
+    let activeChallenge = activeChallenges[0];
 
     if (!activeChallenge) {
       const upcomingChallenge = challenges?.find(

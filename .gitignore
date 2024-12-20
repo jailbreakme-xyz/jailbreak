@@ -4,3 +4,4 @@
 /run/secrets
 transactionDetails
 refund.sh
+node_modules

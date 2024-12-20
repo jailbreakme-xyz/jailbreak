@@ -33,30 +33,30 @@ export default function Beta() {
   }, []);
 
   return (
-    <div className="beta-page">
-      <div className="beta-container">
+    <div className="fullWidthPage">
+      <div>
         <Header activeChallenge={data?.activeChallenge} />
         {loading ? (
           <PageLoader />
         ) : (
-          <>
+          <div className="beta-container">
             <Hero data={data} />
             <div className="beta-agents">
-              <h1>Meet the Agents →</h1>
+              <h1>Meet the Agents 🤖</h1>
               <hr />
               <div className="beta-agents-list">
-                {data?.challenges.map((agent, index) => (
+                {data?.challenges?.map((agent, index) => (
                   <AgentCard char={agent} data={data} key={index} />
                 ))}
               </div>
             </div>
             <div className="beta-breakers">
-              <h1>Top Jailbreakers →</h1>
+              <h1>Top Jailbreakers 🔥</h1>
               <hr />
               <div className="beta-breakers-list">
                 {data?.topBreakers
                   ?.concat(data?.topChatters)
-                  .map((breaker, index) => (
+                  ?.map((breaker, index) => (
                     <div
                       className="beta-breaker pointer"
                       key={index}
@@ -106,7 +106,7 @@ export default function Beta() {
               </div>
             </div>
             <Footer />
-          </>
+          </div>
         )}
       </div>
     </div>

@@ -50,14 +50,12 @@ export default function SocialIcons(props) {
       >
         <SiGithub size={25} className="pointer" />
       </a>
-      {props.component === "break" && props.address && (
+      {props.address && <div className="separator"></div>}
+      {props.address && (
         <a
           href={`/breaker/${props.address}`}
           target="_blank"
           className="pointer userIcon"
-          style={{
-            marginLeft: "20px",
-          }}
         >
           <Jdenticon
             value={props.address}

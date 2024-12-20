@@ -7,6 +7,7 @@ import DatabaseService from "../services/db/index.js";
 import TelegramBotService from "../services/bots/telegram.js";
 import validatePrompt from "../hooks/validatePrompt.js";
 import getSolPriceInUSDT from "../hooks/solPrice.js";
+
 function numberWithCommas(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
@@ -56,10 +57,20 @@ router.post("/submit/:id", async (req, res) => {
     const now = new Date();
     const oneHourInMillis = 3600000;
 
+    const tournamentData = await blockchainService.getTournamentData(
+      tournamentPDA
+    );
+
+    const entryFee = tournamentData.entryFee;
+    const feeMulPct = tournamentData.feeMulPct;
+
     const isValidTransaction =
       await blockchainService.verifyTransactionSignature(
         signature,
-        transaction
+        transaction,
+        entryFee,
+        feeMulPct,
+        walletAddress
       );
 
     console.log("isValidTransaction:", isValidTransaction);
@@ -71,12 +82,6 @@ router.post("/submit/:id", async (req, res) => {
     if (transaction.entryFee < lastTransaction.entryFee) {
       return res.write("INVALID TRANSACTION");
     }
-
-    const tournamentData = await blockchainService.getTournamentData(
-      tournamentPDA
-    );
-
-    const entryFee = tournamentData.entryFee;
 
     await DatabaseService.updateChallenge(
       id,

@@ -16,6 +16,8 @@ import {
   fetchAllDigitalAsset,
 } from "@metaplex-foundation/mpl-token-metadata";
 import axios from "axios";
+import { sha256 } from "js-sha256";
+
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -24,7 +26,7 @@ const RPC_KEY = process.env.RPC_KEY;
 class BlockchainService {
   constructor(solanaRpc, programId) {
     this.connection = new Connection(solanaRpc, "confirmed");
-    this.programId = new PublicKey(programId);
+    this.programId = programId ? new PublicKey(programId) : null;
     this.umi = createUmi(solanaRpc).use(mplTokenMetadata());
     this.HELIUS_API_URL = `https://api.helius.xyz/v0`;
   }
@@ -157,11 +159,13 @@ class BlockchainService {
 
       // Read entry fee (8 bytes)
       const entryFee = data.readBigUInt64LE(41);
+      const feeMulPct = data.readUInt8(49);
 
       return {
         authority: authority.toString(),
         state,
         entryFee: Number(entryFee) / LAMPORTS_PER_SOL, // Convert BigInt to number if needed
+        feeMulPct,
       };
     } catch (error) {
       console.error("Error fetching tournament data:", error);
@@ -292,7 +296,13 @@ class BlockchainService {
     }
   }
 
-  async verifyTransactionSignature(signature, savedTransaction) {
+  async verifyTransactionSignature(
+    signature,
+    savedTransaction,
+    entryFee,
+    feeMulPct,
+    senderWalletAddress
+  ) {
     try {
       // Step 1: Fetch transaction details from the network
       const transactionDetails = await this.connection.getParsedTransaction(
@@ -305,12 +315,13 @@ class BlockchainService {
         return false;
       }
 
-      const {
-        unsignedTransaction,
-        userWalletAddress,
-        tournamentPDA,
-        entryFee,
-      } = savedTransaction;
+      const { unsignedTransaction, userWalletAddress, tournamentPDA } =
+        savedTransaction;
+
+      if (userWalletAddress !== senderWalletAddress) {
+        console.log("User wallet address mismatch");
+        throw new Error("User wallet address mismatch");
+      }
 
       const unsignedTx = Transaction.from(
         Buffer.from(unsignedTransaction, "base64")
@@ -345,13 +356,18 @@ class BlockchainService {
         return false;
       }
 
-      const amountReceivedSOL = totalLamportsSent / LAMPORTS_PER_SOL;
+      const amountReceivedSOL = (totalLamportsSent / LAMPORTS_PER_SOL).toFixed(
+        6
+      );
+      const expectedDifference = amountReceivedSOL * (feeMulPct / 1000);
+      const expectedFee = (entryFee - expectedDifference).toFixed(6);
 
       console.log("Amount received:", amountReceivedSOL);
-      console.log("Entry fee:", entryFee);
-      const tolerance = entryFee * 0.05;
+      console.log("Expected Fee:", expectedFee);
+      console.log("Next Entry fee:", entryFee);
+      const tolerance = expectedFee * 0.05;
       const isWithinTolerance =
-        Math.abs(amountReceivedSOL - entryFee) <= tolerance;
+        Math.abs(amountReceivedSOL - expectedFee) <= tolerance;
 
       if (!isWithinTolerance) {
         console.log("Amount mismatch");
@@ -475,6 +491,289 @@ class BlockchainService {
     const shuffledArray = [...partialArr, ...arr.slice(count)];
 
     return shuffledArray;
+  }
+
+  async createDeployProgramTransaction(
+    senderAddress,
+    ownerAddress,
+    ownerFee,
+    programData
+  ) {
+    try {
+      const programAccount = Keypair.generate();
+      const programId = programAccount.publicKey;
+      const rentExemption =
+        await this.connection.getMinimumBalanceForRentExemption(
+          programData.byteLength
+        );
+
+      const extraCharge = rentExemption * ownerFee;
+
+      const transaction = new Transaction().add(
+        SystemProgram.createAccount({
+          fromPubkey: senderAddress,
+          newAccountPubkey: programId,
+          lamports: rentExemption,
+          space: programData.byteLength,
+          programId: SystemProgram.programId,
+        }),
+        SystemProgram.transfer({
+          fromPubkey: senderAddress,
+          toPubkey: ownerAddress,
+          lamports: extraCharge,
+        })
+      );
+
+      const { blockhash } = await this.connection.getLatestBlockhash();
+      transaction.recentBlockhash = blockhash;
+      transaction.feePayer = new PublicKey(senderAddress);
+
+      const serializedTransaction = transaction
+        .serialize({
+          requireAllSignatures: false,
+        })
+        .toString("base64");
+
+      return {
+        serializedTransaction,
+        program_id: programId,
+      };
+    } catch (error) {
+      console.error("Error creating submit_solution transaction:", error);
+      return false;
+    }
+  }
+
+  async initializeTournament(senderAddress, programId) {
+    try {
+      // Find the PDA for the tournament
+      const [tournamentPDA, bump] = PublicKey.findProgramAddressSync(
+        [Buffer.from("tournament")],
+        programId
+      );
+
+      console.log("Tournament PDA:", tournamentPDA.toBase58());
+
+      // Check if the tournament PDA is already initialized
+      const tournamentInfo = await this.connection.getAccountInfo(
+        tournamentPDA
+      );
+      if (tournamentInfo) {
+        console.log(
+          "Tournament PDA already initialized. Skipping initialization."
+        );
+        return;
+      }
+
+      // Define the accounts involved in the transaction
+      const keys = [
+        { pubkey: tournamentPDA, isSigner: false, isWritable: true },
+        { pubkey: senderAddress, isSigner: true, isWritable: true },
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
+      ];
+
+      // Calculate the discriminator for the initialize instruction
+      const discriminator = sha256.digest("global:initialize").slice(0, 8);
+      const data = Buffer.from([...discriminator, bump]);
+
+      // Create the transaction instruction
+      const instruction = new TransactionInstruction({
+        keys,
+        programId,
+        data,
+      });
+
+      // Create a new transaction and add the instruction
+      const transaction = new Transaction().add(instruction);
+
+      // Get the latest blockhash and set the fee payer
+      const { blockhash } = await this.connection.getLatestBlockhash();
+      transaction.recentBlockhash = blockhash;
+      transaction.feePayer = new PublicKey(senderAddress);
+
+      // Serialize the transaction
+      const serializedTransaction = transaction
+        .serialize({
+          requireAllSignatures: false,
+        })
+        .toString("base64");
+
+      return {
+        serializedTransaction,
+      };
+    } catch (error) {
+      console.error("Error initializing tournament:", error);
+      return false;
+    }
+  }
+
+  async startTournament(
+    senderAddress,
+    tournamentPDA,
+    initialSol,
+    fee_mul_pct,
+    winner_payout_pct,
+    systemPrompt
+  ) {
+    try {
+      const systemPromptHash = new Uint8Array(
+        Buffer.from(sha256.digest(systemPrompt))
+      );
+
+      const initialPool = BigInt(initialSol * LAMPORTS_PER_SOL);
+      const keys = [
+        { pubkey: tournamentPDA, isSigner: false, isWritable: true }, // tournament
+        { pubkey: senderAddress, isSigner: true, isWritable: true }, // payer
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // system_program
+      ];
+
+      // Calculate the discriminator for the `start_tournament` instruction
+      const discriminator = sha256
+        .digest("global:start_tournament")
+        .slice(0, 8);
+      console.log("Discriminator:", Buffer.from(discriminator).toString("hex"));
+
+      // Construct the instruction data
+      const data = Buffer.alloc(8 + 32 + 8 + 2); // Allocate sufficient space
+      data.set(Buffer.from(discriminator), 0); // Add discriminator
+      data.set(systemPromptHash, 8); // Add system prompt hash at offset 8
+      data.writeBigUInt64LE(initialPool, 40); // Add initial pool at offset 40
+      data.writeUInt8(fee_mul_pct, 48); // Add fee multiplier at offset 48
+      data.writeUInt8(winner_payout_pct, 49); // Add winner payout at offset 49
+
+      console.log("Instruction Data Buffer:", data.toString("hex")); // Log the full buffer
+
+      const instruction = new TransactionInstruction({
+        keys,
+        programId,
+        data,
+      });
+
+      // Create a new transaction and add the instruction
+      const transaction = new Transaction().add(instruction);
+
+      // Get the latest blockhash and set the fee payer
+      const { blockhash } = await this.connection.getLatestBlockhash();
+      transaction.recentBlockhash = blockhash;
+      transaction.feePayer = new PublicKey(senderAddress);
+
+      // Serialize the transaction
+      const serializedTransaction = transaction
+        .serialize({
+          requireAllSignatures: false,
+        })
+        .toString("base64");
+
+      return {
+        serializedTransaction,
+      };
+    } catch (error) {
+      console.error("Error starting tournament:", error);
+      return false;
+    }
+  }
+
+  async initializeAndStartTournament(
+    senderAddress,
+    programId,
+    initialSol,
+    fee_mul_pct,
+    winner_payout_pct,
+    systemPrompt
+  ) {
+    try {
+      // Find the PDA for the tournament
+      const [tournamentPDA, bump] = PublicKey.findProgramAddressSync(
+        [Buffer.from("tournament")],
+        programId
+      );
+
+      console.log("Tournament PDA:", tournamentPDA.toBase58());
+
+      // Check if the tournament PDA is already initialized
+      const tournamentInfo = await this.connection.getAccountInfo(
+        tournamentPDA
+      );
+      if (tournamentInfo) {
+        console.log(
+          "Tournament PDA already initialized. Skipping initialization."
+        );
+        return;
+      }
+
+      // Define the accounts involved in the initialization transaction
+      const initKeys = [
+        { pubkey: tournamentPDA, isSigner: false, isWritable: true },
+        { pubkey: senderAddress, isSigner: true, isWritable: true },
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
+      ];
+
+      // Calculate the discriminator for the initialize instruction
+      const initDiscriminator = sha256.digest("global:initialize").slice(0, 8);
+      const initData = Buffer.from([...initDiscriminator, bump]);
+
+      // Create the initialization transaction instruction
+      const initInstruction = new TransactionInstruction({
+        keys: initKeys,
+        programId,
+        data: initData,
+      });
+
+      // Proceed to start the tournament
+      const systemPromptHash = new Uint8Array(
+        Buffer.from(sha256.digest(systemPrompt))
+      );
+      const initialPool = BigInt(initialSol * LAMPORTS_PER_SOL);
+      const startKeys = [
+        { pubkey: tournamentPDA, isSigner: false, isWritable: true }, // tournament
+        { pubkey: senderAddress, isSigner: true, isWritable: true }, // payer
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // system_program
+      ];
+
+      // Calculate the discriminator for the `start_tournament` instruction
+      const startDiscriminator = sha256
+        .digest("global:start_tournament")
+        .slice(0, 8);
+
+      // Construct the instruction data for starting the tournament
+      const startData = Buffer.alloc(8 + 32 + 8 + 2); // Allocate sufficient space
+      startData.set(Buffer.from(startDiscriminator), 0); // Add discriminator
+      startData.set(systemPromptHash, 8); // Add system prompt hash at offset 8
+      startData.writeBigUInt64LE(initialPool, 40); // Add initial pool at offset 40
+      startData.writeUInt8(fee_mul_pct, 48); // Add fee multiplier at offset 48
+      startData.writeUInt8(winner_payout_pct, 49); // Add winner payout at offset 49
+
+      const startInstruction = new TransactionInstruction({
+        keys: startKeys,
+        programId,
+        data: startData,
+      });
+
+      // Create a new transaction and add both instructions
+      const transaction = new Transaction().add(
+        initInstruction,
+        startInstruction
+      );
+
+      // Get the latest blockhash and set the fee payer
+      const { blockhash } = await this.connection.getLatestBlockhash();
+      transaction.recentBlockhash = blockhash;
+      transaction.feePayer = new PublicKey(senderAddress);
+
+      // Serialize the transaction
+      const serializedTransaction = transaction
+        .serialize({
+          requireAllSignatures: false,
+        })
+        .toString("base64");
+
+      return {
+        serializedTransaction,
+      };
+    } catch (error) {
+      console.error("Error initializing and starting tournament:", error);
+      return false;
+    }
   }
 }
 

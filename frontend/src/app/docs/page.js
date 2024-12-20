@@ -32,13 +32,13 @@ const APIDocs = (props) => {
   }, []);
 
   return (
-    <main className="beta-page">
-      <div className="beta-container" style={{ paddingBottom: "100px" }}>
+    <main className="fullWidthPage">
+      <div style={{ paddingBottom: "100px" }}>
         <Header activeChallenge={activeChallenge} />
         {loading ? (
           <PageLoader />
         ) : (
-          <div className="docsPage">
+          <div className="docsPage beta-container">
             <div
               style={{
                 textAlign: "left",

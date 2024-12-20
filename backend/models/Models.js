@@ -46,6 +46,8 @@ const ChallengeSchema = new mongoose.Schema(
     fee_multiplier: Number,
     agent_logic: String,
     expiry_logic: String,
+    style: Array,
+    custom_user_img: String,
   },
   {
     collection:
