@@ -16,7 +16,7 @@ const RPC_ENV = process.env.NODE_ENV === "development" ? "devnet" : "mainnet";
 const SOLANA_RPC = `https://${RPC_ENV}.helius-rpc.com/?api-key=${process.env.RPC_KEY}`;
 
 const idl = fs.readFileSync(
-  path.join(__dirname, "../jailbreak-pool-v2/target/idl/tournament.json")
+  path.join(__dirname, "../jailbreak-pool-v2/dist/tournament.json")
 );
 const idlData = JSON.parse(idl.toString());
 
