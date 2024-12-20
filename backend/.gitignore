@@ -40,7 +40,7 @@ next-env.d.ts
 /data/challenges.js
 /data/challenges_old.js
 
-/jailbreak-pool/target
+/jailbreak-pool-v2/target
 
 /secrets
 /data
