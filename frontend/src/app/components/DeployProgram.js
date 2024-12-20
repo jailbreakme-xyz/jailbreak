@@ -89,7 +89,7 @@ const DeployProgram = () => {
           unlimited tournaments directly from your profile page.
           <br />
           This upgrade empowers you to host and oversee competitions, enhancing
-          your profile's capabilities and engagement with the community.
+          your profile&lsquo;s capabilities and engagement with the community.
         </p>
         <p>
           <strong>
