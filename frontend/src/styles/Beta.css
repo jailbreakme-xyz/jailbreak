@@ -549,7 +549,7 @@ font-size: 12px;
       margin: auto !important;
     }
     .beta-header {
-      width: 85% !important;
+      width: 95% !important;
       padding: 15px 20px 5px !important;
       margin: 0px auto !important;
     }
@@ -562,7 +562,7 @@ font-size: 12px;
       padding-bottom: 20px;
     }
     .beta-container {
-      width: 100%;
+      width: 100% !important;
     }
     .beta-mobile-header-left {
       display: flex;
