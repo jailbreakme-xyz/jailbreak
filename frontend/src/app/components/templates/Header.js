@@ -37,11 +37,11 @@ const Header = (props) => {
         <a href="/" className="beta-header-link pointer">
           HOME
         </a>
-        <a
-          href={`/break/${props.activeChallenge?.name}`}
-          className="beta-header-link pointer"
-        >
-          BREAK
+        <a href={`/agents`} className="beta-header-link pointer">
+          AGENTS
+        </a>
+        <a href="/breakers" className="beta-header-link pointer">
+          BREAKERS
         </a>
         <a
           href="https://jailbreak.gitbook.io/jailbreakme.xyz"
@@ -49,9 +49,6 @@ const Header = (props) => {
           className="beta-header-link pointer"
         >
           DOCS
-        </a>
-        <a href="/docs" className="beta-header-link pointer">
-          API
         </a>
         <a href="/faq" className="beta-header-link pointer">
           FAQ

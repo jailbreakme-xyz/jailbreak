@@ -227,11 +227,11 @@ router.post("/submit/:id", async (req, res) => {
             const winningPrize = entryFee * fee_multiplier;
             const usdPrize = winningPrize * solPrice;
 
-            const successMessage = `🥳 Congratulations! ${
-              challenge.winning_message
-            } and won $${numberWithCommas(usdPrize)}.\n\n${
+            const successMessage = `${challenge.winning_message}\n\n${
               assistantMessage.content
-            }\nTransaction: ${concluded}`;
+            }\n\nYou won $${numberWithCommas(
+              usdPrize.toFixed(2)
+            )}.\n\nTransaction: ${concluded}`;
             assistantMessage.content = successMessage;
             assistantMessage.win = true;
             await DatabaseService.createChat(assistantMessage);

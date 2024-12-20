@@ -68,6 +68,7 @@ import { conversationRoute } from "./routes/conversation.js";
 import { settingsRoute } from "./routes/settings.js";
 import { transactionsRoute } from "./routes/transactions.js";
 import { programRoute } from "./routes/program.js";
+import { dataRoute } from "./routes/data.js";
 // TEST:
 // import { testRoute } from "./test/conversation.js";
 
@@ -80,6 +81,7 @@ app.use("/api/conversation", conversationRoute);
 app.use("/api/settings", settingsRoute);
 app.use("/api/transactions", transactionsRoute);
 app.use("/api/program", programRoute);
+app.use("/api/data", dataRoute);
 // app.use("/api/json/v1/tournaments", tournamentsAPI);
 // app.use("/api/json/v1/conversations", conversationsAPI);
 

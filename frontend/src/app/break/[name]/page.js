@@ -394,6 +394,7 @@ export default function Challenge({ params }) {
             hiddenItems={["API", "BREAK", "SOCIAL"]}
             component={"break"}
             address={publicKey}
+            activeChallenge={challenge}
           />
         </div>
         {pageLoading ? (

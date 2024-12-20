@@ -12,6 +12,7 @@ import {
   GiBreakingChain,
 } from "react-icons/gi";
 import { FaCopy, FaCheckCircle } from "react-icons/fa";
+import Footer from "../../components/templates/Footer";
 
 export default function Breaker({ params }) {
   const address = use(params).address;
@@ -209,6 +210,7 @@ export default function Breaker({ params }) {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

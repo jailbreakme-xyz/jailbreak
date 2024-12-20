@@ -1092,9 +1092,12 @@ margin-right: 5px;
 
 
 @media screen and (max-width:768px) {
-  /* .chatHeader .beta-header {
+  .docsPage.beta-container {
     width: 90% !important;
-  } */
+  }
+  .beta-container > .chat-container {
+    padding: 0px;
+  }
   .applyButton, .applyButton:hover {
     width: 100%;
   }
@@ -1245,7 +1248,7 @@ margin-right: 5px;
 .jail-token-page h1 {
   font-size: 24px !important;
 }
-.agent-page {
+.agent-page.beta-container {
   border-radius: 20px !important;
   overflow-wrap: break-word !important;
   margin: 10px auto 20px !important;
@@ -1347,7 +1350,7 @@ margin-right: 5px;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999999;
+  z-index: 9999999999;
   position: relative;
 }
 .fullWidthPage .beta-header {
@@ -1384,6 +1387,8 @@ margin-right: 5px;
   display: flex;
       justify-content: center;
       align-items: center;
+      width: 25px;
+      height: 25px;
 }
 
 /* Menu Items */
@@ -1401,13 +1406,13 @@ margin-right: 5px;
   flex-direction: column !important;
   align-items: flex-start !important;
   padding: 40px 20px;
-  z-index: 1000;
+  z-index: 9999999999;
   overflow-y: scroll;
 }
 
 .mainMenu.open {
   transform: translateX(0);
-  z-index: 99999;
+  z-index: 999999999;
 }
 
 /* Menu Item Links */

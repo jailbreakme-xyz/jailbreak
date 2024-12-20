@@ -13,7 +13,7 @@ export default function Deploy() {
           justifyContent: "center",
           alignItems: "center",
           width: "100%",
-          height: "80vh",
+          height: "85vh",
         }}
       >
         <DeployProgram />

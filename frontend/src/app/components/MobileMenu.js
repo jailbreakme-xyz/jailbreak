@@ -54,32 +54,21 @@ const MobileMenu = (props) => {
         >
           <FaHome size={25} /> HOME
         </Link>
-        {props.activeChallenge && (
-          <Link
-            href={`/agent/${props.activeChallenge?.name}`}
-            className="chatMainMenuItem pointer"
-            style={{ textTransform: "uppercase" }}
-          >
-            <Image
-              src={props.activeChallenge?.pfp}
-              alt="logo"
-              width="25"
-              height="25"
-              style={{ borderRadius: "50px" }}
-            />{" "}
-            {props.activeChallenge?.name}
-          </Link>
-        )}
+        <Link
+          href={`/agents`}
+          className="chatMainMenuItem pointer"
+          style={{ textTransform: "uppercase" }}
+        >
+          AGENTS
+        </Link>
 
-        {!props.hiddenItems?.includes("API") && (
-          <Link
-            href="/docs"
-            className="chatMainMenuItem pointer"
-            onClick={() => setMenuOpen(false)}
-          >
-            <FaCode size={25} /> API
-          </Link>
-        )}
+        <Link
+          href="/docs"
+          className="chatMainMenuItem pointer"
+          onClick={() => setMenuOpen(false)}
+        >
+          <GiBreakingChain size={25} /> BREAKERS
+        </Link>
         <Link
           href="/faq"
           className="chatMainMenuItem pointer"

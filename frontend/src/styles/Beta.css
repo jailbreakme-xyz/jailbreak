@@ -119,7 +119,7 @@ padding: 5px;
     justify-content: space-between;
     align-items: center;
     width: 95%;
-    padding: 20px 30px;
+    padding: 40px 30px;
     margin: 0px auto;
 }
 
@@ -534,6 +534,21 @@ font-size: 12px;
     color: #0BBF99;
     border: 2px solid #0BBF99;
   }
+  .all-breakers-title span, .all-agents-title span {
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: #0BBF99;
+  }
+  .beta-breaker-load-more {
+    background-color: #0BBF99;
+    color: #000;
+    border: 2px solid #000;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-size: 16px;
+    margin: 20px auto;
+  }
+  .beta-breakers-view-all {font-size: 16px; color: #0BBF99; font-weight: bold;}
   @media screen and (min-width:768px) {
     .mobile {
       display: none;
@@ -549,8 +564,8 @@ font-size: 12px;
       margin: auto !important;
     }
     .beta-header {
-      width: 95% !important;
-      padding: 15px 20px 5px !important;
+      width: 100% !important;
+      padding: 0px !important;
       margin: 0px auto !important;
     }
     .beta-header .mobile {
@@ -559,7 +574,7 @@ font-size: 12px;
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
-      padding-bottom: 20px;
+      /* border-bottom: 2px solid #ebebeb; */
     }
     .beta-container {
       width: 100% !important;
@@ -570,9 +585,14 @@ font-size: 12px;
       justify-content: flex-start;
       column-gap: 10px;
       width: 85%;
+      padding: 15px 10px;
     }
     .beta-mobile-header-right {
+      padding: 15px 10px;
       width: 15%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
     }
     .beta-mobile-header-left img:first-child {
       width: 40px;
@@ -593,11 +613,26 @@ font-size: 12px;
     border-radius: 20px;
    }
 
+   .all-breakers-title, .all-agents-title {
+    display: block;
+    width: 95%;
+    margin: 0px auto;
+   }
+   .all-breakers-title h1, .all-agents-title h1 {
+    font-size: 28px;
+    margin: 0px;
+   }
+   .all-breakers-title span, .all-agents-title span {
+    font-size: 22px;
+    margin: 0px;
+   }
    .chatPageSocialMenu {
     width: 90% !important;
     height: auto !important;
   }
-
+  .beta-agents-list .agentCard, .beta-breakers-list .beta-breaker {
+    max-width: 320px;
+  }
    .chatPageSocialIcons {
     margin-top: 20px;
     display: flex !important;

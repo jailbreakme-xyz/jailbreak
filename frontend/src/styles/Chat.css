@@ -35,8 +35,9 @@
   
   .chat-bubble.user {
     /* flex-direction: row-reverse; */
-    padding-left: 150px;
+    /* padding-left: 150px; */
     align-self: flex-end; 
+    justify-content: flex-end;
     text-align: left;
     /* float: left; */
   }
@@ -76,7 +77,7 @@ height: 30px;
   }
   
   .chat-bubble .message {
-    max-width: 80%;
+    max-width: 70%;
     width: fit-content;
     padding: 10px 15px;
     border-radius: 15px;

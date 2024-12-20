@@ -77,6 +77,19 @@ class DataBaseService {
     }
   }
 
+  async getBreakersCount(query) {
+    try {
+      return await Chat.aggregate([
+        { $match: query },
+        { $group: { _id: "$address", count: { $sum: 1 } } },
+        { $count: "count" },
+      ]);
+    } catch (error) {
+      console.error("Database Service Error:", error);
+      return false;
+    }
+  }
+
   async findOneChat(query) {
     try {
       return await Chat.findOne(query);
@@ -301,69 +314,71 @@ class DataBaseService {
     }
   }
 
-  async getTopBreakersAndChatters() {
+  async getTopBreakersAndChatters(page = 1, limit = 16) {
     try {
-      const limit = 16;
-      // Aggregation for Top Breakers from the 'challenges' collection
-      const topBreakers = await Challenge.aggregate([
-        {
-          $match: {
-            winner: { $ne: null },
-          },
-        },
-        {
-          $group: {
-            _id: "$winner",
-            winCount: { $sum: 1 },
-            totalUsdPrize: { $sum: "$usd_prize" },
-            developerFee: { $first: "$developer_fee" },
-          },
-        },
-        {
-          $lookup: {
-            from:
-              process.env.NODE_ENV === "development" ? "chats_test" : "chats",
-            let: { challengeId: "$_id" },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $and: [
-                      { $eq: ["$address", "$$challengeId"] },
-                      { $eq: ["$role", "user"] },
-                    ],
-                  },
-                },
-              },
-            ],
-            as: "userChats",
-          },
-        },
-        {
-          $addFields: {
-            chatCount: { $size: "$userChats" },
-            netUsdPrize: {
-              $multiply: [
-                "$totalUsdPrize",
-                { $subtract: [1, { $divide: ["$developerFee", 100] }] },
-              ],
+      const skip = (page - 1) * limit;
+      let topBreakers = [];
+      if (page === 1) {
+        topBreakers = await Challenge.aggregate([
+          {
+            $match: {
+              winner: { $ne: null },
             },
           },
-        },
-        {
-          $project: {
-            _id: 0,
-            address: "$_id",
-            winCount: 1,
-            chatCount: 1,
-            totalUsdPrize: "$netUsdPrize",
+          {
+            $group: {
+              _id: "$winner",
+              winCount: { $sum: 1 },
+              totalUsdPrize: { $sum: "$usd_prize" },
+              developerFee: { $first: "$developer_fee" },
+            },
           },
-        },
-        { $sort: { totalUsdPrize: -1 } },
-      ]);
+          {
+            $lookup: {
+              from:
+                process.env.NODE_ENV === "development" ? "chats_test" : "chats",
+              let: { challengeId: "$_id" },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $and: [
+                        { $eq: ["$address", "$$challengeId"] },
+                        { $eq: ["$role", "user"] },
+                      ],
+                    },
+                  },
+                },
+              ],
+              as: "userChats",
+            },
+          },
+          {
+            $addFields: {
+              chatCount: { $size: "$userChats" },
+              netUsdPrize: {
+                $multiply: [
+                  "$totalUsdPrize",
+                  { $subtract: [1, { $divide: ["$developerFee", 100] }] },
+                ],
+              },
+            },
+          },
+          {
+            $project: {
+              _id: 0,
+              address: "$_id",
+              winCount: 1,
+              chatCount: 1,
+              totalUsdPrize: "$netUsdPrize",
+            },
+          },
+          { $sort: { totalUsdPrize: -1 } },
+        ]);
+      }
 
-      const usersToFilter = topBreakers.map((breaker) => breaker.address);
-      const topChattersLimit = limit - topBreakers.length;
+      const usersToFilter = topBreakers?.map((breaker) => breaker.address);
+      const topChattersLimit = limit - topBreakers?.length;
       // Aggregation for Top Chatters from the 'chats' collection
       const topChatters = await Chat.aggregate([
         { $match: { role: "user", address: { $nin: usersToFilter } } },
@@ -381,6 +396,7 @@ class DataBaseService {
           },
         },
         { $sort: { chatCount: -1 } },
+        { $skip: skip },
         { $limit: topChattersLimit },
       ]);
 

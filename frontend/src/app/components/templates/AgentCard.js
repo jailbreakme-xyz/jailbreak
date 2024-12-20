@@ -78,7 +78,11 @@ const AgentCard = ({ char, data, hero }) => {
               >
                 Starts in ↓
               </p>
-              <Timer expiryDate={char.start_date} />
+              {char.start_date ? (
+                <Timer expiryDate={char.start_date} />
+              ) : (
+                <p>TBA</p>
+              )}
             </div>
           ) : (
             <button

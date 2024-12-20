@@ -10,6 +10,8 @@ import Jdenticon from "react-jdenticon";
 import CountUp from "react-countup";
 import Footer from "./components/templates/Footer";
 import { ImCross } from "react-icons/im";
+import Link from "next/link";
+
 export default function Beta() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -51,7 +53,10 @@ export default function Beta() {
               </div>
             </div>
             <div className="beta-breakers">
-              <h1>Top Jailbreakers 🔥</h1>
+              <h1 style={{ margin: "5px 0px" }}>Top Jailbreakers 🔥</h1>
+              <Link className="beta-breakers-view-all pointer" href="/breakers">
+                View All →
+              </Link>
               <hr />
               <div className="beta-breakers-list">
                 {data?.topBreakers
