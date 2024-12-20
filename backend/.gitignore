@@ -45,6 +45,7 @@ next-env.d.ts
 /secrets
 /data
 /test
+/jailbreak-pool-v2
 /jailbreak-pool-dev
 /hooks/degenScore.js
 /services/llm/characters
