@@ -59,55 +59,53 @@ export default function Beta() {
               </Link>
               <hr />
               <div className="beta-breakers-list">
-                {data?.topBreakers
-                  ?.concat(data?.topChatters)
-                  ?.map((breaker, index) => (
+                {data?.topChatters?.map((breaker, index) => (
+                  <div
+                    className="beta-breaker pointer"
+                    key={index}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.location.href = `/breaker/${breaker?.address}`;
+                    }}
+                  >
                     <div
-                      className="beta-breaker pointer"
-                      key={index}
+                      className="pointer"
                       onClick={(e) => {
                         e.preventDefault();
                         window.location.href = `/breaker/${breaker?.address}`;
                       }}
                     >
-                      <div
-                        className="pointer"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          window.location.href = `/breaker/${breaker?.address}`;
-                        }}
-                      >
-                        <Jdenticon value={breaker?.address} size={"30"} />
-                        <p className="beta-breaker-address pointer">
-                          {breaker?.address?.slice(0, 4)}...
-                          {breaker?.address?.slice(-4)}
-                        </p>
-                      </div>
-                      <div className="beta-breaker-separator"></div>
-                      <div>
-                        {breaker?.totalUsdPrize > 0 ? (
-                          <CountUp
-                            end={breaker?.totalUsdPrize?.toFixed(0)}
-                            prefix="$"
-                            start={0}
-                            duration={2.75}
-                            decimals={0}
-                            decimal="."
-                          />
-                        ) : (
-                          <ImCross size={16} color="#ff0000" />
-                        )}
-                        <p>
-                          {breaker?.winCount > 1
-                            ? `${breaker?.winCount} WINS`
-                            : breaker?.winCount === 1
-                            ? `${breaker?.winCount} WIN`
-                            : "NO WINS"}
-                        </p>
-                        <p>{breaker?.chatCount} BREAK ATTEMPTS</p>
-                      </div>
+                      <Jdenticon value={breaker?.address} size={"30"} />
+                      <p className="beta-breaker-address pointer">
+                        {breaker?.address?.slice(0, 4)}...
+                        {breaker?.address?.slice(-4)}
+                      </p>
                     </div>
-                  ))}
+                    <div className="beta-breaker-separator"></div>
+                    <div>
+                      {breaker?.totalUsdPrize > 0 ? (
+                        <CountUp
+                          end={breaker?.totalUsdPrize?.toFixed(0)}
+                          prefix="$"
+                          start={0}
+                          duration={2.75}
+                          decimals={0}
+                          decimal="."
+                        />
+                      ) : (
+                        <ImCross size={16} color="#ff0000" />
+                      )}
+                      <p>
+                        {breaker?.winCount > 1
+                          ? `${breaker?.winCount} WINS`
+                          : breaker?.winCount === 1
+                          ? `${breaker?.winCount} WIN`
+                          : "NO WINS"}
+                      </p>
+                      <p>{breaker?.chatCount} BREAK ATTEMPTS</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
             <Footer />

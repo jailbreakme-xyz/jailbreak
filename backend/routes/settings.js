@@ -80,7 +80,6 @@ router.get("/", async (req, res) => {
       total_payout: totalPayout,
       breakAttempts: breakAttempts,
       solPrice: solPrice,
-      topBreakers: topBreakersAndChatters.topBreakers,
       topChatters: topBreakersAndChatters.topChatters,
     };
 

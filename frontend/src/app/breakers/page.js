@@ -27,7 +27,6 @@ export default function Breakers() {
     const breakers = await axios
       .get(`/api/data/breakers?page=${page}`)
       .then((res) => res.data);
-    setTopBreakers([...topBreakers, ...breakers?.topBreakers]);
     setTopChatters([...topChatters, ...breakers?.topChatters]);
     setCount(breakers?.count);
     setHasNextPage(breakers?.hasNextPage);
@@ -62,7 +61,7 @@ export default function Breakers() {
           </div>
           <hr />
           <div className="beta-breakers-list">
-            {topBreakers?.concat(topChatters)?.map((breaker, index) => (
+            {topChatters?.map((breaker, index) => (
               <div
                 className="beta-breaker pointer"
                 key={index}

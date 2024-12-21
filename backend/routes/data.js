@@ -11,7 +11,6 @@ router.get("/breakers", async (req, res) => {
 
   const hasNextPage = count[0]?.count > page * limit;
   res.send({
-    topBreakers: breakers.topBreakers,
     topChatters: breakers.topChatters,
     count: count[0]?.count,
     hasNextPage: hasNextPage,
