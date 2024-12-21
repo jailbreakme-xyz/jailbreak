@@ -1,6 +1,13 @@
 import React from "react";
 import Timer from "./partials/Timer";
+
+function isMobileDevice() {
+  return /Mobi|Android/i.test(window.navigator.userAgent);
+}
+
 export default function Footer(props) {
+  const isMobile = isMobileDevice();
+
   return (
     <div style={{ width: "100%" }}>
       {props.status === "active" ? (
@@ -37,7 +44,9 @@ export default function Footer(props) {
               }
             }}
             placeholder={
-              props.task ? `${props.task}...` : "Jailbreak this prompt..."
+              props.task && !isMobile
+                ? `${props.task}...`
+                : "Enter your prompt..."
             }
           />
 

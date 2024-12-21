@@ -280,6 +280,7 @@ border: 0px;
       display: flex;
       flex-direction: column;
       overflow-y: auto;
+      overflow-x: hidden;
       height: calc(100vh - 80px);
       padding-bottom: 80px;  
     }
@@ -319,6 +320,7 @@ border: 0px;
     .chat-footer div form input, .chat-footer div form textarea {
       width: 90% !important;      
     }
+
 
     .poolDiv {
       display: none;

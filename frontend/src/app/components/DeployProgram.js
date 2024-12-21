@@ -115,10 +115,10 @@ const DeployProgram = () => {
             *This is a one-time setup fee to enable these advanced features.
           </strong>
         </p>
-        <form onSubmit={handleSubmit}>
+        <form>
           {connected && publicKey ? (
-            <button type="submit" disabled={loading} className="pointer">
-              {loading ? loading : "Deploy Program 🚀"}
+            <button type="submit" disabled={loading} className="disabled">
+              {loading ? loading : "Deploy Program (Coming Soon) 🚀"}
             </button>
           ) : (
             <WalletMultiButton />
