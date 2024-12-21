@@ -7,10 +7,7 @@ import DatabaseService from "../services/db/index.js";
 import TelegramBotService from "../services/bots/telegram.js";
 import validatePrompt from "../hooks/validatePrompt.js";
 import getSolPriceInUSDT from "../hooks/solPrice.js";
-
-function numberWithCommas(x) {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
+import concludeTournament from "../hooks/concludeTournament.js";
 
 const router = express.Router();
 const model = "gpt-4o-mini";
@@ -81,6 +78,14 @@ router.post("/submit/:id", async (req, res) => {
 
     if (transaction.entryFee < lastTransaction.entryFee) {
       return res.write("INVALID TRANSACTION");
+    }
+
+    const duplicateTxn = await DatabaseService.findOneChat({
+      txn: signature,
+    });
+
+    if (duplicateTxn) {
+      return res.write("DUPLICATE TRANSACTION");
     }
 
     await DatabaseService.updateChallenge(
@@ -191,7 +196,33 @@ router.post("/submit/:id", async (req, res) => {
         assistantMessage.content += delta;
         res.write(delta);
       } else if (event === "thread.message.completed") {
-        await DatabaseService.createChat(assistantMessage);
+        if (challenge.phrases?.length > 0) {
+          const allPhrasesIncluded = challenge.phrases.every((phrase) =>
+            assistantMessage.content
+              .toLowerCase()
+              .includes(phrase.toLowerCase())
+          );
+
+          if (allPhrasesIncluded) {
+            const successMessage = await concludeTournament(
+              isValidTransaction,
+              challenge,
+              assistantMessage,
+              blockchainService,
+              DatabaseService,
+              tournamentPDA,
+              walletAddress,
+              entryFee,
+              fee_multiplier,
+              signature
+            );
+            assistantMessage.content = successMessage;
+          } else {
+            await DatabaseService.createChat(assistantMessage);
+          }
+        } else {
+          await DatabaseService.createChat(assistantMessage);
+        }
       } else if (event === "thread.run.requires_action") {
         const required_action = chunk.data.required_action;
         const toolCalls = required_action.submit_tool_outputs.tool_calls[0];
@@ -217,44 +248,19 @@ router.post("/submit/:id", async (req, res) => {
         assistantMessage.content += results;
 
         if (functionName === challenge.success_function) {
-          if (isValidTransaction) {
-            const concluded = await blockchainService.concludeTournament(
-              tournamentPDA,
-              walletAddress
-            );
-            const solPrice = await getSolPriceInUSDT();
-
-            const winningPrize = entryFee * fee_multiplier;
-            const usdPrize = winningPrize * solPrice;
-
-            const successMessage = `${challenge.winning_message}\n\n${
-              assistantMessage.content
-            }\n\nYou won $${numberWithCommas(
-              usdPrize.toFixed(2)
-            )}.\n\nTransaction: ${concluded}`;
-            assistantMessage.content = successMessage;
-            assistantMessage.win = true;
-            await DatabaseService.createChat(assistantMessage);
-            await DatabaseService.updateChallenge(id, {
-              status: "concluded",
-              expiry: new Date(),
-              winning_prize: winningPrize,
-              usd_prize: usdPrize,
-              winner: walletAddress,
-            });
-            console.log("success:", successMessage);
-            res.write(successMessage);
-          } else {
-            const failedMessage = `🚨 Transaction verification failed, but this prompt won the tournament, we will manualy verify the transaction and reward you once we confirm the transaction`;
-            assistantMessage.content = failedMessage;
-
-            await DatabaseService.createChat(assistantMessage);
-            await DatabaseService.updateChallenge(id, {
-              status: "concluded",
-              expiry: new Date(),
-            });
-            res.write(failedMessage);
-          }
+          const successMessage = await concludeTournament(
+            isValidTransaction,
+            challenge,
+            assistantMessage,
+            blockchainService,
+            DatabaseService,
+            tournamentPDA,
+            walletAddress,
+            entryFee,
+            fee_multiplier,
+            signature
+          );
+          res.write(successMessage);
         } else {
           await DatabaseService.createChat(assistantMessage);
           res.write(assistantMessage.content);

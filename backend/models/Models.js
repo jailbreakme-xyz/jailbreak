@@ -48,6 +48,7 @@ const ChallengeSchema = new mongoose.Schema(
     expiry_logic: String,
     style: Array,
     custom_user_img: String,
+    phrases: Array,
   },
   {
     collection:
@@ -72,6 +73,7 @@ const chatSchema = new mongoose.Schema(
     txn: String,
     fee: Number,
     thread_id: String,
+    win: Boolean,
     date: { type: Date, default: Date.now },
   },
   {

@@ -185,7 +185,7 @@ export default function Challenge({ params }) {
       return messagesCopy;
     });
 
-    await delay(100);
+    await delay(20);
     return read(reader);
   }
 
@@ -497,6 +497,22 @@ export default function Challenge({ params }) {
                             <>
                               <div className="message">
                                 <p>{item.content}</p>
+                                {item.win && (
+                                  <p
+                                    style={{
+                                      margin: "0px",
+                                      backgroundColor: "orange",
+                                      color: "black",
+                                      padding: "2px 10px",
+                                      borderRadius: "30px",
+                                      fontSize: "12px",
+                                      fontStyle: "italic",
+                                      width: "fit-content",
+                                    }}
+                                  >
+                                    🏆 Winner
+                                  </p>
+                                )}
                                 <TimeAgo date={new Date(item.date)} />
                               </div>
                               {challenge?.custom_user_img ? (
@@ -575,6 +591,17 @@ export default function Challenge({ params }) {
                               <div className="message">
                                 <ParsedText message={item.content} />
                                 <TimeAgo date={new Date(item.date)} />
+                                {item.address && (
+                                  <p
+                                    style={{
+                                      color: "gray",
+                                      fontSize: "12px",
+                                      fontStyle: "italic",
+                                    }}
+                                  >
+                                    Responded to: {item.address}
+                                  </p>
+                                )}
                               </div>
                             </>
                           )}

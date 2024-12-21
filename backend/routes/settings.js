@@ -27,6 +27,15 @@ router.get("/", async (req, res) => {
         (challenge) => challenge.status === "upcoming"
       );
       if (upcomingChallenge) {
+        const now = new Date();
+        if (
+          upcomingChallenge.start_date <= now &&
+          upcomingChallenge.expiry >= now
+        ) {
+          await DatabaseService.updateChallenge(upcomingChallenge._id, {
+            status: "active",
+          });
+        }
         activeChallenge = upcomingChallenge;
       } else {
         activeChallenge = challenges?.sort(

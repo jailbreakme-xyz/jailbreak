@@ -91,6 +91,7 @@ router.get("/get-challenge", async (req, res) => {
       address: 1,
       txn: 1,
       date: 1,
+      win: 1,
     };
 
     if (!challenge.tools_description) {

@@ -4,7 +4,7 @@
   cursor: url("data:image/svg+xml,%3Csvg stroke='currentColor' fill='%23ccc' stroke-width='2' viewBox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' height='32' width='32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='m4 4 7.07 17 2.51-7.39L21 11.07z'%3E%3C/path%3E%3C/svg%3E"), auto;
 }
 
-.pointer,.pointer svg, .pointer path, .wallet-adapter-button, .wallet-adapter-modal-button-close, .wallet-adapter-button  {
+.pointer,.pointer svg, .pointer path, .wallet-adapter-button, .wallet-adapter-modal-button-close, .wallet-adapter-button, .file-upload-container label, .file-upload-container label div, .file-upload-container svg, .file-upload-container input, .file-upload-container path, .file-upload-container span {
   cursor: url("data:image/svg+xml,%3Csvg stroke='currentColor' fill='%23ccc' stroke-width='2' viewBox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' height='32' width='32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M22 14a8 8 0 0 1-8 8'%3E%3C/path%3E%3Cpath d='M18 11v-1a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0'%3E%3C/path%3E%3Cpath d='M14 10V9a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v1'%3E%3C/path%3E%3Cpath d='M10 9.5V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v10'%3E%3C/path%3E%3Cpath d='M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15'%3E%3C/path%3E%3C/svg%3E"), auto !important;
 }
 
@@ -874,15 +874,16 @@ background-color: #ccc;
 }
 
 
+
+
 .typewriter {
   white-space: break-spaces;
-    overflow: hidden; /* Hides content as it's being typed */
+    overflow: hidden;
   animation: 
     typing 3.5s steps(30, end),
     blink-caret 0.5s step-end infinite;
-  max-width: 100%; /* Ensures it doesn't overflow the bubble */
+    max-width: 100%; 
 }
-
 
 @keyframes typing {
   from {
@@ -1090,6 +1091,118 @@ margin-right: 5px;
   font-size: 34px;
 }
 
+.fullScreenDialog .MuiDialog-paper {
+  background-color: #000;
+  color: #ebebeb;
+}
+.fullScreenDialog .close {
+  background-color: #ccc;
+  color: #000;
+  border-radius: 100px;
+  padding: 10px;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  margin: 10px 10px 0px 0px;
+}
+.advanced-creation-form {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  column-gap: 20px;
+}
+.dialog-title {
+  font-size: 24px;
+  font-weight: bold;
+}
+.styled-date-input {
+  /* Add your desired styles for the input */
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  color: #333;
+  font-size: 16px;
+  /* width: 40%; */
+}
+
+.styled-date-input::-webkit-calendar-picker-indicator {
+  filter: invert(1); /* Inverts the color of the calendar icon */
+}
+.advanced-creation-form .date-field {
+  --webkit-fill-color: #0BBF99 !important;
+  color: #0BBF99 !important;
+  background-color: #000 !important;
+  /* width: 40%; */
+}
+.file-upload-container label {
+  width: 50px;
+  height: 50px;
+  min-width: 50px;
+  min-height: 50px;
+  border-radius: 100px;
+  padding: 15px;
+  justify-content: center;
+  align-items: center;
+}
+.file-upload-container label input {
+width: 40px;
+height: 40px;
+}
+.file-upload-container label div {
+  display: none;
+}
+.file-upload-container label {
+  color: #0BBF99 !important;
+  border: dashed 2px #0BBF99 !important;
+}
+.file-upload-container path {
+  fill: #0BBF99 !important;
+}
+.advanced-creation-form > div {
+  width: 50%;
+  padding: 10px 20px;
+  background-color: #181726;
+  border-radius: 10px;
+  min-height: 500px;
+}
+.advanced-creation-form hr {
+  margin: 20px 0px;
+}
+.advanced-creation-form input {
+  --webkit-fill-color: #0BBF99 !important;
+  color: #0BBF99 !important;
+}
+
+.advanced-creation-form .MuiInput-underline::after {
+  color: #0BBF99 !important;
+  border-bottom: 2px solid #0BBF99 !important;
+}
+.advanced-creation-form input:focus {
+  --webkit-fill-color: #0BBF99 !important;
+}
+
+.advanced-creation-form textarea {
+  --webkit-fill-color: #0BBF99 !important;
+}
+
+.advanced-creation-form textarea:focus {
+  --webkit-fill-color: #0BBF99 !important;
+}
+
+.advanced-creation-form .MuiFormLabel-root {
+  color: #0BBF99 !important;
+}
+
+.advanced-creation-form .MuiInput-root {
+  color: #0BBF99 !important;
+}
+
+.advanced-creation-form .MuiInput-root:focus {
+  color: #0BBF99 !important;
+}
 
 @media screen and (max-width:768px) {
   .docsPage.beta-container {

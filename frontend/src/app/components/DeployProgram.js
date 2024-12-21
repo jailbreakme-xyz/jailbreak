@@ -11,6 +11,15 @@ import {
   Keypair,
 } from "@solana/web3.js";
 import axios from "axios";
+import AdvancedCreation from "./templates/AdvancedCreation";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+} from "@mui/material";
+import Header from "./templates/Header";
 
 const DeployProgram = () => {
   const { publicKey, sendTransaction, connected, connect } = useWallet();
@@ -22,6 +31,7 @@ const DeployProgram = () => {
   const [loading, setLoading] = useState(null);
   const [programId, setProgramId] = useState(null);
   const [step, setStep] = useState(1);
+  const [formOpen, setFormOpen] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,6 +44,7 @@ const DeployProgram = () => {
     setLoading(null);
     if (success) {
       alert("Tournament program deployed successfully!");
+      setStep(2);
     }
   };
 
@@ -79,6 +90,14 @@ const DeployProgram = () => {
     console.log("Creating tournament...");
   };
 
+  const handleFormOpen = () => {
+    setFormOpen(true);
+  };
+
+  const handleFormClose = () => {
+    setFormOpen(false);
+  };
+
   const stepContent = {
     1: (
       <div>
@@ -96,16 +115,55 @@ const DeployProgram = () => {
             *This is a one-time setup fee to enable these advanced features.
           </strong>
         </p>
-        <form>
+        <form onSubmit={handleSubmit}>
           {connected && publicKey ? (
-            <button type="submit" disabled={true} className="disabled">
-              {loading ? loading : "Deploy Program (Coming Soon) 🚀"}
+            <button type="submit" disabled={loading} className="pointer">
+              {loading ? loading : "Deploy Program 🚀"}
             </button>
           ) : (
             <WalletMultiButton />
           )}
         </form>
         {error && <p className="error">{error}</p>}
+      </div>
+    ),
+    2: (
+      <div>
+        <h1>Create Your Tournament 🏆</h1>
+        <p>
+          Your program has been successfully deployed! Now, you can set up your
+          first tournament.
+        </p>
+        <Button variant="contained" color="primary" onClick={handleFormOpen}>
+          Open Tournament Form
+        </Button>
+
+        <Dialog
+          open={formOpen}
+          onClose={handleFormClose}
+          fullScreen
+          className="fullWidthPage fullScreenDialog"
+        >
+          <Header />
+
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <DialogTitle className="dialog-title">
+              Create Tournament 🏆
+            </DialogTitle>
+            <Button
+              className="pointer close"
+              onClick={handleFormClose}
+              color="secondary"
+            >
+              X
+            </Button>
+          </div>
+
+          <DialogContent>
+            <AdvancedCreation />
+          </DialogContent>
+          <DialogActions></DialogActions>
+        </Dialog>
       </div>
     ),
   };

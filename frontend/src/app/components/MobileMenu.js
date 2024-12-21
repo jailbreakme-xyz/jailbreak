@@ -59,11 +59,11 @@ const MobileMenu = (props) => {
           className="chatMainMenuItem pointer"
           style={{ textTransform: "uppercase" }}
         >
-          AGENTS
+          <GiArtificialIntelligence size={25} /> AGENTS
         </Link>
 
         <Link
-          href="/docs"
+          href="/breakers"
           className="chatMainMenuItem pointer"
           onClick={() => setMenuOpen(false)}
         >

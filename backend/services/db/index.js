@@ -59,6 +59,15 @@ class DataBaseService {
     }
   }
 
+  async updateChat(query, update) {
+    try {
+      return await Chat.updateOne(query, update);
+    } catch (error) {
+      console.error("Database Service Error:", error);
+      return false;
+    }
+  }
+
   async getChatHistory(query, projection, sort = { date: -1 }, limit = 0) {
     try {
       return await Chat.find(query, projection).sort(sort).limit(limit);
@@ -121,8 +130,8 @@ class DataBaseService {
       const challenge = await Challenge.find(
         {},
         {
-          _id: 0,
-          id: "$_id",
+          _id: 1,
+          // id: "$_id",
           name: 1,
           title: 1,
           image: 1,

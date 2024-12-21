@@ -9,6 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^6.2.1",
+    "@mui/system": "^6.2.1",
     "@solana/wallet-adapter-base": "^0.9.23",
     "@solana/wallet-adapter-phantom": "^0.9.24",
     "@solana/wallet-adapter-react": "^0.15.35",
@@ -17,15 +21,19 @@
     "axios": "^1.6.7",
     "bs58": "^6.0.0",
     "crypto": "^1.0.1",
+    "formik": "^2.4.6",
     "next": "^15.0.3",
     "react": "^18",
     "react-countup": "^6.5.3",
     "react-dom": "^18",
+    "react-drag-drop-files": "^2.4.0",
     "react-icons": "^5.0.1",
+    "react-image-uploader": "^1.0.0",
     "react-jdenticon": "^1.4.0",
     "react-spinners": "^0.13.8",
     "react-timeago": "^7.2.0",
-    "react-timer-hook": "^3.0.8"
+    "react-timer-hook": "^3.0.8",
+    "yup": "^1.6.1"
   },
   "devDependencies": {
     "eslint": "^8",
