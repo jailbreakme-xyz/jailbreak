@@ -370,7 +370,7 @@ padding-bottom: 0px;
 }
 
 .chat-bubble .message {
-  max-width: 75%;
+  max-width: 70%;
 }
 /* Menu Item Links */
 .chatMainMenuItem:not(.chatPageSocialMenu) {
