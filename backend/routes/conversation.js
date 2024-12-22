@@ -7,7 +7,10 @@ import DatabaseService from "../services/db/index.js";
 import TelegramBotService from "../services/bots/telegram.js";
 import validatePrompt from "../hooks/validatePrompt.js";
 import getSolPriceInUSDT from "../hooks/solPrice.js";
-import concludeTournament from "../hooks/concludeTournament.js";
+import {
+  shouldBeConcluded,
+  concludeTournament,
+} from "../hooks/concludeTournament.js";
 
 const router = express.Router();
 const model = "gpt-4o-mini";
@@ -196,7 +199,7 @@ router.post("/submit/:id", async (req, res) => {
         assistantMessage.content += delta;
         res.write(delta);
       } else if (event === "thread.message.completed") {
-        if (challenge.phrases?.length > 0) {
+        if (challenge.type === "phrases" && challenge.phrases?.length > 0) {
           const allPhrasesIncluded = challenge.phrases.every((phrase) =>
             assistantMessage.content
               .toLowerCase()
@@ -229,13 +232,29 @@ router.post("/submit/:id", async (req, res) => {
         const functionName = toolCalls.function.name;
         const functionArguments = toolCalls.function.arguments;
         const jsonArgs = JSON.parse(functionArguments);
-        const results = jsonArgs.results;
+        const functionParams = challenge.tools.find(
+          (tool) => tool.name === functionName
+        )?.parameters?.properties;
+        const functionParamsKeys = Object.keys(functionParams);
+        const results = functionParamsKeys
+          .map((key) => {
+            if (key === "results") {
+              return jsonArgs[key];
+            } else {
+              const resultString = `${
+                key.replace(/_/g, " ").charAt(0).toUpperCase() +
+                key.replace(/_/g, " ").slice(1)
+              }: ${jsonArgs[key]}`;
+              return resultString.replace("Response: ", "");
+            }
+          })
+          .join("\n");
 
         if (required_action.type === "submit_tool_outputs") {
           const tool_outputs = [
             {
               tool_call_id: toolCalls.id,
-              output: results,
+              output: "success",
             },
           ];
           await OpenAIService.submitRun(thread.id, chunk.data.id, tool_outputs);
@@ -247,7 +266,7 @@ router.post("/submit/:id", async (req, res) => {
         };
         assistantMessage.content += results;
 
-        if (functionName === challenge.success_function) {
+        if (shouldBeConcluded(challenge, functionName, jsonArgs)) {
           const successMessage = await concludeTournament(
             isValidTransaction,
             challenge,

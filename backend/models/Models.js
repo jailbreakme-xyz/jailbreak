@@ -49,6 +49,12 @@ const ChallengeSchema = new mongoose.Schema(
     style: Array,
     custom_user_img: String,
     phrases: Array,
+    type: String,
+    single_tool_comparison: {
+      tool_name: String,
+      higher_field_name: String,
+      lower_field_name: String,
+    },
   },
   {
     collection:

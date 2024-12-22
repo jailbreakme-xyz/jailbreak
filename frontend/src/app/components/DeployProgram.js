@@ -115,10 +115,10 @@ const DeployProgram = () => {
             *This is a one-time setup fee to enable these advanced features.
           </strong>
         </p>
-        <form>
+        <form onSubmit={handleSubmit}>
           {connected && publicKey ? (
-            <button type="submit" disabled={loading} className="disabled">
-              {loading ? loading : "Deploy Program (Coming Soon) 🚀"}
+            <button type="submit" disabled={loading} className="pointer">
+              {loading ? loading : "Deploy Program 🚀"}
             </button>
           ) : (
             <WalletMultiButton />
@@ -131,11 +131,12 @@ const DeployProgram = () => {
       <div>
         <h1>Create Your Tournament 🏆</h1>
         <p>
-          Your program has been successfully deployed! Now, you can set up your
-          first tournament.
+          Your program has been successfully deployed!
+          <br />
+          Now, you can set up your first tournament.
         </p>
         <Button variant="contained" color="primary" onClick={handleFormOpen}>
-          Open Tournament Form
+          Create Tournament
         </Button>
 
         <Dialog
@@ -146,7 +147,13 @@ const DeployProgram = () => {
         >
           <Header />
 
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          {/* <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <DialogTitle className="dialog-title">
               Create Tournament 🏆
             </DialogTitle>
@@ -158,8 +165,15 @@ const DeployProgram = () => {
               X
             </Button>
           </div>
-
-          <DialogContent>
+          <hr style={{ width: "100%" }} /> */}
+          <DialogContent style={{ padding: "0px 20px" }}>
+            {/* <Button
+              className="pointer close"
+              onClick={handleFormClose}
+              color="secondary"
+            >
+              X
+            </Button> */}
             <AdvancedCreation />
           </DialogContent>
           <DialogActions></DialogActions>

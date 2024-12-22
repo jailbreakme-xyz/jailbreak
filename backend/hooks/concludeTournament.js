@@ -64,4 +64,25 @@ async function concludeTournament(
   }
 }
 
-export default concludeTournament;
+const shouldBeConcluded = (challenge, functionName, jsonArgs) => {
+  if (
+    challenge.type === "tool_calls" &&
+    functionName === challenge.success_function
+  ) {
+    return true;
+  } else if (
+    challenge.type === "single_tool_comparison" &&
+    functionName === challenge.single_tool_comparison?.tool_name
+  ) {
+    const higherField =
+      jsonArgs[challenge.single_tool_comparison?.higher_field_name];
+    const lowerField =
+      jsonArgs[challenge.single_tool_comparison?.lower_field_name];
+    if (higherField < lowerField) {
+      return true;
+    }
+  }
+  return false;
+};
+
+export { shouldBeConcluded, concludeTournament };

@@ -2,6 +2,7 @@
 import React from "react";
 import Image from "next/image";
 import StoneLogo from "../../../assets/stone_logo.png";
+import logo from "../../../assets/logo.png";
 import lightSlogen from "../../../assets/lightSlogen.png";
 import SocialIcons from "../partials/SocialIcons";
 import "../../../styles/Beta.css";
@@ -11,9 +12,17 @@ const Footer = () => {
     <div className="beta-footer">
       <Image
         alt="logo"
-        src={StoneLogo}
-        width="50"
+        src={logo}
+        width="40"
         className="pointer mainLogo"
+        style={{
+          backgroundColor: "#ebebeb",
+          border: "6px double #000",
+          padding: "5px",
+        }}
+        onClick={() => {
+          window.location.href = "/";
+        }}
       />
       <Image alt="logo" src={lightSlogen} width="140" className="pointer" />
       <br />

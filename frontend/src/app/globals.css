@@ -225,12 +225,12 @@ outline: none;
 
 .chatPageMain {
   display: flex;
-  width: 95%;
+  width: 97%;
   margin: auto;
   justify-content: center;
   align-items: flex-start;
   column-gap: 10px;
-  padding: 15px;
+  padding: 15px 0px;
 }
 
 .chatHeader {
@@ -244,7 +244,7 @@ padding-bottom: 0px;
   width: 20%;
 }
 .conversationSection {
-  width: 55%;
+  width: 50%;
 }
 
 
@@ -1104,7 +1104,7 @@ margin-right: 5px;
   height: 40px;
   min-width: 40px;
   min-height: 40px;
-  margin: 10px 10px 0px 0px;
+  margin: 0px 20px 0px 0px;
 }
 .advanced-creation-form {
   display: flex;
@@ -1112,17 +1112,25 @@ margin-right: 5px;
   justify-content: center;
   width: 100%;
   column-gap: 20px;
+  color: #0BBF99;
+  padding: 20px 0px;
+}
+.advanced-creation-form hr {
+  border-color: #0BBF99 !important;
 }
 .dialog-title {
-  font-size: 24px;
-  font-weight: bold;
+  font-size: 24px !important;
+  font-weight: bold !important;
+}
+.advanced-creation-form .MuiCheckbox-root path {
+  fill: #0BBF99 !important;
 }
 .styled-date-input {
   /* Add your desired styles for the input */
   padding: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid #0BBF99;
   border-radius: 4px;
-  background-color: #f9f9f9;
+  background-color: #000;
   color: #333;
   font-size: 16px;
   /* width: 40%; */
@@ -1136,6 +1144,27 @@ margin-right: 5px;
   color: #0BBF99 !important;
   background-color: #000 !important;
   /* width: 40%; */
+}
+.advanced-creation-form .MuiInputBase-root, .advanced-creation-form  .MuiTabs-flexContainer > .MuiButtonBase-root {
+  color: #0BBF99 !important;
+}
+.advanced-creation-form .MuiTouchRipple-root {
+  color: #0BBF99 !important;
+}
+.advanced-creation-form .MuiTabs-indicator {
+  background-color: #0BBF99 !important;
+}
+.advanced-creation-form .MuiSelect-icon {
+  fill: #0BBF99 !important;
+}
+.advanced-creation-form .MuiTabs-flexContainer {
+  color: #0BBF99 !important;
+}
+.pfp-container label {
+  display: none;
+}
+.advanced-creation-form .disabled button {
+ display: none;
 }
 .file-upload-container label {
   width: 50px;
@@ -1161,10 +1190,17 @@ height: 40px;
 .file-upload-container path {
   fill: #0BBF99 !important;
 }
+.advanced-creation-form .MuiSelect-select {
+  color: #0BBF99 !important;
+  padding: 10px !important;
+}
+.advanced-creation-form .base-NumberInput-input {
+  width: 60%;
+}
 .advanced-creation-form > div {
   width: 50%;
   padding: 10px 20px;
-  background-color: #181726;
+  background-color: #000;
   border-radius: 10px;
   min-height: 500px;
 }
@@ -1192,6 +1228,21 @@ height: 40px;
   --webkit-fill-color: #0BBF99 !important;
 }
 
+.advanced-creation-form .MuiFormHelperText-root {
+  color: #0BBF99 !important;
+}
+
+.advanced-creation-form .MuiFormHelperText-root.Mui-error {
+  color: #ff0000 !important;
+}
+.advanced-creation-form .Mui-focused {
+  color: #0BBF99 !important;
+  --webkit-fill-color: #0BBF99 !important;
+  border-color: #0BBF99 !important;
+}
+.advanced-creation-form .MuiOutlinedInput-notchedOutline {
+  border-color: #0BBF99 !important;
+}
 .advanced-creation-form .MuiFormLabel-root {
   color: #0BBF99 !important;
 }
