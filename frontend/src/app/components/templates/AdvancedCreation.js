@@ -270,7 +270,7 @@ const AdvancedCreation = () => {
             <h3>🛠️ Tools (Optional)</h3>
             <hr />
             <p style={{ fontSize: "12px", color: "#0BBF99", margin: "0px" }}>
-              Leave blank if you don't want the agent to use tools
+              Leave blank if you don&apos;t want the agent to use tools
             </p>
             <FormSection sx={{ marginTop: 3 }}>
               <Grid size={{ xs: 12, md: 12, lg: 12 }} sx={{ marginTop: 2 }}>
@@ -740,8 +740,8 @@ const AdvancedCreation = () => {
                 label="Score User Prompts?"
               />
               <span style={{ fontSize: "12px", color: "#0BBF99" }}>
-                If checked, our system will score the user's prompts based on
-                the phrases you provided.
+                If checked, our system will score the user&apos;s prompts based
+                on the phrases you provided.
               </span>
             </FormGroup>
           </Grid>
@@ -760,8 +760,8 @@ const AdvancedCreation = () => {
                 label="Allow Special Characters?"
               />
               <span style={{ fontSize: "12px", color: "#0BBF99" }}>
-                If checked, tournament's chat will allow special characters in
-                the messages.
+                If checked, tournament&apos;s chat will allow special characters
+                in the messages.
               </span>
             </FormGroup>
           </Grid>
@@ -780,8 +780,8 @@ const AdvancedCreation = () => {
                 label="Collect User Holdings?"
               />
               <span style={{ fontSize: "12px", color: "#0BBF99" }}>
-                If checked, user's token holdings will be collected and sent to
-                the agent.
+                If checked, user&apos;s token holdings will be collected and
+                sent to the agent.
               </span>
             </FormGroup>
           </Grid>
