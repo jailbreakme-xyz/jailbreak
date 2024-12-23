@@ -56,6 +56,7 @@ const Header = (props) => {
         <a
           href="https://dexscreener.com/solana/card131dsufcqfky9ciczd4qj5hbazsqlklsekjjmadp"
           className="beta-header-link pointer"
+          target="_blank"
         >
           $JAIL
         </a>
