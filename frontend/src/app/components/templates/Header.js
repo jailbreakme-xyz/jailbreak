@@ -53,7 +53,10 @@ const Header = (props) => {
         <a href="/faq" className="beta-header-link pointer">
           FAQ
         </a>
-        <a href="/jail-token" className="beta-header-link pointer">
+        <a
+          href="https://dexscreener.com/solana/card131dsufcqfky9ciczd4qj5hbazsqlklsekjjmadp"
+          className="beta-header-link pointer"
+        >
           $JAIL
         </a>
       </div>
