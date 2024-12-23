@@ -200,6 +200,7 @@ router.post("/submit/:id", async (req, res) => {
         res.write(delta);
       } else if (event === "thread.message.completed") {
         if (challenge.type === "phrases" && challenge.phrases?.length > 0) {
+          // TODO: IF THE CHALLENGE COLLECTS SCORES, RANK THE RESPONSE
           const allPhrasesIncluded = challenge.phrases.every((phrase) =>
             assistantMessage.content
               .toLowerCase()

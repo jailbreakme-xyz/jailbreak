@@ -10,7 +10,7 @@ const APIDocumentation = (props) => {
   return (
     <div className="api-doc-container" style={{ backgroundColor: "black" }}>
       <div style={{ textAlign: "center" }}>
-        <Image
+        <img
           alt="logo"
           src={stoneLogo}
           width="80"

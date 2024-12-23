@@ -19,7 +19,7 @@ export default function Header(props) {
         usdPrize={props.usdPrize}
         activeChallenge={props.activeChallenge}
       />
-      <Image
+      <img
         onClick={() => {
           window.location.href = "/";
         }}
@@ -32,7 +32,7 @@ export default function Header(props) {
         }}
         className="pointer mainLogo"
       />
-      <Image
+      <img
         className="pointer"
         onClick={() => {
           window.location.href = "/";

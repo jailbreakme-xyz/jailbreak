@@ -41,7 +41,7 @@ const MobileMenu = (props) => {
       </div>
 
       <div className={`mainMenu ${menuOpen ? "open" : ""}`}>
-        <Image
+        <img
           src={darkSlogen}
           alt="logo"
           width="200"
@@ -77,9 +77,10 @@ const MobileMenu = (props) => {
           <FaQuestionCircle size={25} /> FAQ
         </Link>
         <Link
-          href="/jail-token"
+          href="https://dexscreener.com/solana/card131dsufcqfky9ciczd4qj5hbazsqlklsekjjmadp"
           className="chatMainMenuItem pointer"
           onClick={() => setMenuOpen(false)}
+          target="_blank"
         >
           <GiTwoCoins size={25} /> $JAIL TOKENS
         </Link>
@@ -128,7 +129,7 @@ const MobileMenu = (props) => {
                   alignItems: "center",
                 }}
               >
-                <Image
+                <img
                   src={SolIcon}
                   alt="Solana"
                   width={30}

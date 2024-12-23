@@ -10,9 +10,9 @@ import "../../../styles/Beta.css";
 const Footer = () => {
   return (
     <div className="beta-footer">
-      <Image
+      <img
         alt="logo"
-        src={logo}
+        src="/images/logo.png"
         width="40"
         className="pointer mainLogo"
         style={{
@@ -24,7 +24,12 @@ const Footer = () => {
           window.location.href = "/";
         }}
       />
-      <Image alt="logo" src={lightSlogen} width="140" className="pointer" />
+      <img
+        alt="logo"
+        src="/images/lightSlogen.png"
+        width="140"
+        className="pointer"
+      />
       <br />
       <SocialIcons />
 

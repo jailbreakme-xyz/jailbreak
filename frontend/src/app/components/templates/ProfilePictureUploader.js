@@ -72,7 +72,12 @@ const ProfilePictureUploader = ({ onFileChange }) => {
     >
       {imagePreview ? (
         <>
-          <Image src={imagePreview} alt="Profile Preview" className="pointer" />
+          <img
+            src={imagePreview}
+            alt="Profile Preview"
+            className="pointer"
+            style={{ width: "90px", height: "90px", objectFit: "cover" }}
+          />
 
           <Overlay className="pointer">Upload</Overlay>
         </>

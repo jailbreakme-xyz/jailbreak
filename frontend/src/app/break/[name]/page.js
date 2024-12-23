@@ -474,7 +474,7 @@ export default function Challenge({ params }) {
                     }}
                   >
                     <div>
-                      <Image
+                      <img
                         alt="logo"
                         src={challenge?.pfp}
                         width="30"
@@ -525,7 +525,7 @@ export default function Challenge({ params }) {
                                     );
                                   }}
                                 >
-                                  <Image
+                                  <img
                                     alt="pfp"
                                     src={challenge?.custom_user_img}
                                     width="40"
@@ -577,7 +577,7 @@ export default function Challenge({ params }) {
                           ) : (
                             <>
                               <div className="avatar">
-                                <Image
+                                <img
                                   alt="pfp"
                                   src={challenge?.pfp}
                                   width="40"

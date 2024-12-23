@@ -28,8 +28,8 @@ export default function SocialIcons(props) {
         target="_blank"
         className="pointer imgIcon"
       >
-        <Image
-          src={SolIcon}
+        <img
+          src="/images/solIcon.png"
           alt="Solana"
           width={25}
           height={25}

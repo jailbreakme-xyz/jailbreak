@@ -508,14 +508,16 @@ font-size: 12px;
     margin: 0px auto;
     padding: 20px;
     text-align: center;
-    color: #ebebeb;
-    background-color: #181726;
+    color: #0BBF99;
+    background-color: #000;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     border-radius: 20px;
-    border: 2px solid #ccc;
+    border: 2px solid #0BBF99;
   }
   .deploy-program-container hr {
     width: 100%;
     margin: 20px auto;
+    border: 2px solid #0BBF99;
   }
 
   .deploy-program-container p {

@@ -14,7 +14,7 @@ const Terms = () => {
       <div
         style={{ textAlign: "center", display: "grid", placeItems: "center" }}
       >
-        <Image
+        <img
           alt="logo"
           src={stoneLogo}
           width="80"
@@ -23,7 +23,7 @@ const Terms = () => {
             marginBottom: "10px",
           }}
         />
-        <Image
+        <img
           className="pointer"
           onClick={() => {
             window.location.href = "/";

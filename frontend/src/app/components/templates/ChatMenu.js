@@ -27,7 +27,7 @@ export default function ChatMenu({ challenge, attempts, price, usdPrice }) {
               </span>
             </div>
             <div className="pointer">
-              <Image
+              <img
                 onClick={() => {
                   window.open(`/agent/${challenge?.name}`, "_blank");
                 }}

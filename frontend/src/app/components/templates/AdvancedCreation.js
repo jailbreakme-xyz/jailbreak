@@ -523,7 +523,7 @@ const AdvancedCreation = () => {
                 <span
                   style={{ fontSize: "12px", color: "#0BBF99", margin: "0px" }}
                 >
-                  It could be a secret phrase/ingredient/location/etc..
+                  It could be a secret keyword/phrase/ingredient/location/etc..
                 </span>
                 {formik.values.phrases.map((phrase, index) => (
                   <Grid container spacing={2} key={index}>

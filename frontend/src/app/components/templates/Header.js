@@ -14,9 +14,9 @@ const Header = (props) => {
   return (
     <div className="beta-header">
       <div className="beta-header-left desktop">
-        <Image
+        <img
           alt="logo"
-          src={logo}
+          src="/images/logo.png"
           width="40"
           className="pointer mainLogo"
           style={{ backgroundColor: "#ebebeb" }}
@@ -24,9 +24,9 @@ const Header = (props) => {
             window.location.href = "/";
           }}
         />
-        <Image
+        <img
           alt="logo"
-          src={lightSlogen}
+          src="/images/lightSlogen.png"
           width="140"
           className="pointer mainLogo"
           onClick={() => {
@@ -66,9 +66,9 @@ const Header = (props) => {
       </div>
       <div className="mobile">
         <div className="beta-mobile-header-left">
-          <Image
+          <img
             alt="logo"
-            src={logo}
+            src="/images/logo.png"
             width="40"
             className="pointer"
             style={{ backgroundColor: "#ebebeb" }}
@@ -76,9 +76,9 @@ const Header = (props) => {
               window.location.href = "/";
             }}
           />
-          <Image
+          <img
             alt="logo"
-            src={lightSlogen}
+            src="/images/lightSlogen.png"
             width="100"
             className="pointer"
             onClick={() => {

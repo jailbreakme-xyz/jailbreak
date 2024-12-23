@@ -44,7 +44,11 @@ const MainMenu = (props) => {
         <Link target="_blank" href="/faq" className="chatMainMenuItem pointer">
           <FaQuestionCircle size={25} /> <span>FAQ</span>
         </Link>
-        <Link href="/jail-token" className="chatMainMenuItem pointer">
+        <Link
+          href="https://dexscreener.com/solana/card131dsufcqfky9ciczd4qj5hbazsqlklsekjjmadp"
+          className="chatMainMenuItem pointer"
+          target="_blank"
+        >
           <GiTwoCoins size={25} /> <span>$JAIL TOKENS</span>
         </Link>
         {!props.hiddenItems?.includes("SOCIAL") && (
@@ -77,7 +81,7 @@ const MainMenu = (props) => {
                   alignItems: "center",
                 }}
               >
-                <Image
+                <img
                   src={SolIcon}
                   alt="Solana"
                   width={30}

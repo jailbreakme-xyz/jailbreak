@@ -28,8 +28,8 @@ const PageLoader = () => {
         <div style={{ display: "block" }}>
           <div className="page-loader" style={{ textAlign: "center" }}>
             <div>
-              <Image
-                src={logo}
+              <img
+                src="/images/logo.png"
                 width="60"
                 alt="logo"
                 style={{
@@ -40,7 +40,7 @@ const PageLoader = () => {
                   padding: "5px",
                 }}
               />
-              <Image src={lightSlogen} width="100" alt="logo" />
+              <img src="/images/lightSlogen.png" width="100" alt="logo" />
             </div>
             <BarLoader color="#ccc" size={150} cssOverride={override} />
             <br />
