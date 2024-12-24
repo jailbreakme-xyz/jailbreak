@@ -63,6 +63,11 @@ router.post("/submit/:id", async (req, res) => {
 
     const entryFee = tournamentData.entryFee;
     const feeMulPct = tournamentData.feeMulPct;
+    const winnerPayoutPct = tournamentData.winnerPayoutPct;
+    const feeType = tournamentData.feeType;
+    const sol_prize = tournamentData.programBalance;
+    const solPrice = await getSolPriceInUSDT();
+    const usd_prize = sol_prize * solPrice;
 
     const isValidTransaction =
       await blockchainService.verifyTransactionSignature(
@@ -70,6 +75,8 @@ router.post("/submit/:id", async (req, res) => {
         transaction,
         entryFee,
         feeMulPct,
+        winnerPayoutPct,
+        feeType,
         walletAddress
       );
 
@@ -95,6 +102,8 @@ router.post("/submit/:id", async (req, res) => {
       id,
       {
         entryFee: entryFee,
+        usd_prize: usd_prize,
+        winning_prize: sol_prize,
         ...(currentExpiry - now < oneHourInMillis && {
           expiry: new Date(now.getTime() + oneHourInMillis),
         }),

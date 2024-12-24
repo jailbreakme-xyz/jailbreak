@@ -18,13 +18,22 @@ export default function ChatMenu({ challenge, attempts, price, usdPrice }) {
             }}
           >
             <div>
-              <h2 style={{ margin: "0px 0px 5px" }}>{challenge?.title}</h2>
               <span
-                className={`${challenge?.level} level`}
-                style={{ fontWeight: "bold" }}
+                className="level"
+                style={{
+                  fontWeight: "bold",
+                  textTransform: "uppercase",
+                  borderRadius: "150px",
+                  padding: "5px 15px",
+                  backgroundColor: "#000",
+                  color: "#0BBF99",
+                  border: "1px solid #0BBF99",
+                  fontSize: "14px",
+                }}
               >
-                {challenge?.level}
+                {challenge?.name}
               </span>
+              <h2 style={{ margin: "8px 0px 0px" }}>{challenge?.title}</h2>
             </div>
             <div className="pointer">
               <img
@@ -67,7 +76,24 @@ export default function ChatMenu({ challenge, attempts, price, usdPrice }) {
             />{" "}
             EXPIRY
           </h3>
-          <Timer expiryDate={challenge?.expiry} />
+          {challenge?.expiry ? (
+            <Timer expiryDate={challenge?.expiry} />
+          ) : (
+            <div
+              style={{
+                backgroundColor: "#000",
+                color: "#0BBF99",
+                width: "fit-content",
+                margin: "0px",
+                padding: "5px 20px",
+                fontStyle: "italic",
+                fontWeight: "bold",
+                borderRadius: "10px",
+              }}
+            >
+              TBA
+            </div>
+          )}
         </div>
 
         <hr />

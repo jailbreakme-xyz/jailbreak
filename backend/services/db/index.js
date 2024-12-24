@@ -147,6 +147,7 @@ class DataBaseService {
           usd_prize: 1,
           break_attempts: 1,
           fee_multiplier: 1,
+          tag: 1,
         }
       );
 

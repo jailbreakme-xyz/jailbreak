@@ -5,7 +5,7 @@ resolution = true
 skip-lint = false
 
 [programs.mainnet]
-jailbreak_pool = "9LRtUrui3pfsMpBe7NGLdGsjNUPKRT5W6rwddTTuAxTE"
+jailbreak_pool = "7UeCxsRTJyjqMuuckjjsfJfSNzVNzVYXpvFWLKCkmapU"
 
 [registry]
 url = "https://api.apr.dev"

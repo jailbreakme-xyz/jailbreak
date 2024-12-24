@@ -9,4 +9,6 @@ pub enum JailbreakError {
     InvalidAuthority,
     #[msg("Tournament is not concluded")]
     TournamentNotConcluded,
+    #[msg("Invalid tournament fee type")]
+    InvalidTournamentFeeType,
 }

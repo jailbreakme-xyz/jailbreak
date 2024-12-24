@@ -85,7 +85,24 @@ export default function Footer(props) {
         <div style={{ width: "100%" }}>
           <h3 style={{ color: "black" }}>Tournament starts in</h3>
           <div className="upcoming-timer">
-            <Timer expiryDate={props.start_date} />
+            {props.start_date ? (
+              <Timer expiryDate={props.start_date} />
+            ) : (
+              <div
+                style={{
+                  backgroundColor: "#000",
+                  color: "#0BBF99",
+                  width: "fit-content",
+                  margin: "0px auto",
+                  padding: "5px 20px",
+                  fontStyle: "italic",
+                  fontWeight: "bold",
+                  borderRadius: "10px",
+                }}
+              >
+                TBA
+              </div>
+            )}
           </div>
         </div>
       )}

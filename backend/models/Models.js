@@ -50,6 +50,7 @@ const ChallengeSchema = new mongoose.Schema(
     custom_user_img: String,
     phrases: Array,
     type: String,
+    tag: String,
     single_tool_comparison: {
       tool_name: String,
       higher_field_name: String,

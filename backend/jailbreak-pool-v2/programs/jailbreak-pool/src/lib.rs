@@ -2,11 +2,12 @@ pub mod errors;
 pub mod instructions;
 pub mod state;
 pub mod consts;
+pub mod fees;
 
 use anchor_lang::prelude::*;
 use instructions::*;
 
-declare_id!("9LRtUrui3pfsMpBe7NGLdGsjNUPKRT5W6rwddTTuAxTE");
+declare_id!("7UeCxsRTJyjqMuuckjjsfJfSNzVNzVYXpvFWLKCkmapU");
 
 #[program]
 pub mod tournament {
@@ -16,8 +17,8 @@ pub mod tournament {
         instructions::initialize::handler(ctx)
     }
 
-    pub fn start_tournament(ctx: Context<StartTournament>, system_prompt_hash: [u8; 32], initial_pool: u64, fee_mul_pct_x10: u8, winner_payout_pct: u8) -> Result<()> {
-        instructions::start::handler(ctx, system_prompt_hash, initial_pool, fee_mul_pct_x10, winner_payout_pct)
+    pub fn start_tournament(ctx: Context<StartTournament>, system_prompt_hash: [u8; 32], initial_pool: u64, fee_mul_pct_x10: u8, winner_payout_pct: u8, tournament_fee_type: u8) -> Result<()> {
+        instructions::start::handler(ctx, system_prompt_hash, initial_pool, fee_mul_pct_x10, winner_payout_pct, tournament_fee_type)
     }
 
     pub fn conclude_tournament(ctx: Context<ConcludeTournament>) -> Result<()> {
@@ -28,4 +29,3 @@ pub mod tournament {
         instructions::submit::handler(ctx, solution_hash)
     }
 }
-

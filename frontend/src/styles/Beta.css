@@ -130,6 +130,7 @@ padding: 5px;
 .beta-content-left p {
     font-size: 1.5rem;
     line-height: 1.5;
+    margin: 10px 0px 15px;
 }
 .beta-content-left strong {
     color: #0BBF99;
@@ -137,17 +138,34 @@ padding: 5px;
     font-size: 2.5rem;
 }
 
+.animate-scroll {
+  display: flex;
+  animation: scroll 20s linear infinite;
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
 .beta-counters {
-    margin: 0px;
+    margin: 15px 0px 10px;
+    width: 100%;
     max-width: 660px;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     column-gap: 10px;
   }
   
   .beta-counters h4 {
     margin: 0px;
+    font-size: 16px;
+    font-weight: bold;
   }
   
   .beta-counters hr {
@@ -158,14 +176,14 @@ padding: 5px;
   
   .beta-counters > div {
     color: #0BBF99;
-    background-color: black;
+    background-color: #181726;
       border-radius: 20px;
-      padding: 10px;
-      width: 50%;
+      padding: 20px 10px;
+      width: 150px;
       display: grid;
       place-items: center;
       row-gap: 8px;
-      border: 2px solid #ccc;
+      /* border: 2px solid #ccc; */
       text-align: center;
   }
   .beta-counters > div > svg {
@@ -175,7 +193,8 @@ padding: 5px;
     color: #0BBF99;
   }
   .beta-counters > div  > span {
-    font-size: 30px;
+    font-size: 18px;
+    font-weight: bold;
   }
 
   #heroTopWinners svg {
@@ -186,6 +205,7 @@ padding: 5px;
   #heroTopWinners > div {
     gap: 0px;
   }
+
   #heroTopWinners p {
     font-size: 16px;
     font-weight: normal;
@@ -224,10 +244,10 @@ padding: 5px;
     padding: 20px;
     text-align: center;
     border: 2px solid #ccc;
-    min-height: 400px;
+    min-height: 380px;
   }
 .agentCard.hero {
-  width: 300px;
+  width: 280px;
   min-height: auto;
 }
 .beta-agents-list .agentCard, .beta-breakers-list .beta-breaker {
@@ -299,15 +319,17 @@ text-align: center;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  column-gap: 10px;
+  column-gap: 2px;
   background-color: black;
   color: #0BBF99;
   border-radius: 20px;
   padding: 3px 10px;
   width: fit-content;
-  margin: 0px auto;
+  min-width: 200px;
+  margin: 8px auto 5px;
   font-weight: bold;
   text-transform: uppercase;
+  border: 1px dashed;
 }
 
 .agent-card-content-bottom {
@@ -320,15 +342,17 @@ text-align: center;
 
 .agentCard button {
     background-color: black;
-    color: #ccc;
+    color: #0BBF99;
     border: 2px solid black;
     width: 100%;
     padding: 10px;
     border-radius: 20px;
     font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
 }
 .agentCard button:hover {
-    background-color: #ccc;
+    background-color: #0BBF99;
     color: black;
     border: 2px solid black;
 }
@@ -552,8 +576,32 @@ font-size: 12px;
   }
   .beta-breakers-view-all {font-size: 16px; color: #0BBF99; font-weight: bold;}
   @media screen and (min-width:768px) {
+    .beta-counters svg, .beta-counters br, .beta-counters hr {
+      display: none !important;
+    }
     .mobile {
       display: none;
+    }
+    .inline-counters {
+      width: 100%;
+      font-size: 16px;
+    }
+    .beta-counters.inline-counters > div {
+      min-width: 220px;
+      width: fit-content;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      column-gap: 8px;
+      padding: 8px 20px;
+      border-radius: 50px;
+    }
+    .beta-counters.inline-counters h4 {
+      font-size: 16px;
+    }
+    .beta-counters.inline-counters span {
+      font-size: 22px;
     }
   }
 
@@ -654,7 +702,7 @@ font-size: 12px;
         align-items: center;
   }
   .agentCard.hero {
-    width: 300px;
+    width: 95%;
     max-width: fit-content;
   }
   .beta-content {
@@ -665,20 +713,42 @@ font-size: 12px;
     margin: 0px auto;
   }
   .beta-content-left {
-    width: 100% !important;
+    width: 98% !important;
+    text-align: center;
+  }
+  .beta-content-left a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .beta-content-left .styledBtn {
+    /* width: 95% !important; */
+    margin: 10px auto !important;
   }
   .beta-content-right {
-    width: 100% !important;
+    width: 98% !important;
     justify-items: center;
+    margin: 0px auto;
   }
   .beta-content-left h1 {
     font-size: 28px;
   }
   .beta-content-left p {
     font-size: 1.2rem;
+    margin: 10px 0px;
+  }
+  .beta-content-left hr {
+    width: 100% !important;
+  }
+  .beta-counters {
+margin-top: 20px;
   }
   .beta-counters div {
+    padding: 20px 10px;
     width: 50% !important;
+  }
+  .beta-counters span {
+    font-size: 22px !important;
   }
   .beta-counters div:nth-child(2) {
     display: none;
@@ -728,7 +798,16 @@ font-size: 12px;
   }
 
   #heroTopWinners {
+    display: none !important;
     padding: 10px 0px 20px !important;
     justify-content: center !important;
+    column-gap: 5px !important;
   }
+  /* #heroTopWinners > div:last-child {
+    display: none;
+  }
+
+  #heroTopWinners span {
+    font-size: 18px !important;
+  } */
   }

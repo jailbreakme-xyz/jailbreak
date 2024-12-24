@@ -6,6 +6,8 @@ import {
   SystemProgram,
   Keypair,
   LAMPORTS_PER_SOL,
+  TransactionMessage,
+  VersionedTransaction,
 } from "@solana/web3.js";
 import { createHash } from "crypto";
 import { readFileSync } from "fs";
@@ -157,15 +159,27 @@ class BlockchainService {
       // Read state (1 byte)
       const state = data.readUInt8(40);
 
-      // Read entry fee (8 bytes)
-      const entryFee = data.readBigUInt64LE(41);
-      const feeMulPct = data.readUInt8(49);
+      // Read fee type (1 byte)
+      const fee_type = data.readUInt8(41);
 
+      // Read entry fee (8 bytes)
+      const entryFee = data.readBigUInt64LE(42);
+
+      // Read fee multiplier percentage times 10 (1 byte)
+      const fee_mul_pct_x10 = data.readUInt8(50);
+
+      // Read winner payout percentage (1 byte)
+      const winner_payout_pct = data.readUInt8(51);
+
+      const programBalance = await this.getAccountBalance(tournamentPDA);
       return {
         authority: authority.toString(),
         state,
         entryFee: Number(entryFee) / LAMPORTS_PER_SOL, // Convert BigInt to number if needed
-        feeMulPct,
+        feeMulPct: fee_mul_pct_x10,
+        winnerPayoutPct: winner_payout_pct,
+        feeType: fee_type,
+        programBalance: programBalance / LAMPORTS_PER_SOL,
       };
     } catch (error) {
       console.error("Error fetching tournament data:", error);
@@ -221,17 +235,31 @@ class BlockchainService {
       // Create the transaction and add the instruction
       const transaction = new Transaction().add(instruction);
 
+      const { blockhash, lastValidBlockHeight } =
+        await this.connection.getLatestBlockhash();
+      transaction.recentBlockhash = blockhash;
+      transaction.feePayer = wallet.publicKey;
+
+      const message = new TransactionMessage({
+        payerKey: wallet.publicKey,
+        recentBlockhash: blockhash,
+        instructions: transaction.instructions,
+      }).compileToV0Message();
+
+      const versionedTransaction = new VersionedTransaction(message);
+      versionedTransaction.sign([wallet]);
+
       // Send the transaction
       const signature = await this.connection.sendTransaction(
-        transaction,
-        [wallet],
+        versionedTransaction,
         {
+          skipPreflight: false,
           preflightCommitment: "confirmed",
         }
       );
 
       // Confirm the transaction
-      const confirmation = await this.connection.confirmTransaction({
+      await this.connection.confirmTransaction({
         signature: signature,
         commitment: "confirmed",
       });
@@ -301,6 +329,8 @@ class BlockchainService {
     savedTransaction,
     entryFee,
     feeMulPct,
+    winnerPayoutPct,
+    feeType,
     senderWalletAddress
   ) {
     try {
@@ -359,8 +389,10 @@ class BlockchainService {
       const amountReceivedSOL = (totalLamportsSent / LAMPORTS_PER_SOL).toFixed(
         6
       );
+
       const expectedDifference = amountReceivedSOL * (feeMulPct / 1000);
-      const expectedFee = (entryFee - expectedDifference).toFixed(6);
+      const expectedFee =
+        feeType === 0 ? (entryFee - expectedDifference).toFixed(6) : entryFee;
 
       console.log("Amount received:", amountReceivedSOL);
       console.log("Expected Fee:", expectedFee);
@@ -491,6 +523,11 @@ class BlockchainService {
     const shuffledArray = [...partialArr, ...arr.slice(count)];
 
     return shuffledArray;
+  }
+
+  async getAccountBalance(address) {
+    const balance = await this.connection.getBalance(new PublicKey(address));
+    return balance;
   }
 
   async createDeployProgramTransaction(

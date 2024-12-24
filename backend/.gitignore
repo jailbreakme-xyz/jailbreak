@@ -41,11 +41,12 @@ next-env.d.ts
 /data/challenges_old.js
 
 /jailbreak-pool-v2/target
-
+*/target
 /secrets
 /data
 /test
 /jailbreak-pool-dev
+/jailbreak-pool-24-12
 /hooks/degenScore.js
 /services/llm/characters
 /services/llm/logs

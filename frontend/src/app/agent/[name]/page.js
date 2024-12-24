@@ -12,6 +12,18 @@ async function getAgentData(name) {
   return response.json();
 }
 
+const defineLevel = (break_attempts) => {
+  if (break_attempts < 50) {
+    return "Beginner";
+  } else if (break_attempts < 100) {
+    return "Intermediate";
+  } else if (break_attempts < 200) {
+    return "Advanced";
+  } else {
+    return "Master";
+  }
+};
+
 const Agent = ({ params }) => {
   const name = use(params).name;
   const [loading, setLoading] = useState(true);
@@ -74,6 +86,8 @@ const Agent = ({ params }) => {
     charactersPerWord,
     disable,
     language,
+    tag,
+    break_attempts,
   } = agentData?.challenge;
 
   return (
@@ -107,8 +121,18 @@ const Agent = ({ params }) => {
               <p style={styles[status]} className={status}>
                 {status}
               </p>
-              <p style={styles.level} className={`${level} level`}>
-                {level}
+              <p
+                style={{
+                  width: "fit-content",
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                  borderRadius: "150px",
+                  padding: "5px 15px",
+                  margin: "5px 0px",
+                }}
+                className={`level ${defineLevel(break_attempts)}`}
+              >
+                {numberWithCommas(break_attempts)} Break Attempts
               </p>
             </div>
           </div>
@@ -125,8 +149,24 @@ const Agent = ({ params }) => {
           ) : (
             status === "upcoming" && (
               <div>
-                <p>Tournament starts in</p>
-                <Timer expiryDate={start_date} />
+                <p style={{ margin: "5px 0px 0px" }}>Tournament starts in</p>
+                {start_date ? (
+                  <Timer expiryDate={start_date} />
+                ) : (
+                  <div
+                    style={{
+                      backgroundColor: "#d3d3d387",
+                      width: "fit-content",
+                      margin: "0px",
+                      padding: "5px 20px",
+                      fontStyle: "italic",
+                      fontWeight: "bold",
+                      borderRadius: "10px",
+                    }}
+                  >
+                    TBA
+                  </div>
+                )}
               </div>
             )
           )}
@@ -323,6 +363,13 @@ const styles = {
     margin: "5px 0px",
     width: "fit-content",
     fontWeight: "bold",
+    textTransform: "capitalize",
+    borderRadius: "150px",
+    padding: "5px 15px",
+    backgroundColor: "#000",
+    color: "#0BBF99",
+    border: "1px solid #0BBF99",
+    fontStyle: "italic",
   },
   active: {
     fontSize: "16px",
@@ -335,7 +382,7 @@ const styles = {
     fontSize: "16px",
     fontWeight: "bold",
     margin: "0",
-    color: "blue",
+    color: "red",
     textTransform: "capitalize",
   },
   closed: {

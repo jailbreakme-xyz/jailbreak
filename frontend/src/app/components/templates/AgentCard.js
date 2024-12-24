@@ -7,6 +7,18 @@ const numberWithCommas = (x) => {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
+const defineLevel = (break_attempts) => {
+  if (break_attempts < 50) {
+    return "Beginner";
+  } else if (break_attempts < 100) {
+    return "Intermediate";
+  } else if (break_attempts < 200) {
+    return "Advanced";
+  } else {
+    return "Master";
+  }
+};
+
 const AgentCard = ({ char, data, hero }) => {
   return (
     <div className={`agentCard ${hero ? "hero" : ""}`}>
@@ -43,9 +55,14 @@ const AgentCard = ({ char, data, hero }) => {
             >
               {char.name}
             </h2>
-            <p className={`level ${char.level}`}>{char.level}</p>
+            <p
+              className={`level ${defineLevel(char.break_attempts)}`}
+              style={{ margin: "2px auto" }}
+            >
+              {numberWithCommas(char.break_attempts)} Break Attempts
+            </p>
             <div className="agent-card-prize-pool">
-              <span>Prize Pool</span>
+              <span>Prize Pool - </span>
               <CountUp
                 start={0}
                 end={
@@ -64,24 +81,42 @@ const AgentCard = ({ char, data, hero }) => {
           </div>
         </div>
         <hr />
-        <p>{char.label}</p>
+        <p>
+          {char.label.length > 120
+            ? char.label.substring(0, char.label.lastIndexOf(" ", 120)) + "..."
+            : char.label}
+        </p>
 
         <div className="agent-card-content-bottom">
           {char.status === "upcoming" ? (
             <div className="upcoming-timer">
-              <p
-                style={{
-                  fontSize: "14px",
-                  color: "#0bbf99",
-                  fontWeight: "bold",
-                }}
-              >
-                Starts in ↓
-              </p>
               {char.start_date ? (
-                <Timer expiryDate={char.start_date} />
+                <>
+                  <p
+                    style={{
+                      fontSize: "14px",
+                      color: "#0bbf99",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Starts in ↓
+                  </p>
+                  <Timer expiryDate={char.start_date} />
+                </>
               ) : (
-                <p>TBA</p>
+                <div
+                  style={{
+                    backgroundColor: "#d3d3d387",
+                    width: "100%",
+                    margin: "0px",
+                    padding: "10px 0px",
+                    fontStyle: "italic",
+                    fontWeight: "bold",
+                    borderRadius: "20px",
+                  }}
+                >
+                  COMING SOON
+                </div>
               )}
             </div>
           ) : (

@@ -54,6 +54,18 @@ export default function Beta() {
             </div>
             <div className="beta-breakers">
               <h1 style={{ margin: "5px 0px" }}>Top Jailbreakers 🔥</h1>
+              <div className="beta-counters inline-counters desktop">
+                <div>
+                  <h4>🎯 BREAK ATTEMPTS</h4>
+                  <CountUp
+                    start={100}
+                    end={data?.breakAttempts}
+                    duration={2.75}
+                    decimals={0}
+                    decimal="."
+                  />
+                </div>
+              </div>
               <Link className="beta-breakers-view-all pointer" href="/breakers">
                 View All →
               </Link>

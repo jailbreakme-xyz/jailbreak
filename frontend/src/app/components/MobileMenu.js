@@ -42,7 +42,7 @@ const MobileMenu = (props) => {
 
       <div className={`mainMenu ${menuOpen ? "open" : ""}`}>
         <img
-          src={darkSlogen}
+          src={"/images/darkSlogen.png"}
           alt="logo"
           width="200"
           style={{ marginBottom: "15px" }}
@@ -82,7 +82,7 @@ const MobileMenu = (props) => {
           onClick={() => setMenuOpen(false)}
           target="_blank"
         >
-          <GiTwoCoins size={25} /> $JAIL TOKENS
+          <GiTwoCoins size={25} /> $JAIL TOKEN
         </Link>
         {props.address && (
           <Link
@@ -111,14 +111,14 @@ const MobileMenu = (props) => {
                 target="_blank"
                 className="pointer"
               >
-                <FaXTwitter size={30} className="pointer" />
+                <FaXTwitter size={25} className="pointer" />
               </a>
               <a
                 href="https://t.me/jailbreakme_xyz"
                 target="_blank"
                 className="pointer"
               >
-                <FaTelegramPlane size={30} className="pointer" />
+                <FaTelegramPlane size={25} className="pointer" />
               </a>
               <a
                 href="https://solscan.io/account/B1XbZeQYZxv5ezBpBgomEUqDvTbM8HwSYfktcpBGkgjg"
@@ -130,10 +130,10 @@ const MobileMenu = (props) => {
                 }}
               >
                 <img
-                  src={SolIcon}
+                  src={"/images/solIcon.png"}
                   alt="Solana"
-                  width={30}
-                  height={30}
+                  width={25}
+                  height={25}
                   className="pointer"
                 />
               </a>
@@ -142,14 +142,14 @@ const MobileMenu = (props) => {
                 target="_blank"
                 className="pointer"
               >
-                <SiGitbook size={30} className="pointer" />
+                <SiGitbook size={25} className="pointer" />
               </a>
               <a
                 href="https://github.com/probonodev/jailbreak"
                 target="_blank"
                 className="pointer"
               >
-                <SiGithub size={30} className="pointer" />
+                <SiGithub size={25} className="pointer" />
               </a>
             </div>
           </div>

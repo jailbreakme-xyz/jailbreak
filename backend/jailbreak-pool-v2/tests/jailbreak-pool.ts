@@ -4,6 +4,9 @@ import Wallet from "@coral-xyz/anchor/dist/cjs/nodewallet"
 const assert = require("assert");
 import { Tournament, TournamentState } from "../target/types/tournament";
 
+const TOURNAMENT_EXP = 0;
+const TOURNAMENT_CONST = 1;
+
 describe("tournament", () => {
   // Configure the client to use the local cluster.
   const provider = anchor.AnchorProvider.env();
@@ -48,7 +51,7 @@ describe("tournament", () => {
   it("Starts a tournament", async () => {
     const expected_entry_fee = entry_sum * fee_mul_x10 / 1000;
     const system_prompt_hash = Array.from(new Uint8Array(32).fill(0));
-    await program.methods.startTournament(system_prompt_hash, new anchor.BN(entry_sum), fee_mul_x10, winner_pct).accounts({
+    await program.methods.startTournament(system_prompt_hash, new anchor.BN(entry_sum), fee_mul_x10, winner_pct, TOURNAMENT_EXP).accounts({
       tournament: tournamentPubKey,
       payer: provider.wallet.publicKey,
       systemProgram: anchor.web3.SystemProgram.programId,
@@ -110,7 +113,7 @@ describe("tournament", () => {
 
   it("Starts a second tournament", async () => {
     let system_prompt_hash = Array.from(new Uint8Array(32).fill(2));
-    await program.methods.startTournament(system_prompt_hash, new anchor.BN(entry_sum), fee_mul_x10, winner_pct).accounts({
+    await program.methods.startTournament(system_prompt_hash, new anchor.BN(entry_sum), fee_mul_x10, winner_pct, TOURNAMENT_EXP).accounts({
       tournament: tournamentPubKey,
       payer: provider.wallet.publicKey,
       systemProgram: anchor.web3.SystemProgram.programId,
@@ -166,6 +169,48 @@ describe("tournament", () => {
       systemProgram: anchor.web3.SystemProgram.programId,
     }).rpc();
     let balance = await provider.connection.getBalance(tournamentPubKey);
+    assert.equal(balance, init_balance);
+  });
+
+  it("Starts a CONST tournament", async () => {
+    const system_prompt_hash = Array.from(new Uint8Array(32).fill(5));
+    await program.methods.startTournament(system_prompt_hash, new anchor.BN(entry_sum), fee_mul_x10, winner_pct, TOURNAMENT_CONST).accounts({
+      tournament: tournamentPubKey,
+      payer: provider.wallet.publicKey,
+      systemProgram: anchor.web3.SystemProgram.programId,
+    }).rpc();
+    const tournamentAccount = await program.account.tournament.fetch(tournamentPubKey);
+    assert.equal(tournamentAccount.entryFee, entry_sum*fee_mul_x10/1000);
+    const balance = await provider.connection.getBalance(tournamentPubKey);
+    assert.equal(balance - init_balance, entry_sum);
+  });
+
+  it("Submits to the CONST tournament", async () => {
+    let tournamentAccount = await program.account.tournament.fetch(tournamentPubKey);
+    const entry_fee = tournamentAccount.entryFee / 1;
+    const solution_hash = Array.from(new Uint8Array(32).fill(6));
+    await program.methods.submitSolution(solution_hash).accounts({
+      tournament: tournamentPubKey,
+      payer: provider.wallet.publicKey,
+      systemProgram: anchor.web3.SystemProgram.programId,
+    }).rpc();
+    tournamentAccount = await program.account.tournament.fetch(tournamentPubKey);
+
+    // In CONST tournament, entry fee should remain the same
+    assert.equal(tournamentAccount.entryFee, entry_fee);
+
+    const balance = await provider.connection.getBalance(tournamentPubKey);
+    assert.equal(balance - init_balance, entry_sum + entry_fee);
+  });
+
+  it("Concludes the CONST tournament", async () => {
+    await program.methods.concludeTournament().accounts({
+      tournament: tournamentPubKey,
+      payer: provider.wallet.publicKey,
+      winnerAccount: provider.wallet.publicKey,
+      systemProgram: anchor.web3.SystemProgram.programId,
+    }).rpc();
+    const balance = await provider.connection.getBalance(tournamentPubKey);
     assert.equal(balance, init_balance);
   });
 });

@@ -6,18 +6,72 @@ import AgentCard from "./AgentCard";
 import Counters from "./Counters";
 import Jdenticon from "react-jdenticon";
 import CountUp from "react-countup";
-
+import InlineCounters from "./InlineCounters";
 const Hero = ({ data }) => {
   return (
     <div className="beta-content">
       <div className="beta-content-left">
         <h1>What is JailbreakMe?</h1>
-        <hr />
+        <hr style={{ width: "70%", margin: "0px" }} />
+        <InlineCounters data={data} />
         <p>
           The first open-source decentralized app where organizations test their
           AI models and agents while users earn rewards for jailbreaking them.
         </p>
         <Counters data={data} />
+        {/* <p style={{ fontWeight: "bold", fontStyle: "italic" }}>
+          TOP WINNERS 🔥
+        </p> */}
+        <div
+          id="heroTopWinners"
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "start",
+            alignItems: "center",
+            columnGap: "20px",
+            padding: "0px 0px 0px",
+            margin: "0px 0px",
+          }}
+        >
+          {data?.topChatters &&
+            data?.topChatters?.slice(0, 5)?.map((breaker, index) => (
+              <div
+                key={index}
+                className="pointer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.location.href = `/breaker/${breaker?.address}`;
+                }}
+                style={{
+                  display: "grid",
+                  placeItems: "center",
+                }}
+              >
+                <Jdenticon value={breaker?.address} size={"50"} />
+                <p
+                  className="beta-breaker-address pointer"
+                  style={{
+                    backgroundColor: "#181726",
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {index === 0 && "👑 "}
+                  {breaker?.address?.slice(0, 3)}...
+                  {breaker?.address?.slice(-3)}
+                </p>
+                <CountUp
+                  end={breaker?.totalUsdPrize?.toFixed(0)}
+                  prefix="$"
+                  start={0}
+                  duration={2.75}
+                  decimals={0}
+                  decimal="."
+                />
+              </div>
+            ))}
+        </div>
         <Link
           href={`/break/${data?.activeChallenge?.name}`}
           target="_blank"
@@ -28,9 +82,8 @@ const Hero = ({ data }) => {
             START BREAKING <FaChevronCircleRight className="pointer" />
           </button>
         </Link>
-        {/* <h1>Top Winners 🔥</h1>
-        <hr /> */}
-        {/* <div
+        {/* <h3 style={{ margin: "5px" }}>Top Winners 🔥</h3>
+        <div
           id="heroTopWinners"
           style={{
             display: "flex",
@@ -41,8 +94,8 @@ const Hero = ({ data }) => {
             padding: "20px 0px 0px",
           }}
         >
-          {data?.topBreakers &&
-            data?.topBreakers?.slice(0, 5)?.map((breaker, index) => (
+          {data?.topChatters &&
+            data?.topChatters?.slice(0, 6)?.map((breaker, index) => (
               <div
                 key={index}
                 className="pointer"

@@ -51,6 +51,9 @@ router.get("/get-challenge", async (req, res) => {
       agent_logic: 1,
       expiry_logic: 1,
       custom_user_img: 1,
+      tag: 1,
+      winning_prize: 1,
+      usd_prize: 1,
     };
 
     let challenge = await DatabaseService.getChallengeByName(name, projection);
@@ -58,9 +61,15 @@ router.get("/get-challenge", async (req, res) => {
       return res.status(404).send("Challenge not found");
     }
 
+    const solPrice = await getSolPriceInUSDT(initial === "true");
     let fee_multiplier = challenge.fee_multiplier || 100;
-    let message_price = challenge.entryFee;
-    let prize = message_price * fee_multiplier;
+    const message_price = challenge.entryFee;
+    const usdMessagePrice = message_price * solPrice;
+    const prize =
+      challenge.fee_multiplier === 1
+        ? challenge.winning_prize
+        : message_price * fee_multiplier;
+    const usdPrize = challenge.usd_prize;
 
     const challengeName = challenge.name;
     const challengeId = challenge._id;
@@ -121,7 +130,6 @@ router.get("/get-challenge", async (req, res) => {
       });
     }
 
-    const solPrice = await getSolPriceInUSDT(initial === "true");
     let highestScore = 0;
     if (challenge.agent_logic === "scoring") {
       const highestScoreMessage = await DatabaseService.getHighestScore(
@@ -133,11 +141,6 @@ router.get("/get-challenge", async (req, res) => {
     }
 
     if (chatHistory.length > 0) {
-      message_price = challenge.entryFee;
-      prize = message_price * fee_multiplier;
-
-      const usdMessagePrice = message_price * solPrice;
-      const usdPrize = prize * solPrice;
       if (expiry < now && challenge.status === "active") {
         await DatabaseService.updateChallenge(challengeId, {
           status: "concluded",
@@ -188,9 +191,6 @@ router.get("/get-challenge", async (req, res) => {
         highestScore,
         chatHistory: chatHistory.reverse(),
       });
-    } else if (initial != "true") {
-      message_price = challenge.entryFee;
-      prize = message_price * fee_multiplier;
     }
 
     if (initial === "true") {
@@ -198,13 +198,7 @@ router.get("/get-challenge", async (req, res) => {
       const tournamentData = await blockchainService.getTournamentData(
         tournamentPDA
       );
-
-      message_price = tournamentData.entryFee;
-      prize = message_price * fee_multiplier;
     }
-
-    const usdMessagePrice = message_price * solPrice;
-    const usdPrize = prize * solPrice;
 
     return res.status(200).json({
       challenge,

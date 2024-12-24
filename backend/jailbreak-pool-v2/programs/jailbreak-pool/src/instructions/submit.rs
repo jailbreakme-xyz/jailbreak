@@ -3,6 +3,7 @@ use anchor_lang::system_program::{transfer, Transfer};
 
 use crate::state::{Tournament, TournamentState};
 use crate::errors::JailbreakError;
+use crate::fees::update_fee;
 
 #[derive(Accounts)]
 pub struct SubmitSolution<'info> {
@@ -39,7 +40,7 @@ pub fn handler(ctx: Context<SubmitSolution>, solution_hash: [u8; 32]) -> Result<
     );
     transfer(cpi_context, tournament.entry_fee)?;
 
-    tournament.entry_fee += tournament.entry_fee * (tournament.fee_mul_pct as u64) / 1000u64;
+    tournament.entry_fee = update_fee(tournament.entry_fee, tournament.fee_mul_pct_x10, tournament.fee_type);
 
     emit!(SolutionSubmitted {
         // address of submitter
@@ -51,4 +52,3 @@ pub fn handler(ctx: Context<SubmitSolution>, solution_hash: [u8; 32]) -> Result<
     });
     Ok(())
 }
-
