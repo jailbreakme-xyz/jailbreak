@@ -1,0 +1,53 @@
+/* frontend/src/app/components/partials/TypingAnimation.css */
+.typing-bubble {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px !important;
+    height: 30px !important;
+    background-color: #FFFFFF !important;
+    border-radius: 0px 50px 50px 50px !important;
+    padding: 5px 20px !important;
+  }
+  
+  .dot {
+    width: 8px !important   ;
+    height: 8px !important;
+    margin: 0 2px !important;
+    background-color: #555 !important;
+    border-radius: 50% !important;
+    animation: typingBubble 1.5s infinite;
+  }
+  
+  .dot:nth-child(1) {
+    animation-delay: 0s;
+  }
+  
+  .dot:nth-child(2) {
+    animation-delay: 0.3s;
+  }
+  
+  .dot:nth-child(3) {
+    animation-delay: 0.6s;
+  }
+  
+  @keyframes typingBubble {
+    0%, 60%, 100% {
+      opacity: 0.2;
+    }
+    30% {
+      opacity: 1;
+    }
+  }
+
+  .bubble-loading-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  .bubble-loading-container img {
+    position: relative;
+    top: -20px;
+  }

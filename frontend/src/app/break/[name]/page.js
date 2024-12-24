@@ -25,6 +25,7 @@ import {
 import AgentInfo from "../../components/templates/AgentInfo";
 import ChatMenu from "../../components/templates/ChatMenu";
 import ScoreCircle from "../../components/partials/ScoreCircle";
+import TypingBubble from "../../components/partials/TypingBubble";
 
 const SOLANA_RPC =
   process.env.NODE_ENV === "development"
@@ -624,8 +625,19 @@ export default function Challenge({ params }) {
                         </div>
                       )}
                   {loading && conversation?.length > 0 && (
-                    <div className="loading-indicator">
-                      <RingLoader color="#09bf99" size={30} />
+                    <div className="bubble-loading-container">
+                      <img
+                        alt="pfp"
+                        src={challenge?.pfp}
+                        width="40"
+                        height="40"
+                        className="avatar-image"
+                        style={{
+                          border: "2px solid #09bf99",
+                          borderRadius: "50%",
+                        }}
+                      />
+                      <TypingBubble />
                     </div>
                   )}
                   <div ref={messagesEndRef}></div>

@@ -247,7 +247,7 @@ padding: 5px;
     min-height: 380px;
   }
 .agentCard.hero {
-  width: 280px;
+  width: 300px;
   min-height: auto;
 }
 .beta-agents-list .agentCard, .beta-breakers-list .beta-breaker {

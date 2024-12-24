@@ -50,3 +50,4 @@ next-env.d.ts
 /hooks/degenScore.js
 /services/llm/characters
 /services/llm/logs
+/recovered.json

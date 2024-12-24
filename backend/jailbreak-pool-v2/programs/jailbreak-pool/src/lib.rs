@@ -7,7 +7,7 @@ pub mod fees;
 use anchor_lang::prelude::*;
 use instructions::*;
 
-declare_id!("7UeCxsRTJyjqMuuckjjsfJfSNzVNzVYXpvFWLKCkmapU");
+declare_id!("9CCexVvp6SocgVvuy4XSnSPKeUBWBADCkKS9kexnKNfo");
 
 #[program]
 pub mod tournament {
