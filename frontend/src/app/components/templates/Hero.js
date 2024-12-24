@@ -12,13 +12,14 @@ const Hero = ({ data }) => {
     <div className="beta-content">
       <div className="beta-content-left">
         <h1>What is JailbreakMe?</h1>
-        <hr style={{ width: "70%", margin: "0px" }} />
-        <InlineCounters data={data} />
+        <hr style={{ width: "80%", margin: "0px" }} />
         <p>
           The first open-source decentralized app where organizations test their
           AI models and agents while users earn rewards for jailbreaking them.
         </p>
         <Counters data={data} />
+        <InlineCounters data={data} />
+
         {/* <p style={{ fontWeight: "bold", fontStyle: "italic" }}>
           TOP WINNERS 🔥
         </p> */}
@@ -29,7 +30,7 @@ const Hero = ({ data }) => {
             flexDirection: "row",
             justifyContent: "start",
             alignItems: "center",
-            columnGap: "20px",
+            columnGap: "25px",
             padding: "0px 0px 0px",
             margin: "0px 0px",
           }}
@@ -72,16 +73,23 @@ const Hero = ({ data }) => {
               </div>
             ))}
         </div>
-        <Link
-          href={`/break/${data?.activeChallenge?.name}`}
-          target="_blank"
-          className="pointer"
-          style={{ zIndex: "99999", position: "relative" }}
-        >
-          <button className="styledBtn pointer">
-            START BREAKING <FaChevronCircleRight className="pointer" />
+        <div className="hero-buttons">
+          <Link
+            href={`/break/${data?.activeChallenge?.name}`}
+            target="_blank"
+            className="pointer"
+            style={{ zIndex: "99999", position: "relative" }}
+          >
+            <button className="styledBtn pointer">
+              START BREAKING <FaChevronCircleRight className="pointer" />
+            </button>
+          </Link>
+
+          <button className="styledBtn pointer disabled">
+            LAUNCH TOURNAMENT 🔜
           </button>
-        </Link>
+        </div>
+
         {/* <h3 style={{ margin: "5px" }}>Top Winners 🔥</h3>
         <div
           id="heroTopWinners"

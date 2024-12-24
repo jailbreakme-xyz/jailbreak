@@ -122,15 +122,57 @@ padding: 5px;
     padding: 40px 30px;
     margin: 0px auto;
 }
-
+.hero-buttons {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  column-gap: 10px;
+}
+.hero-buttons .disabled {
+  background-color: gray !important;
+  color: #000 !important;
+  border: 2px solid #000 !important;
+  cursor: not-allowed !important;
+}
+.hero-buttons button {
+  width: 250px !important;
+  font-size: 16px;
+}
 .beta-content-left {
     width: 55%;
 }
-
+.beta-breakers-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.beta-breakers-header .inline-counters {
+  justify-content: flex-end !important;
+  margin: 0px !important;
+}
+.beta-content-left h1 {
+  /* color: #0BBF99; */
+  font-size: 44px;
+  font-weight: bold;
+  margin: 10px 0px !important;
+}
+.inline-counters {
+  margin: 0px 0px 20px !important;
+}
+.inline-counters > div {
+  letter-spacing: 0.5px !important;
+}
+/* .beta-content-left hr {
+  border: 1px solid #0BBF99;
+} */
 .beta-content-left p {
     font-size: 1.5rem;
     line-height: 1.5;
     margin: 10px 0px 15px;
+    /* color: #0BBF99; */
 }
 .beta-content-left strong {
     color: #0BBF99;
@@ -222,11 +264,11 @@ padding: 5px;
     background-color: black;
     color: #0BBF99;
     margin-top: 20px;
-    border: 2px solid #ccc;
-    width: 250px;
-    font-size: 20px;
+    border: 2px solid #0BBF99;
+    /* width: 250px; */
+    font-size: 16px;
     padding: 15px;
-    border-radius: 0px 50px 50px 50px;
+    border-radius: 50px;
   }
 
   .beta-content .styledBtn:hover {
@@ -723,7 +765,7 @@ font-size: 12px;
   }
   .beta-content-left .styledBtn {
     /* width: 95% !important; */
-    margin: 10px auto !important;
+    margin: 0px auto !important;
   }
   .beta-content-right {
     width: 98% !important;
@@ -740,6 +782,7 @@ font-size: 12px;
   .beta-content-left hr {
     width: 100% !important;
   }
+
   .beta-counters {
 margin-top: 20px;
   }
@@ -776,7 +819,7 @@ margin-top: 20px;
   } */
   .beta-content .styledBtn {
     width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 0px;
     border-radius: 50px !important;
   }
   .chatInfoSection {
@@ -788,6 +831,10 @@ margin-top: 20px;
   .beta-agents, .beta-breakers {
     width: 90% !important;
     margin: auto !important;
+    text-align: center;
+  }
+  .beta-breakers-header {
+    justify-content: center !important;
   }
   .beta-breakers {
     padding: 20px 0px 30px !important;
@@ -802,6 +849,15 @@ margin-top: 20px;
     padding: 10px 0px 20px !important;
     justify-content: center !important;
     column-gap: 5px !important;
+  }
+  .hero-buttons {
+    flex-direction: column;
+    row-gap: 8px;
+    width: 100% !important;
+    margin: 20px auto 20px !important;
+  }
+  .hero-buttons button, .hero-buttons a {
+    width: 100% !important;
   }
   /* #heroTopWinners > div:last-child {
     display: none;

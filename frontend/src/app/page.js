@@ -53,22 +53,30 @@ export default function Beta() {
               </div>
             </div>
             <div className="beta-breakers">
-              <h1 style={{ margin: "5px 0px" }}>Top Jailbreakers 🔥</h1>
-              <div className="beta-counters inline-counters desktop">
+              <div className="beta-breakers-header">
                 <div>
-                  <h4>🎯 BREAK ATTEMPTS</h4>
-                  <CountUp
-                    start={100}
-                    end={data?.breakAttempts}
-                    duration={2.75}
-                    decimals={0}
-                    decimal="."
-                  />
+                  <h1 style={{ margin: "5px 0px" }}>Top Jailbreakers 🔥</h1>
+                  <Link
+                    className="beta-breakers-view-all pointer"
+                    href="/breakers"
+                  >
+                    View All →
+                  </Link>
+                </div>
+                <div className="beta-counters inline-counters desktop">
+                  <div>
+                    <h4>🎯 BREAK ATTEMPTS</h4>
+                    <CountUp
+                      start={100}
+                      end={data?.breakAttempts}
+                      duration={2.75}
+                      decimals={0}
+                      decimal="."
+                    />
+                  </div>
                 </div>
               </div>
-              <Link className="beta-breakers-view-all pointer" href="/breakers">
-                View All →
-              </Link>
+
               <hr />
               <div className="beta-breakers-list">
                 {data?.topChatters?.map((breaker, index) => (

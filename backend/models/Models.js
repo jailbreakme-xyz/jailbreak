@@ -84,7 +84,7 @@ const chatSchema = new mongoose.Schema(
     date: { type: Date, default: Date.now },
   },
   {
-    collection: process.env.NODE_ENV === "development" ? "chats_test" : "chats",
+    collection: process.env.NODE_ENV === "development" ? "chats" : "chats",
   }
 );
 
