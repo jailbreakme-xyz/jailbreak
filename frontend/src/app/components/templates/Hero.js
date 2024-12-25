@@ -11,8 +11,8 @@ const Hero = ({ data }) => {
   return (
     <div className="beta-content">
       <div className="beta-content-left">
-        <h1>What is JailbreakMe?</h1>
-        <hr style={{ width: "80%", margin: "0px" }} />
+        <h1>JailbreakMe</h1>
+        <hr style={{ width: "100%", margin: "0px" }} />
         <p>
           The first open-source decentralized app where organizations test their
           AI models and agents while users earn rewards for jailbreaking them.
@@ -53,7 +53,7 @@ const Hero = ({ data }) => {
                 <p
                   className="beta-breaker-address pointer"
                   style={{
-                    backgroundColor: "#181726",
+                    backgroundColor: "#000",
                     fontSize: "12px",
                     fontWeight: "bold",
                   }}
