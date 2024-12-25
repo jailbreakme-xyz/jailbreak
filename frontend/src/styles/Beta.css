@@ -382,7 +382,7 @@ text-align: center;
   align-items: center;
   justify-content: center;
   column-gap: 2px;
-  background-color: #181726;
+  background-color: #000;
   color: #0BBF99;
   border-radius: 20px;
   padding: 3px 10px;
@@ -393,9 +393,17 @@ text-align: center;
   text-transform: uppercase;
   border: 1px dashed;
 }
+.agentCard.hero .agent-card-prize-pool {
+  background-color: #181726;
+}
+.agent-card-content-bottom {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+}
 
-
-.agent-card-content-bottom .upcoming-timer 
 .agentCard button {
     background-color: black;
     color: #0BBF99;
