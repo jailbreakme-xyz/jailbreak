@@ -24,7 +24,7 @@ export default function SocialIcons(props) {
         <FaTelegramPlane size={25} className="pointer" />
       </a>
       <a
-        href="https://solscan.io/account/B1XbZeQYZxv5ezBpBgomEUqDvTbM8HwSYfktcpBGkgjg"
+        href="https://solscan.io/account/9CCexVvp6SocgVvuy4XSnSPKeUBWBADCkKS9kexnKNfo"
         target="_blank"
         className="pointer imgIcon"
       >
