@@ -119,8 +119,10 @@ padding: 5px;
     justify-content: space-between;
     align-items: center;
     width: 95%;
-    padding: 40px 30px;
-    margin: 0px auto;
+    padding: 60px 30px;
+    margin: 30px auto 10px;
+    background-color: #181726;
+    border-radius: 20px;
 }
 .hero-buttons {
   width: 100%;
@@ -152,6 +154,7 @@ padding: 5px;
 .beta-breakers-header .inline-counters {
   justify-content: flex-end !important;
   margin: 0px !important;
+ 
 }
 .beta-content-left h1 {
   /* color: #0BBF99; */
@@ -159,17 +162,21 @@ padding: 5px;
   font-weight: bold;
   margin: 10px 0px !important;
 }
+.beta-content-left > p > span {
+  font-size: 44px;
+}
 .inline-counters {
   margin: 0px 0px 20px !important;
 }
 .inline-counters > div {
+  background-color: #000 !important;
   letter-spacing: 0.5px !important;
 }
 /* .beta-content-left hr {
   border: 1px solid #0BBF99;
 } */
 .beta-content-left p {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     line-height: 1.5;
     margin: 10px 0px 15px;
     /* color: #0BBF99; */
@@ -291,6 +298,9 @@ padding: 5px;
 .agentCard.hero {
   width: 300px;
   min-height: auto;
+  background-color: #000;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2) !important;
+
 }
 .beta-agents-list .agentCard, .beta-breakers-list .beta-breaker {
   flex: 1 1 255px;
@@ -305,6 +315,16 @@ padding: 5px;
   left: auto;
   transform: none;
   width: 100%;
+}
+.agentCard.hero button {
+  background-color: #0BBF99 !important;
+  color: #000 !important;
+  border: 2px solid #0BBF99 !important;
+}
+.agentCard.hero button:hover {
+  background-color: #000 !important;
+  color: #0BBF99 !important;
+  border: 2px solid #0BBF99 !important;
 }
 .agent-card-content-top {
   display: block;
@@ -753,6 +773,7 @@ font-size: 12px;
     flex-direction: column;
     padding: 0px;
     margin: 0px auto;
+    background-color: #000 !important;
   }
   .beta-content-left {
     width: 98% !important;
