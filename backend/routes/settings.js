@@ -5,7 +5,6 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
-    const challenges = await DatabaseService.getSettings();
     const pages = await DatabaseService.getPages({});
     const topBreakersAndChatters =
       await DatabaseService.getTopBreakersAndChatters();
@@ -16,71 +15,104 @@ router.get("/", async (req, res) => {
     const jailToken = pages.find((page) => page.name === "jail-token")?.content;
     const beta = pages.find((page) => page.name === "beta")?.content;
 
-    const activeChallenges = challenges
-      ?.filter((challenge) => challenge.status === "active")
-      ?.sort((a, b) => b.start_date - a.start_date);
+    const solPrice = await getSolPriceInUSDT();
+    const totalGrossPrize = await DatabaseService.countTotalUsdPrize();
+    const totalNetPrize = totalGrossPrize[0].netTotal.toFixed(2);
+    const totalPayout = totalGrossPrize[0].grossTotal.toFixed(2);
+    const breakAttempts = await DatabaseService.getChatCount({ role: "user" });
+    let activeChallenge = null;
 
-    let activeChallenge = activeChallenges[0];
-
-    if (!activeChallenge) {
-      const upcomingChallenge = challenges?.find(
-        (challenge) => challenge.status === "upcoming"
+    let topChallengesByPrize =
+      await DatabaseService.getSortedChallengesByStatus(
+        "active",
+        { usd_prize: -1 },
+        { limit: 10 }
       );
-      if (upcomingChallenge) {
-        const now = new Date();
-        if (
-          upcomingChallenge.start_date <= now &&
-          upcomingChallenge.expiry >= now
-        ) {
-          await DatabaseService.updateChallenge(upcomingChallenge._id, {
-            status: "active",
-          });
-        }
-        activeChallenge = upcomingChallenge;
-      } else {
-        activeChallenge = challenges?.sort(
-          (a, b) => a.start_date - b.start_date
-        )[0];
+
+    activeChallenge = topChallengesByPrize[0];
+    // Fallback
+    if (topChallengesByPrize.length < 10) {
+      topChallengesByPrize = await DatabaseService.getSortedChallengesByStatus(
+        "concluded",
+        { usd_prize: -1 },
+        { limit: 10 }
+      );
+      if (topChallengesByPrize.length < 10) {
+        topChallengesByPrize =
+          await DatabaseService.getSortedChallengesByStatus(
+            "upcoming",
+            { start_date: 1 },
+            { limit: 10 }
+          );
       }
     }
 
-    const solPrice = await getSolPriceInUSDT();
+    let topChallengesByVolume =
+      await DatabaseService.getSortedChallengesByStatus(
+        "active",
+        { break_attempts: -1, start_date: -1 },
+        { limit: 50 }
+      );
 
-    const totalWinningPrize = challenges
-      ?.filter((challenge) => challenge.usd_prize)
-      ?.map((challenge) => {
-        const treasury = challenge.usd_prize * (challenge.developer_fee / 100);
-        const total_payout = challenge.usd_prize - treasury;
+    if (topChallengesByVolume.length < 10) {
+      topChallengesByVolume = await DatabaseService.getSortedChallengesByStatus(
+        "concluded",
+        { break_attempts: -1, start_date: -1 },
+        { limit: 50 }
+      );
+      if (topChallengesByVolume.length < 10) {
+        topChallengesByVolume =
+          await DatabaseService.getSortedChallengesByStatus(
+            "upcoming",
+            { break_attempts: -1, start_date: -1 },
+            { limit: 50 }
+          );
+      }
+    }
 
-        return {
-          treasury: treasury,
-          total_payout: total_payout,
-        };
-      });
-
-    const totalTreasury = totalWinningPrize.reduce(
-      (acc, item) => acc + item.treasury,
-      0
+    let latestChallenges = await DatabaseService.getSortedChallengesByStatus(
+      "active",
+      { start_date: -1 },
+      { limit: 10 }
     );
-    const totalPayout = totalWinningPrize.reduce(
-      (acc, item) => acc + item.total_payout,
-      0
-    );
 
-    // console.log(JSON.stringify(topBreakers, null, 2));
-    const breakAttempts = await DatabaseService.getChatCount({ role: "user" });
+    if (latestChallenges.length < 10) {
+      latestChallenges = [
+        ...latestChallenges,
+        ...(await DatabaseService.getSortedChallengesByStatus(
+          "upcoming",
+          { start_date: 1 },
+          { limit: 10 }
+        )),
+      ];
+      if (latestChallenges.length < 10) {
+        latestChallenges = [
+          ...latestChallenges,
+          ...(await DatabaseService.getSortedChallengesByStatus(
+            "concluded",
+            { start_date: -1 },
+            { limit: 10 }
+          )),
+        ];
+      }
+    }
+
     const response = {
       endpoints: endpoints,
       faq: faq,
       beta: beta,
-      challenges: challenges,
+      challenges: topChallengesByPrize.slice(0, 10),
       jailToken: jailToken,
-      activeChallenge: activeChallenge,
-      treasury: totalTreasury,
+      activeChallenge: activeChallenge
+        ? activeChallenge
+        : topChallengesByPrize[0],
+      totalNetPrize: totalNetPrize,
       total_payout: totalPayout,
       breakAttempts: breakAttempts,
       solPrice: solPrice,
       topChatters: topBreakersAndChatters.topChatters,
+      latestChallenges: latestChallenges.slice(0, 10),
+      trendingAgents: topChallengesByVolume,
     };
 
     res.send(response);

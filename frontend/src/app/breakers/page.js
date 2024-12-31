@@ -70,6 +70,11 @@ export default function Breakers() {
                   window.location.href = `/breaker/${breaker?.address}`;
                 }}
               >
+                {index < 3 && (
+                  <div className={`position-badge position-${index + 1}`}>
+                    {index === 0 ? "👑" : index === 1 ? "🥈" : "🥉"}
+                  </div>
+                )}
                 <div
                   className="pointer"
                   onClick={(e) => {

@@ -20,7 +20,7 @@ const Counters = ({ data }) => {
         <hr />
         <CountUp
           start={1000}
-          end={data?.total_payout + data?.treasury}
+          end={data?.total_payout}
           duration={2.75}
           decimals={0}
           decimal="."
@@ -37,7 +37,7 @@ const Counters = ({ data }) => {
         <hr />
         <CountUp
           start={1000}
-          end={data?.total_payout}
+          end={data?.totalNetPrize}
           duration={2.75}
           decimals={0}
           decimal="."

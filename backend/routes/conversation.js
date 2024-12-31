@@ -11,19 +11,24 @@ import {
   shouldBeConcluded,
   concludeTournament,
 } from "../hooks/concludeTournament.js";
+import JailXService from "../services/llm/jailx.js";
+import { solanaAuth } from "../middleware/solanaAuth.js";
 
 const router = express.Router();
-const model = "gpt-4o-mini";
 const RPC_ENV = process.env.NODE_ENV === "development" ? "devnet" : "mainnet";
 const solanaRpc = `https://${RPC_ENV}.helius-rpc.com/?api-key=${process.env.RPC_KEY}`;
 
-router.post("/submit/:id", async (req, res) => {
+router.post("/submit/:id", solanaAuth, async (req, res) => {
   try {
     let { prompt, signature, walletAddress, transactionId } = req.body;
     const { id } = req.params;
 
     if (!prompt || !signature || !walletAddress || !transactionId) {
       return res.write("Missing required fields");
+    }
+
+    if (walletAddress !== req.user.walletAddress) {
+      return res.status(401).json({ error: "Unauthorized." });
     }
 
     const challenge = await DatabaseService.getChallengeById(id);
@@ -68,6 +73,7 @@ router.post("/submit/:id", async (req, res) => {
     const sol_prize = tournamentData.programBalance;
     const solPrice = await getSolPriceInUSDT();
     const usd_prize = sol_prize * solPrice;
+    const model = challenge.model;
 
     const isValidTransaction =
       await blockchainService.verifyTransactionSignature(
@@ -98,12 +104,18 @@ router.post("/submit/:id", async (req, res) => {
       return res.write("DUPLICATE TRANSACTION");
     }
 
+    let jailxThread = challenge.jailx_thread;
+    if (!jailxThread) {
+      jailxThread = await JailXService.createJailXThread();
+    }
+
     await DatabaseService.updateChallenge(
       id,
       {
         entryFee: entryFee,
         usd_prize: usd_prize,
         winning_prize: sol_prize,
+        jailx_thread: jailxThread?.id,
         ...(currentExpiry - now < oneHourInMillis && {
           expiry: new Date(now.getTime() + oneHourInMillis),
         }),
@@ -217,6 +229,31 @@ router.post("/submit/:id", async (req, res) => {
           );
 
           if (allPhrasesIncluded) {
+            // await JailXService.useJailX(
+            //   jailxThread,
+            //   JSON.stringify([
+            //     {
+            //       role: "system",
+            //       content: challenge.agent_logic,
+            //     },
+            //     {
+            //       role: "user",
+            //       content: prompt,
+            //     },
+            //     {
+            //       role: "assistant",
+            //       content: assistantMessage.content,
+            //     },
+            //   ])
+            // );
+
+            // const jailxRun = await JailXService.runJailX(
+            //   jailxThread,
+            //   challenge.tool_choice
+            // );
+
+            // console.log("jailxRun:", jailxRun);
+
             const successMessage = await concludeTournament(
               isValidTransaction,
               challenge,

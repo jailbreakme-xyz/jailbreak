@@ -11,10 +11,29 @@ import CountUp from "react-countup";
 import Footer from "./components/templates/Footer";
 import { ImCross } from "react-icons/im";
 import Link from "next/link";
+import AgentsCarousel from "./components/AgentsCarousel";
+import ChallengesSection from "./components/templates/ChallengesSection";
+import TrendingAgentsCarousel from "./components/templates/TrendingAgentsCarousel";
+
+const numbersWithCommas = (x) => {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
 
 export default function Beta() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [quickCreationOpen, setQuickCreationOpen] = useState(false);
+  const [trendingAgents, setTrendingAgents] = useState(null);
+  const [latestChallenges, setLatestChallenges] = useState(null);
+  const [challenges, setChallenges] = useState(null);
+
+  const handleQuickCreationOpen = () => {
+    setQuickCreationOpen(true);
+  };
+
+  const handleQuickCreationClose = () => {
+    setQuickCreationOpen(false);
+  };
 
   const getContent = async (initial) => {
     if (initial) {
@@ -25,25 +44,46 @@ export default function Beta() {
       .then((res) => res.data)
       .catch((err) => err);
     setData(data);
+    setTrendingAgents(data?.trendingAgents);
+    setLatestChallenges(data?.latestChallenges);
+    setChallenges(data?.challenges);
     setLoading(false);
   };
 
   useEffect(() => {
     getContent(true);
-    const interval = setInterval(() => getContent(false), 5000);
+    const interval = setInterval(() => getContent(false), 3000);
     return () => clearInterval(interval);
   }, []);
 
   return (
     <div className="fullWidthPage">
       <div>
-        <Header activeChallenge={data?.activeChallenge} />
+        <Header
+          activeChallenge={data?.activeChallenge}
+          handleQuickCreationOpen={handleQuickCreationOpen}
+          handleQuickCreationClose={handleQuickCreationClose}
+          quickCreationOpen={quickCreationOpen}
+        />
         {loading ? (
           <PageLoader />
         ) : (
           <div className="beta-container">
-            <Hero data={data} />
-            <div className="beta-agents">
+            <Hero
+              data={data}
+              handleQuickCreationOpen={handleQuickCreationOpen}
+              handleQuickCreationClose={handleQuickCreationClose}
+              quickCreationOpen={quickCreationOpen}
+            />
+
+            <ChallengesSection
+              latestChallenges={latestChallenges}
+              challenges={challenges}
+            />
+
+            <TrendingAgentsCarousel agents={trendingAgents} />
+
+            {/* <div className="beta-agents">
               <h1>Meet the Agents 🤖</h1>
               <hr />
               <div className="beta-agents-list">
@@ -51,16 +91,32 @@ export default function Beta() {
                   <AgentCard char={agent} data={data} key={index} />
                 ))}
               </div>
-            </div>
+            </div> */}
+
             <div className="beta-breakers">
               <div className="beta-breakers-header">
                 <div>
-                  <h1 style={{ margin: "5px 0px" }}>Top Jailbreakers 🔥</h1>
+                  <h2 style={{ margin: "5px 0px" }}>🔥 Top Jailbreakers</h2>
                   <Link
-                    className="beta-breakers-view-all pointer"
+                    className="pointer"
                     href="/breakers"
+                    style={{
+                      margin: "5px 0px",
+                      fontSize: "14px",
+                      color: "#666",
+                      textDecoration: "none",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      transition: "color 0.2s ease",
+                      fontWeight: "500",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.color = "#0BBF99")
+                    }
+                    onMouseLeave={(e) => (e.currentTarget.style.color = "#666")}
                   >
-                    View All →
+                    View Leaderboard{" "}
+                    <span style={{ marginLeft: "4px" }}>→</span>
                   </Link>
                 </div>
                 <div className="beta-counters inline-counters desktop">
@@ -88,6 +144,11 @@ export default function Beta() {
                       window.location.href = `/breaker/${breaker?.address}`;
                     }}
                   >
+                    {index < 3 && (
+                      <div className={`position-badge position-${index + 1}`}>
+                        {index === 0 ? "👑" : index === 1 ? "🥈" : "🥉"}
+                      </div>
+                    )}
                     <div
                       className="pointer"
                       onClick={(e) => {

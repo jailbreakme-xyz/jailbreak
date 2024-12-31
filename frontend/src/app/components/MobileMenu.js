@@ -22,6 +22,7 @@ import Image from "next/image";
 import SolIcon from "../../assets/solIcon.png";
 import darkSlogen from "../../assets/darkSlogen.png";
 import Jdenticon from "react-jdenticon";
+import { MdRocketLaunch } from "react-icons/md";
 
 function numberWithCommas(x) {
   return x?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -69,6 +70,16 @@ const MobileMenu = (props) => {
         >
           <GiBreakingChain size={25} /> BREAKERS
         </Link>
+        <a
+          href={undefined}
+          className="chatMainMenuItem pointer"
+          onClick={() => {
+            props.handleQuickCreationOpen();
+            setMenuOpen(false);
+          }}
+        >
+          <MdRocketLaunch size={25} /> CREATE AGENT
+        </a>
         <Link
           href="/faq"
           className="chatMainMenuItem pointer"

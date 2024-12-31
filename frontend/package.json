@@ -12,6 +12,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/base": "^5.0.0-beta.67",
+    "@mui/lab": "^6.0.0-beta.21",
     "@mui/material": "^6.2.1",
     "@mui/system": "^6.2.1",
     "@solana/wallet-adapter-base": "^0.9.23",
@@ -31,9 +32,11 @@
     "react-icons": "^5.0.1",
     "react-image-uploader": "^1.0.0",
     "react-jdenticon": "^1.4.0",
+    "react-loading-skeleton": "^3.5.0",
     "react-spinners": "^0.13.8",
     "react-timeago": "^7.2.0",
     "react-timer-hook": "^3.0.8",
+    "swiper": "^11.1.15",
     "yup": "^1.6.1"
   },
   "devDependencies": {

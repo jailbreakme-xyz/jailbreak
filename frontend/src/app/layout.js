@@ -1,5 +1,6 @@
 import { Inter } from "next/font/google";
 import Script from "next/script";
+import { SkeletonTheme } from "react-loading-skeleton";
 
 import "./globals.css";
 import ClientWalletProvider from "./providers/WalletProvider";
@@ -73,7 +74,9 @@ export default function RootLayout({ children }) {
         }}
       />
       <body className={inter.className}>
-        <ClientWalletProvider>{children}</ClientWalletProvider>
+        <SkeletonTheme baseColor="#202020" highlightColor="#444">
+          <ClientWalletProvider>{children}</ClientWalletProvider>
+        </SkeletonTheme>
       </body>
     </html>
   );

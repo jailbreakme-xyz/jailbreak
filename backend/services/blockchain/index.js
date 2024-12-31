@@ -8,6 +8,7 @@ import {
   LAMPORTS_PER_SOL,
   TransactionMessage,
   VersionedTransaction,
+  sendAndConfirmTransaction,
 } from "@solana/web3.js";
 import { createHash } from "crypto";
 import { readFileSync } from "fs";
@@ -19,6 +20,7 @@ import {
 } from "@metaplex-foundation/mpl-token-metadata";
 import axios from "axios";
 import { sha256 } from "js-sha256";
+import splitIntoBatches from "../../hooks/splitIntoBatches.js";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -153,8 +155,8 @@ class BlockchainService {
       }
 
       const data = Buffer.from(accountInfo.data);
-      // Read authority (first 32 bytes)
-      const authority = new PublicKey(data.subarray(8, 40)); // Skip 8-byte discriminator
+      // Read authority (32 bytes after 8-byte discriminator)
+      const authority = new PublicKey(data.subarray(8, 40));
 
       // Read state (1 byte)
       const state = data.readUInt8(40);
@@ -171,15 +173,24 @@ class BlockchainService {
       // Read winner payout percentage (1 byte)
       const winner_payout_pct = data.readUInt8(51);
 
+      // Read royalty payout percentage (1 byte)
+      const royalty_payout_pct = data.readUInt8(52);
+
+      // Read tournament_id (8 bytes)
+      const tournament_id = data.readBigUInt64LE(53);
+
       const programBalance = await this.getAccountBalance(tournamentPDA);
       return {
         authority: authority.toString(),
         state,
-        entryFee: Number(entryFee) / LAMPORTS_PER_SOL, // Convert BigInt to number if needed
+        entryFee: Number(entryFee) / LAMPORTS_PER_SOL,
         feeMulPct: fee_mul_pct_x10,
         winnerPayoutPct: winner_payout_pct,
         feeType: fee_type,
+        royaltyPayoutPct: royalty_payout_pct,
         programBalance: programBalance / LAMPORTS_PER_SOL,
+        total_lamports: programBalance,
+        tournamentId: Number(tournament_id),
       };
     } catch (error) {
       console.error("Error fetching tournament data:", error);
@@ -195,6 +206,7 @@ class BlockchainService {
       const wallet = Keypair.fromSecretKey(
         Uint8Array.from(JSON.parse(keypairFile.toString()))
       );
+
       // Fetch tournament account
       const tournamentAccountInfo = await this.connection.getAccountInfo(
         new PublicKey(tournamentPDA)
@@ -203,26 +215,59 @@ class BlockchainService {
         return false;
       }
 
+      // Get tournament data to find authority
+      const tournamentData = await this.getTournamentData(tournamentPDA);
+      if (!tournamentData) {
+        return false;
+      }
+
       // Define the instruction data for ConcludeTournament
       const discriminator = this.calculateDiscriminator("conclude_tournament");
-
-      // Instruction data is just the discriminator
       const data = Buffer.from(discriminator);
 
-      // Define the accounts involved
+      // Find program admin PDA
+      const [programAdminPDA] = PublicKey.findProgramAddressSync(
+        [Buffer.from("admin")],
+        this.programId
+      );
+
+      // Define the accounts involved in the same order as conclude.rs
       const keys = [
         {
           pubkey: new PublicKey(tournamentPDA),
           isSigner: false,
           isWritable: true,
         }, // Tournament PDA
-        { pubkey: wallet.publicKey, isSigner: true, isWritable: true }, // Payer/Authority
+        {
+          pubkey: programAdminPDA,
+          isSigner: false,
+          isWritable: true,
+        }, // Program Admin PDA
+        {
+          pubkey: wallet.publicKey,
+          isSigner: false,
+          isWritable: true,
+        }, // Royalty destination (program admin authority)
+        {
+          pubkey: wallet.publicKey,
+          isSigner: true,
+          isWritable: true,
+        }, // Authority
         {
           pubkey: new PublicKey(winnerAccount),
           isSigner: false,
           isWritable: true,
         }, // Winner account
-        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // System program
+        {
+          pubkey: new PublicKey(tournamentData.authority),
+          isSigner: false,
+          isWritable: true,
+        }, // Tournament authority
+        {
+          pubkey: SystemProgram.programId,
+          isSigner: false,
+          isWritable: false,
+        }, // System program
       ];
 
       // Create the instruction
@@ -530,255 +575,86 @@ class BlockchainService {
     return balance;
   }
 
-  async createDeployProgramTransaction(
-    senderAddress,
-    ownerAddress,
-    ownerFee,
-    programData
-  ) {
-    try {
-      const programAccount = Keypair.generate();
-      const programId = programAccount.publicKey;
-      const rentExemption =
-        await this.connection.getMinimumBalanceForRentExemption(
-          programData.byteLength
-        );
-
-      const extraCharge = rentExemption * ownerFee;
-
-      const transaction = new Transaction().add(
-        SystemProgram.createAccount({
-          fromPubkey: senderAddress,
-          newAccountPubkey: programId,
-          lamports: rentExemption,
-          space: programData.byteLength,
-          programId: SystemProgram.programId,
-        }),
-        SystemProgram.transfer({
-          fromPubkey: senderAddress,
-          toPubkey: ownerAddress,
-          lamports: extraCharge,
-        })
-      );
-
-      const { blockhash } = await this.connection.getLatestBlockhash();
-      transaction.recentBlockhash = blockhash;
-      transaction.feePayer = new PublicKey(senderAddress);
-
-      const serializedTransaction = transaction
-        .serialize({
-          requireAllSignatures: false,
-        })
-        .toString("base64");
-
-      return {
-        serializedTransaction,
-        program_id: programId,
-      };
-    } catch (error) {
-      console.error("Error creating submit_solution transaction:", error);
-      return false;
-    }
-  }
-
-  async initializeTournament(senderAddress, programId) {
-    try {
-      // Find the PDA for the tournament
-      const [tournamentPDA, bump] = PublicKey.findProgramAddressSync(
-        [Buffer.from("tournament")],
-        programId
-      );
-
-      console.log("Tournament PDA:", tournamentPDA.toBase58());
-
-      // Check if the tournament PDA is already initialized
-      const tournamentInfo = await this.connection.getAccountInfo(
-        tournamentPDA
-      );
-      if (tournamentInfo) {
-        console.log(
-          "Tournament PDA already initialized. Skipping initialization."
-        );
-        return;
-      }
-
-      // Define the accounts involved in the transaction
-      const keys = [
-        { pubkey: tournamentPDA, isSigner: false, isWritable: true },
-        { pubkey: senderAddress, isSigner: true, isWritable: true },
-        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
-      ];
-
-      // Calculate the discriminator for the initialize instruction
-      const discriminator = sha256.digest("global:initialize").slice(0, 8);
-      const data = Buffer.from([...discriminator, bump]);
-
-      // Create the transaction instruction
-      const instruction = new TransactionInstruction({
-        keys,
-        programId,
-        data,
-      });
-
-      // Create a new transaction and add the instruction
-      const transaction = new Transaction().add(instruction);
-
-      // Get the latest blockhash and set the fee payer
-      const { blockhash } = await this.connection.getLatestBlockhash();
-      transaction.recentBlockhash = blockhash;
-      transaction.feePayer = new PublicKey(senderAddress);
-
-      // Serialize the transaction
-      const serializedTransaction = transaction
-        .serialize({
-          requireAllSignatures: false,
-        })
-        .toString("base64");
-
-      return {
-        serializedTransaction,
-      };
-    } catch (error) {
-      console.error("Error initializing tournament:", error);
-      return false;
-    }
-  }
-
-  async startTournament(
-    senderAddress,
-    tournamentPDA,
-    initialSol,
-    fee_mul_pct,
-    winner_payout_pct,
-    systemPrompt
-  ) {
-    try {
-      const systemPromptHash = new Uint8Array(
-        Buffer.from(sha256.digest(systemPrompt))
-      );
-
-      const initialPool = BigInt(initialSol * LAMPORTS_PER_SOL);
-      const keys = [
-        { pubkey: tournamentPDA, isSigner: false, isWritable: true }, // tournament
-        { pubkey: senderAddress, isSigner: true, isWritable: true }, // payer
-        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // system_program
-      ];
-
-      // Calculate the discriminator for the `start_tournament` instruction
-      const discriminator = sha256
-        .digest("global:start_tournament")
-        .slice(0, 8);
-      console.log("Discriminator:", Buffer.from(discriminator).toString("hex"));
-
-      // Construct the instruction data
-      const data = Buffer.alloc(8 + 32 + 8 + 2); // Allocate sufficient space
-      data.set(Buffer.from(discriminator), 0); // Add discriminator
-      data.set(systemPromptHash, 8); // Add system prompt hash at offset 8
-      data.writeBigUInt64LE(initialPool, 40); // Add initial pool at offset 40
-      data.writeUInt8(fee_mul_pct, 48); // Add fee multiplier at offset 48
-      data.writeUInt8(winner_payout_pct, 49); // Add winner payout at offset 49
-
-      console.log("Instruction Data Buffer:", data.toString("hex")); // Log the full buffer
-
-      const instruction = new TransactionInstruction({
-        keys,
-        programId,
-        data,
-      });
-
-      // Create a new transaction and add the instruction
-      const transaction = new Transaction().add(instruction);
-
-      // Get the latest blockhash and set the fee payer
-      const { blockhash } = await this.connection.getLatestBlockhash();
-      transaction.recentBlockhash = blockhash;
-      transaction.feePayer = new PublicKey(senderAddress);
-
-      // Serialize the transaction
-      const serializedTransaction = transaction
-        .serialize({
-          requireAllSignatures: false,
-        })
-        .toString("base64");
-
-      return {
-        serializedTransaction,
-      };
-    } catch (error) {
-      console.error("Error starting tournament:", error);
-      return false;
-    }
-  }
-
   async initializeAndStartTournament(
     senderAddress,
     programId,
     initialSol,
     fee_mul_pct,
     winner_payout_pct,
-    systemPrompt
+    systemPrompt,
+    fee_type,
+    royalty_payout_pct,
+    tournamentId,
+    advanced = false,
+    creation_fee,
+    owner_address
   ) {
     try {
-      // Find the PDA for the tournament
-      const [tournamentPDA, bump] = PublicKey.findProgramAddressSync(
-        [Buffer.from("tournament")],
+      // Find the PDA for the tournament using the correct seeds
+      const [tournamentPDA] = PublicKey.findProgramAddressSync(
+        [
+          Buffer.from("tournament"),
+          new PublicKey(senderAddress).toBuffer(),
+          Buffer.from(new BigInt64Array([tournamentId]).buffer),
+        ],
         programId
       );
 
-      console.log("Tournament PDA:", tournamentPDA.toBase58());
-
-      // Check if the tournament PDA is already initialized
-      const tournamentInfo = await this.connection.getAccountInfo(
-        tournamentPDA
+      // Find program admin PDA
+      const [programAdminPDA] = PublicKey.findProgramAddressSync(
+        [Buffer.from("admin")],
+        programId
       );
-      if (tournamentInfo) {
-        console.log(
-          "Tournament PDA already initialized. Skipping initialization."
-        );
-        return;
-      }
 
-      // Define the accounts involved in the initialization transaction
+      // Initialize instruction setup
       const initKeys = [
         { pubkey: tournamentPDA, isSigner: false, isWritable: true },
-        { pubkey: senderAddress, isSigner: true, isWritable: true },
+        { pubkey: programAdminPDA, isSigner: false, isWritable: false },
+        {
+          pubkey: new PublicKey(senderAddress),
+          isSigner: true,
+          isWritable: true,
+        },
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       ];
 
-      // Calculate the discriminator for the initialize instruction
       const initDiscriminator = sha256.digest("global:initialize").slice(0, 8);
-      const initData = Buffer.from([...initDiscriminator, bump]);
+      const initData = Buffer.alloc(16);
+      initData.set(Buffer.from(initDiscriminator), 0);
+      initData.writeBigUInt64LE(tournamentId, 8);
 
-      // Create the initialization transaction instruction
       const initInstruction = new TransactionInstruction({
         keys: initKeys,
         programId,
         data: initData,
       });
 
-      // Proceed to start the tournament
-      const systemPromptHash = new Uint8Array(
-        Buffer.from(sha256.digest(systemPrompt))
-      );
+      // Start tournament instruction setup
+      const systemPromptHash = Buffer.from(sha256.digest(systemPrompt));
       const initialPool = BigInt(initialSol * LAMPORTS_PER_SOL);
+      const fee_mul_pct_x10 = fee_mul_pct;
+
       const startKeys = [
-        { pubkey: tournamentPDA, isSigner: false, isWritable: true }, // tournament
-        { pubkey: senderAddress, isSigner: true, isWritable: true }, // payer
-        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // system_program
+        { pubkey: tournamentPDA, isSigner: false, isWritable: true },
+        {
+          pubkey: new PublicKey(senderAddress),
+          isSigner: true,
+          isWritable: true,
+        },
+        { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       ];
 
-      // Calculate the discriminator for the `start_tournament` instruction
       const startDiscriminator = sha256
         .digest("global:start_tournament")
         .slice(0, 8);
-
-      // Construct the instruction data for starting the tournament
-      const startData = Buffer.alloc(8 + 32 + 8 + 2); // Allocate sufficient space
-      startData.set(Buffer.from(startDiscriminator), 0); // Add discriminator
-      startData.set(systemPromptHash, 8); // Add system prompt hash at offset 8
-      startData.writeBigUInt64LE(initialPool, 40); // Add initial pool at offset 40
-      startData.writeUInt8(fee_mul_pct, 48); // Add fee multiplier at offset 48
-      startData.writeUInt8(winner_payout_pct, 49); // Add winner payout at offset 49
+      const startData = Buffer.alloc(8 + 32 + 8 + 1 + 1 + 1 + 1);
+      startData.set(Buffer.from(startDiscriminator), 0);
+      startData.set(systemPromptHash, 8);
+      startData.writeBigUInt64LE(initialPool, 40);
+      startData.writeUInt8(fee_mul_pct_x10, 48);
+      startData.writeUInt8(winner_payout_pct, 49);
+      startData.writeUInt8(royalty_payout_pct, 50);
+      startData.writeUInt8(fee_type, 51);
 
       const startInstruction = new TransactionInstruction({
         keys: startKeys,
@@ -786,29 +662,93 @@ class BlockchainService {
         data: startData,
       });
 
+      let transferInstruction;
+      if (creation_fee > 0) {
+        transferInstruction = SystemProgram.transfer({
+          fromPubkey: new PublicKey(senderAddress),
+          toPubkey: new PublicKey(owner_address),
+          lamports: BigInt(creation_fee * LAMPORTS_PER_SOL),
+        });
+      }
+
       // Create a new transaction and add both instructions
       const transaction = new Transaction().add(
         initInstruction,
-        startInstruction
+        startInstruction,
+        ...(creation_fee > 0 ? [transferInstruction] : [])
       );
 
-      // Get the latest blockhash and set the fee payer
       const { blockhash } = await this.connection.getLatestBlockhash();
       transaction.recentBlockhash = blockhash;
       transaction.feePayer = new PublicKey(senderAddress);
 
-      // Serialize the transaction
-      const serializedTransaction = transaction
-        .serialize({
-          requireAllSignatures: false,
-        })
-        .toString("base64");
+      const serializedTransaction = transaction.serialize({
+        requireAllSignatures: false,
+      });
+
+      const base64Transaction = serializedTransaction.toString("base64");
 
       return {
-        serializedTransaction,
+        serializedTransaction: base64Transaction,
+        tournamentPDA: tournamentPDA.toBase58(),
       };
     } catch (error) {
       console.error("Error initializing and starting tournament:", error);
+      return false;
+    }
+  }
+
+  async airDrop(recipientAddresses, total_lamports) {
+    try {
+      const batchSize = 5;
+      const keypairFile = readFileSync("./secrets/solana-keypair.json");
+      const wallet = Keypair.fromSecretKey(
+        Uint8Array.from(JSON.parse(keypairFile.toString()))
+      );
+
+      const lamportsPerRecipient = Math.floor(
+        total_lamports / recipientAddresses.length
+      );
+
+      const batches = splitIntoBatches(recipientAddresses, batchSize);
+      const signatures = [];
+
+      for (let i = 0; i < batches.length; i++) {
+        const batch = batches[i];
+        console.log(`Processing batch ${i + 1} of ${batches.length}`);
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        const transaction = new Transaction();
+        await Promise.all(
+          batch.map(async (recipient) => {
+            try {
+              const toPublicKey = new PublicKey(recipient);
+              transaction.add(
+                SystemProgram.transfer({
+                  fromPubkey: wallet.publicKey,
+                  toPubkey: toPublicKey,
+                  lamports: lamportsPerRecipient,
+                })
+              );
+              return transaction;
+            } catch (err) {
+              console.error(`Airdrop to ${recipient} failed:`, err);
+              return null;
+            }
+          })
+        );
+
+        const signature = await sendAndConfirmTransaction(
+          this.connection,
+          transaction,
+          [wallet]
+        );
+        signatures.push(signature);
+      }
+
+      console.log("Airdrop Results:", signatures);
+      return signatures;
+    } catch (error) {
+      console.error("Error air dropping:", error);
       return false;
     }
   }

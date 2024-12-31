@@ -6,12 +6,18 @@ import {
   Breaker,
 } from "../../models/Models.js";
 import dotenv from "dotenv";
+import { agentValidator } from "../../validators/agentValidator.js";
 
 dotenv.config();
 
 class DataBaseService {
   constructor() {
     // Constructor remains empty as we don't need initialization logic
+  }
+
+  async getSampleAgent(sample, projection = {}) {
+    const agent = await Challenge.findOne({ sample }, projection);
+    return agent;
   }
 
   async getChallengeById(id, projection = {}) {
@@ -24,7 +30,7 @@ class DataBaseService {
   }
 
   async getChallengeByName(name, projection = {}) {
-    const nameReg = { $regex: name, $options: "i" };
+    const nameReg = new RegExp(`^${name}$`, "i");
     try {
       return await Challenge.findOne({ name: nameReg }, projection);
     } catch (error) {
@@ -116,9 +122,82 @@ class DataBaseService {
     }
   }
 
+  async getOnePage(query) {
+    try {
+      return await Pages.findOne(query);
+    } catch (error) {
+      console.error("Database Service Error:", error);
+      return false;
+    }
+  }
+
   async updatePage(query, update) {
     try {
       return await Pages.updateOne(query, update);
+    } catch (error) {
+      console.error("Database Service Error:", error);
+      return false;
+    }
+  }
+
+  async countTotalUsdPrize() {
+    try {
+      return await Challenge.aggregate([
+        {
+          $group: {
+            _id: null,
+            grossTotal: { $sum: "$usd_prize" },
+            netTotal: {
+              $sum: {
+                $multiply: [
+                  "$usd_prize",
+                  { $subtract: [1, { $divide: ["$developer_fee", 100] }] },
+                ],
+              },
+            },
+          },
+        },
+      ]);
+    } catch (error) {
+      console.error("Database Service Error:", error);
+      return false;
+    }
+  }
+
+  async getSortedChallengesByStatus(
+    status = "active",
+    sort = { usd_prize: -1 },
+    limit = 0
+  ) {
+    try {
+      return await Challenge.find(
+        { status },
+        {
+          id: "$_id",
+          _id: 1,
+          owner: 1,
+          name: 1,
+          title: 1,
+          image: 1,
+          label: 1,
+          level: 1,
+          status: 1,
+          pfp: 1,
+          entryFee: 1,
+          expiry: 1,
+          winning_prize: 1,
+          developer_fee: 1,
+          start_date: 1,
+          usd_prize: 1,
+          break_attempts: 1,
+          fee_multiplier: 1,
+          tag: 1,
+          sample: 1,
+          sample_keyword: 1,
+        }
+      )
+        .sort(sort)
+        .limit(limit);
     } catch (error) {
       console.error("Database Service Error:", error);
       return false;
@@ -148,8 +227,10 @@ class DataBaseService {
           break_attempts: 1,
           fee_multiplier: 1,
           tag: 1,
+          sample: 1,
+          sample_keyword: 1,
         }
-      );
+      ).sort({ usd_prize: -1 });
 
       return challenge;
     } catch (error) {
@@ -487,6 +568,15 @@ class DataBaseService {
     }
   }
 
+  async getBreakerByIp(ip) {
+    try {
+      return await Breaker.findOne({ cf_ip: ip });
+    } catch (error) {
+      console.error("Error fetching breaker:", error);
+      return false;
+    }
+  }
+
   async updateBreakers(query, update) {
     try {
       return await Breaker.updateMany(query, update);
@@ -537,6 +627,187 @@ class DataBaseService {
       console.error("Error fetching highest score:", error);
       return false;
     }
+  }
+
+  async getSendersByChallenge(query) {
+    return await Chat.aggregate([
+      { $match: query },
+      { $group: { _id: "$address" } },
+      { $project: { _id: 0, address: "$_id" } },
+    ]);
+  }
+
+  async saveAgent(agent) {
+    try {
+      // const { error } = agentValidator.validate(agent);
+      // if (error) {
+      //   throw new Error(error.message);
+      // }
+      const savedAgent = await Challenge.create({
+        owner: agent.owner,
+        title: agent.title || `Jailbreak ${agent.name}`,
+        name: agent.name,
+        tldr: agent.tldr || null,
+        label: agent.opening_message,
+        task: agent.task || `Jailbreak ${agent.name}`,
+        winning_message:
+          agent.winning_message ||
+          `${agent.name} has been successfully jailbroken!`,
+        type: agent.type || "phrases",
+        pfp: agent.pfp,
+        status: agent.status || "active",
+        assistant_id: agent.assistant_id,
+        language: "english",
+        disable: agent.disable || ["special_characters"],
+        start_date: agent.start_date || new Date(),
+        expiry: agent.expiry || new Date(Date.now() + 24 * 60 * 60 * 1000),
+        model: agent.model || "gpt-4o-mini",
+        contextLimit: agent.contextLimit || 1,
+        chatLimit: agent.chatLimit || 100,
+        characterLimit: agent.characterLimit || 500,
+        charactersPerWord: agent.charactersPerWord || null,
+        suffix: agent.suffix || null,
+        agent_logic: agent.agent_logic || null,
+        winner: null,
+        break_attempts: 0,
+        fee_multiplier: agent.fee_multiplier,
+        initial_pool_size: agent.initial_pool_size,
+        winning_prize: agent.initial_pool_size,
+        usd_prize: agent.usd_prize,
+        entryFee: agent.entryFee,
+        developer_fee: agent.developer_fee,
+        expiry_logic: agent.expiry_logic || "last_sender",
+        airdrop_split: agent.airdrop_split || {
+          winner: 20,
+          creator: 20,
+        },
+        phrases: agent.phrases || [],
+        tournament_id: agent.tournament_id,
+        tournamentPDA: agent.tournamentPDA,
+        idl: agent.idl,
+        instructions: agent.instructions,
+        tools_description:
+          agent.tools_description ||
+          `${agent.name} has no available tools, this is a freestyle jailbreak.`,
+        success_function: agent.success_function || null,
+        fail_function: agent.fail_function || null,
+        tool_choice: agent.tool_choice || "none",
+        tools: agent.tools || [],
+      });
+      return savedAgent;
+    } catch (error) {
+      console.error("Error creating agent:", error);
+      return false;
+    }
+  }
+
+  async getChallengesWithFilters({
+    status,
+    sort,
+    limit = 100,
+    lastId = null,
+    sortDirection = -1,
+  }) {
+    try {
+      const baseQuery = status === "$type" ? {} : { status };
+      const query = lastId
+        ? {
+            ...baseQuery,
+            _id: sortDirection === 1 ? { $gt: lastId } : { $lt: lastId },
+          }
+        : baseQuery;
+
+      // Handle special case for expiry sorting
+      if (sort === "expiry_desc" && status !== "active") {
+        throw new Error(
+          "Expiry sorting is only available for active challenges"
+        );
+      }
+
+      // Define sort configuration
+      const sortConfigs = {
+        start_date_asc: { start_date: 1 },
+        start_date_desc: { start_date: -1 },
+        expiry_desc: { expiry: -1 },
+        attempts_asc: { break_attempts: 1 },
+        attempts_desc: { break_attempts: -1 },
+        usd_prize_asc: { usd_prize: 1 },
+        usd_prize_desc: { usd_prize: -1 },
+        entryFee_asc: { entryFee: 1 },
+        entryFee_desc: { entryFee: -1 },
+      };
+
+      const sortBy = sortConfigs[sort] || { start_date: -1 };
+
+      const challenges = await Challenge.find(query, {
+        _id: 1,
+        name: 1,
+        title: 1,
+        image: 1,
+        label: 1,
+        level: 1,
+        status: 1,
+        pfp: 1,
+        entryFee: 1,
+        expiry: 1,
+        winning_prize: 1,
+        developer_fee: 1,
+        start_date: 1,
+        usd_prize: 1,
+        break_attempts: 1,
+        fee_multiplier: 1,
+        tag: 1,
+        sample: 1,
+        sample_keyword: 1,
+      })
+        .sort({ ...sortBy, _id: sortDirection })
+        .limit(limit);
+
+      // Get the next cursor
+      const hasMore = challenges.length === limit;
+      const nextCursor = hasMore ? challenges[challenges.length - 1]._id : null;
+
+      return {
+        challenges,
+        nextCursor,
+        hasMore,
+      };
+    } catch (error) {
+      console.error("Database Service Error:", error);
+      return false;
+    }
+  }
+
+  async getAgentsByOwner(address) {
+    return await Challenge.find(
+      { owner: address },
+      {
+        _id: 1,
+        owner: 1,
+        name: 1,
+        title: 1,
+        image: 1,
+        label: 1,
+        level: 1,
+        status: 1,
+        pfp: 1,
+        entryFee: 1,
+        expiry: 1,
+        winning_prize: 1,
+        developer_fee: 1,
+        start_date: 1,
+        usd_prize: 1,
+        break_attempts: 1,
+        fee_multiplier: 1,
+        tag: 1,
+        sample: 1,
+        sample_keyword: 1,
+      }
+    ).sort({ start_date: -1 });
+  }
+
+  async getFullAgent(agentId, walletAddress) {
+    return await Challenge.findOne({ _id: agentId, owner: walletAddress });
   }
 }
 

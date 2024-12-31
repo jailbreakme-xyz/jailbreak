@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const ChallengeSchema = new mongoose.Schema(
   {
+    owner: String,
     title: String,
     name: String,
     description: String,
@@ -12,7 +13,7 @@ const ChallengeSchema = new mongoose.Schema(
     level: String,
     status: { type: String, default: "active" },
     model: String,
-    system_message: String,
+    instructions: String,
     deployed: Boolean,
     tournamentPDA: String,
     idl: Object,
@@ -51,6 +52,14 @@ const ChallengeSchema = new mongoose.Schema(
     phrases: Array,
     type: String,
     tag: String,
+    sample: String,
+    sample_keyword: String,
+    jailx_thread: String,
+    tournament_id: String,
+    airdrop_split: {
+      winner: Number,
+      creator: Number,
+    },
     single_tool_comparison: {
       tool_name: String,
       higher_field_name: String,
@@ -84,7 +93,7 @@ const chatSchema = new mongoose.Schema(
     date: { type: Date, default: Date.now },
   },
   {
-    collection: process.env.NODE_ENV === "development" ? "chats" : "chats",
+    collection: process.env.NODE_ENV === "development" ? "chats_test" : "chats",
   }
 );
 
@@ -95,6 +104,11 @@ const breakerSchema = new mongoose.Schema(
     address: String,
     degen_score: Number,
     holdings: Array,
+    cf_ip: String,
+    generation_limit: {
+      count: Number,
+      date: Date,
+    },
     date_created: { type: Date, default: Date.now },
   },
   { collection: "breakers" }

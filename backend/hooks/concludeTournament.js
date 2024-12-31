@@ -21,10 +21,8 @@ async function concludeTournament(
       tournamentPDA,
       walletAddress
     );
-    const solPrice = await getSolPriceInUSDT();
 
-    const winningPrize = entryFee * fee_multiplier;
-    const usdPrize = winningPrize * solPrice;
+    const usdPrize = challenge.usd_prize;
 
     const successMessage = `🏆 ${challenge.winning_message}\n\n${
       assistantMessage.content
@@ -45,8 +43,6 @@ async function concludeTournament(
     await DatabaseService.updateChallenge(challenge._id, {
       status: "concluded",
       expiry: new Date(),
-      winning_prize: winningPrize,
-      usd_prize: usdPrize,
       winner: walletAddress,
     });
 

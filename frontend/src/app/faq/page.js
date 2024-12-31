@@ -12,6 +12,7 @@ const FAQ = (props) => {
   const [loading, setLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState(null);
   const [activeChallenge, setActiveChallenge] = useState(null);
+
   const toggleFAQ = (index) => {
     setActiveIndex(activeIndex === index ? null : index);
   };

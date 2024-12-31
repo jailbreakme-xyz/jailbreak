@@ -97,7 +97,7 @@ body {
 background-color: #1F2024;
 border-radius: 10px;
 /* width: 40%; */
-margin: auto;
+/* margin: auto; */
 padding: 10px;
 }
 .challengeTitle h2 {
@@ -1090,7 +1090,9 @@ margin-right: 5px;
 .counters > div  > span {
   font-size: 34px;
 }
-
+.wallet-adapter-modal {
+z-index: 99999999999999999 !important;
+}
 .fullScreenDialog .MuiDialog-paper {
   background-color: #000;
   color: #ebebeb;
@@ -1145,7 +1147,7 @@ margin-right: 5px;
   background-color: #000 !important;
   /* width: 40%; */
 }
-.advanced-creation-form .MuiInputBase-root, .advanced-creation-form  .MuiTabs-flexContainer > .MuiButtonBase-root {
+.advanced-creation-form .MuiInputBase-root, .advanced-creation-form  .MuiTabs-flexContainer > .MuiButtonBase-root, .quick-creation-form .MuiInputBase-root {
   color: #0BBF99 !important;
 }
 .advanced-creation-form .MuiTouchRipple-root {
@@ -1194,6 +1196,12 @@ height: 40px;
   color: #0BBF99 !important;
   padding: 10px !important;
 }
+.launch-agent-button:hover {
+  background-color: #000 !important;
+  color: #0BBF99 !important;
+  border: 2px solid #0BBF99 !important;
+}
+
 .advanced-creation-form .base-NumberInput-input {
   width: 60%;
 }
@@ -1207,53 +1215,134 @@ height: 40px;
 .advanced-creation-form hr {
   margin: 20px 0px;
 }
-.advanced-creation-form input {
+.advanced-creation-form input, .quick-creation-form input {
   --webkit-fill-color: #0BBF99 !important;
   color: #0BBF99 !important;
 }
 
-.advanced-creation-form .MuiInput-underline::after {
+.advanced-creation-form .MuiInput-underline::after, .quick-creation-form .MuiInput-underline::after {
   color: #0BBF99 !important;
   border-bottom: 2px solid #0BBF99 !important;
 }
-.advanced-creation-form input:focus {
+.advanced-creation-form input:focus, .quick-creation-form input:focus {
   --webkit-fill-color: #0BBF99 !important;
 }
 
-.advanced-creation-form textarea {
+.advanced-creation-form textarea, .quick-creation-form textarea {
   --webkit-fill-color: #0BBF99 !important;
 }
 
-.advanced-creation-form textarea:focus {
+.advanced-creation-form textarea:focus, .quick-creation-form textarea:focus {
   --webkit-fill-color: #0BBF99 !important;
 }
 
-.advanced-creation-form .MuiFormHelperText-root {
+.advanced-creation-form .MuiFormHelperText-root, .quick-creation-form .MuiFormHelperText-root {
   color: #0BBF99 !important;
 }
 
-.advanced-creation-form .MuiFormHelperText-root.Mui-error {
+.advanced-creation-form .MuiFormHelperText-root.Mui-error, .quick-creation-form .MuiFormHelperText-root.Mui-error {
   color: #ff0000 !important;
 }
-.advanced-creation-form .Mui-focused {
+.advanced-creation-form .Mui-focused, .quick-creation-form .Mui-focused {
   color: #0BBF99 !important;
   --webkit-fill-color: #0BBF99 !important;
   border-color: #0BBF99 !important;
 }
-.advanced-creation-form .MuiOutlinedInput-notchedOutline {
+.advanced-creation-form .MuiOutlinedInput-notchedOutline, .quick-creation-form .MuiOutlinedInput-notchedOutline {
   border-color: #0BBF99 !important;
 }
-.advanced-creation-form .MuiFormLabel-root {
+.advanced-creation-form .MuiFormLabel-root, .quick-creation-form .MuiFormLabel-root {
   color: #0BBF99 !important;
 }
 
-.advanced-creation-form .MuiInput-root {
+.advanced-creation-form .MuiInput-root, .quick-creation-form .MuiInput-root {
   color: #0BBF99 !important;
 }
 
-.advanced-creation-form .MuiInput-root:focus {
+.advanced-creation-form .MuiInput-root:focus, .quick-creation-form .MuiInput-root:focus {
   color: #0BBF99 !important;
 }
+
+.launch-agent-btn:hover {
+  background-color: #000 !important;
+  color: #0BBF99 !important;
+  border: 2px solid #0BBF99 !important;
+}
+.carousel-container {
+  width: 100%;
+  position: relative;
+  /* padding: 20px 40px; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0px;
+}
+
+.carousel-wrapper {
+  overflow-x: auto;
+  scrollbar-width: none; /* For Firefox */
+  -ms-overflow-style: none; /* For Internet Explorer and Edge */
+  scroll-behavior: smooth;
+  flex: 1; /* Allow the carousel to take up remaining space */
+}
+
+.carousel-wrapper::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for WebKit browsers */
+}
+
+.carousel-content {
+  display: flex;
+  gap: 20px;
+}
+.carousel-content .agentCard {
+  max-width: 320px;
+  flex: 0 0 auto;
+}
+
+.carousel-arrow {
+  position: absolute; /* Position arrows absolutely within the container */
+  z-index: 2; /* Ensure arrows are above carousel items */
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  transition: background-color 0.3s;
+}
+
+.carousel-arrow:hover {
+  background: rgba(255, 255, 255, 1);
+}
+
+.carousel-arrow.left {
+  left: 0px; /* Position the left arrow 10px from the left */
+}
+
+.carousel-arrow.right {
+  right: 0px; /* Position the right arrow 10px from the right */
+}
+
+/* Adjust carousel content to account for arrow buttons */
+.carousel-wrapper {
+  margin: 0 50px; /* Provide space for arrow buttons */
+}
+
+@media (max-width: 768px) {
+  .carousel-arrow {
+    display: none; /* Hide arrows on smaller screens */
+  }
+
+  .carousel-wrapper {
+    margin: 0; /* Remove margin when arrows are hidden */
+    padding: 0 10px; /* Adjust padding for smaller screens */
+  }
+}
+
 
 @media screen and (max-width:768px) {
   .docsPage.beta-container {
@@ -1518,7 +1607,7 @@ height: 40px;
   position: relative;
 }
 .fullWidthPage .beta-header {
-  border-bottom: 0px !important;
+  border-bottom: 2px solid #ebebeb !important;
 }
 .mainMenu .chatMainMenuItem {
   background-color: #000;
@@ -1674,13 +1763,44 @@ font-size: 18px;
     border-radius: 0px 0px 20px 20px !important;
     border-top: 0px !important;
   }
-}
+  .quick-creation-dialog form {
+  padding: 20px 10px !important;
+  }
 
+  .quick-creation-dialog .MuiDialogActions-root {
+    padding: 10px !important;
+  }
+  .quick-creation-dialog .MuiDialogActions-root p {
+   display: none !important;
+  }
+  .quick-creation-dialog p {
+    margin: 8px 0px !important;
+  }
+  /* .quick-creation-dialog img {
+    width: 60px !important;
+    height: 60px !important;
+  } */
+
+  .advanced-creation-form {
+    flex-direction: column !important;
+  }
+  .advanced-creation-form > div {
+    width: 90% !important;
+  }
+
+  .advanced-creation-form .MuiGrid2-root p {
+    font-size: 12px !important;
+  }
+  .styled-date-input {
+    width: 90% !important;
+  }
+}
 
 @media screen and (min-width:768px) {
   .mobileMenu, .mobileOnly {
     display: none;
   }
+
 }
 
 
@@ -1695,6 +1815,451 @@ font-size: 18px;
     transform: translateY(-15px);
   }
 }
+
+/* Filter Styles */
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.filter-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #ccc;
+}
+
+.filter-toggle:hover {
+  background: rgba(204, 204, 204, 0.1);
+}
+
+.filter-toggle .rotate {
+  transform: rotate(180deg);
+}
+
+.filters-panel {
+  background: #181825;
+  border-radius: 8px;
+  transition: all 0.3s ease-in-out;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+}
+
+.filters-panel.max-h-0 {
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+}
+
+.filters-panel.max-h-96 {
+  max-height: 24rem; /* 384px */
+  opacity: 1;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .filters-panel {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1rem;
+  }
+}
+
+/* Agent Card Styles */
+.agent-card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+}
+
+/* .agent-content {
+  margin-top: 0.5rem;
+} */
+
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+
+/* Override Material-UI styles for dark theme */
+.filters-panel .MuiInputLabel-root {
+  color: #ccc !important;
+}
+
+.filters-panel .MuiOutlinedInput-root {
+  color: #ccc !important;
+  border-color: #ccc !important;
+}
+
+.filters-panel .MuiOutlinedInput-notchedOutline {
+  border-color: #ccc !important;
+}
+
+.filters-panel .MuiSelect-icon {
+  color: #ccc !important;
+}
+
+.filters-panel .MuiMenuItem-root {
+  color: #ccc !important;
+  background-color: #181825 !important;
+}
+
+.filters-panel .MuiMenuItem-root:hover {
+  background-color: #232334 !important;
+}
+
+.filters-panel .MuiPaper-root {
+  background-color: #181825 !important;
+  color: #ccc !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .filters-panel {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1rem;
+    width: 90%;
+    margin: 0px auto;
+  }
+
+  .filter-toggle {
+    color: #ebebeb;
+  }
+  .filters-header h1 {
+    font-size: 22px;
+  }
+  .filters-header {
+    width: 95%;
+    margin: 0px auto;
+  }
+  .beta-agents-list .agent-card-alt {
+    min-width: unset !important;
+    width: 90% !important;
+  }
+  .beta-agents-list .challenge-item {
+    width: 95% !important;
+  }
+}
+
+/* Dark theme for Select components */
+.filters-panel .MuiFormControl-root {
+  width: 100%;
+}
+
+.filters-panel .MuiInputLabel-root {
+  color: #ccc;
+}
+
+.filters-panel .MuiInputLabel-root.Mui-focused {
+  color: #0BBF99;
+}
+
+.filters-panel .MuiOutlinedInput-root {
+  color: #ccc;
+  background: #1F2024;
+  border-radius: 8px;
+}
+
+.filters-panel .MuiOutlinedInput-notchedOutline {
+  border-color: #333 !important;
+}
+
+.filters-panel .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #444 !important;
+}
+
+.filters-panel .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #0BBF99 !important;
+}
+
+.filters-panel .MuiSelect-icon {
+  color: #ccc;
+}
+
+/* Dropdown Menu Styling */
+.MuiMenu-paper {
+  background-color: #1F2024 !important;
+  color: #ccc !important;
+  border: 1px solid #333 !important;
+  border-radius: 8px !important;
+  margin-top: 8px !important;
+}
+
+.MuiMenuItem-root {
+  color: #ccc !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.MuiMenuItem-root:hover {
+  background-color: #2a2a30 !important;
+}
+
+.MuiMenuItem-root.Mui-selected {
+  background-color: #0BBF99 !important;
+  color: #000 !important;
+}
+
+.MuiMenuItem-root.Mui-selected:hover {
+  background-color: #0aab8a !important;
+}
+
+/* Scrollbar styling for the dropdown */
+.MuiMenu-paper::-webkit-scrollbar {
+  width: 8px;
+  display: block;
+}
+
+.MuiMenu-paper::-webkit-scrollbar-track {
+  background: #1F2024;
+}
+
+.MuiMenu-paper::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+.MuiMenu-paper::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+/* No Results Styling */
+.no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 1rem;
+  text-align: center;
+  color: #ccc;
+}
+
+.no-results svg {
+  color: #0BBF99;
+  margin-bottom: 1.5rem;
+  opacity: 0.8;
+}
+
+.no-results h2 {
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+}
+
+.no-results p {
+  color: #888;
+  font-size: 1rem;
+}
+
+/* Load More Button Styling */
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
+.beta-breaker-load-more {
+  background: #0BBF99;
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.beta-breaker-load-more:hover {
+  background: #0aab8a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(11, 191, 153, 0.2);
+}
+
+.beta-breaker-load-more:active {
+  transform: translateY(0);
+}
+
+.beta-breaker-load-more:disabled {
+  background: #1F2024;
+  color: #666;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Add loading state animation */
+.beta-breaker-load-more:disabled:before {
+  content: '';
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid #666;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.agent-image-container {
+  position: relative;
+  width: 100%;
+  border-radius: 12px 12px 0px 0px;
+  overflow: hidden;
+}
+
+.attempts-overlay {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  padding: 6px 12px;
+  border-radius: 100px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 0.875rem;
+  text-align: center;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Dynamic colors based on attempts */
+.attempts-overlay[data-attempts="low"] {
+  background: rgba(255, 99, 71, 0.7);
+  border-color: rgba(255, 99, 71, 0.3);
+}
+
+.attempts-overlay[data-attempts="medium"] {
+  background: rgba(255, 165, 0, 0.7);
+  border-color: rgba(255, 165, 0, 0.3);
+}
+
+.attempts-overlay[data-attempts="high"] {
+  background: rgba(11, 191, 153, 0.7);
+  border-color: rgba(11, 191, 153, 0.3);
+}
+
+.attempts-overlay[data-attempts="very-high"] {
+  background: rgba(147, 51, 234, 0.7);
+  border-color: rgba(147, 51, 234, 0.3);
+}
+
+/* Update agent-stats to 2 columns since we removed break attempts */
+.agent-stats {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.prize-overlay {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  padding: 6px 12px;
+  border-radius: 100px;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: bold;
+  text-align: center;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* Prize tier styles */
+.prize-overlay[data-prize-tier="common"] {
+  background: rgba(128, 128, 128, 0.7);
+  border-color: rgba(128, 128, 128, 0.3);
+}
+
+.prize-overlay[data-prize-tier="uncommon"] {
+  background: rgba(255, 59, 59, 0.8);  /* Red */
+  border-color: rgba(255, 59, 59, 0.3);
+}
+
+.prize-overlay[data-prize-tier="rare"] {
+  background: rgba(255, 140, 0, 0.8);  /* Orange */
+  border-color: rgba(255, 140, 0, 0.3);
+}
+
+.prize-overlay[data-prize-tier="epic"] {
+  background: rgba(0, 142, 83, 0.85);  /* Bright Cyan - less transparent */
+  border-color: rgba(0, 137, 69, 0.4);
+}
+
+.prize-overlay[data-prize-tier="legendary"] {
+  background: rgba(0, 170, 8, 0.712);  /* Bright Green - less transparent */
+  border-color: rgba(7, 150, 0, 0.4);
+  /* animation: pulse 2s infinite; */
+}
+
+/* Pulse animation for legendary prizes */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.4);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(255, 0, 0, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+  }
+}
+
+.beta-agents-list.desktop {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* If you have a max-width on the container, you might want to adjust the card itself */
+.agent-card-alt {
+  width: 100%; /* Instead of a fixed width */
+  max-width: 100%;
+  /* ... rest of the agent-card-alt styles ... */
+}
+
+/* Keep mobile view as is */
+@media (max-width: 768px) {
+  .beta-agents-list.desktop {
+    display: none;
+  }
+  
+  .beta-agents-list.mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
 
 
 
