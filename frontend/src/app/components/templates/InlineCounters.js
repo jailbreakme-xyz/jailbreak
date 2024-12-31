@@ -9,12 +9,12 @@ import {
 
 const InlineCounters = ({ data }) => {
   return (
-    <div className="beta-counters inline-counters desktop">
+    <div className="beta-counters inline-counters">
       <div>
         <h4>🏆 TOTAL PAYOUT</h4>
         <CountUp
           start={1000}
-          end={data?.total_payout + data?.treasury}
+          end={data?.total_payout}
           duration={2.75}
           decimals={0}
           decimal="."
@@ -25,7 +25,7 @@ const InlineCounters = ({ data }) => {
         <h4>💰 NET PAYOUT</h4>
         <CountUp
           start={1000}
-          end={data?.total_payout}
+          end={data?.totalNetPrize}
           duration={2.75}
           decimals={0}
           decimal="."

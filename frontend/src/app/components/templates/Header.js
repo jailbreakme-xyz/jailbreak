@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import StoneLogo from "../../../assets/stone_logo.png";
 import logo from "../../../assets/logo.png";
@@ -9,8 +9,30 @@ import MobileMenu from "../MobileMenu";
 import "../../../styles/Beta.css";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useWallet } from "@solana/wallet-adapter-react";
+import QuickCreation from "./QuickCreation";
+import AdvancedModal from "./AdvancedModal";
+
 const Header = (props) => {
-  const { publicKey } = useWallet();
+  const { publicKey, connected, connect } = useWallet();
+  const [advancedModalOpen, setAdvancedModalOpen] = useState(false);
+  const [quickCreationOpen, setQuickCreationOpen] = useState(false);
+
+  const handleQuickCreationOpen = () => {
+    setQuickCreationOpen(true);
+  };
+
+  const handleQuickCreationClose = () => {
+    setQuickCreationOpen(false);
+  };
+
+  const handleAdvancedModalClose = () => {
+    setAdvancedModalOpen(false);
+  };
+
+  const handleAdvancedModalOpen = () => {
+    setAdvancedModalOpen(true);
+  };
+
   return (
     <div className="beta-header">
       <div className="beta-header-left desktop">
@@ -34,9 +56,6 @@ const Header = (props) => {
           }}
         />
         <div className="separator"></div>
-        <a href="/" className="beta-header-link pointer">
-          HOME
-        </a>
         <a href={`/agents`} className="beta-header-link pointer">
           AGENTS
         </a>
@@ -44,11 +63,11 @@ const Header = (props) => {
           BREAKERS
         </a>
         <a
-          href="https://jailbreak.gitbook.io/jailbreakme.xyz"
-          target="_blank"
+          href={undefined}
+          onClick={handleQuickCreationOpen}
           className="beta-header-link pointer"
         >
-          DOCS
+          CREATE AGENT
         </a>
         <a href="/faq" className="beta-header-link pointer">
           FAQ
@@ -103,8 +122,24 @@ const Header = (props) => {
             component={props.component}
             solPrice={props.solPrice}
             address={props.address}
+            handleQuickCreationOpen={handleQuickCreationOpen}
           />
         </div>
+        <QuickCreation
+          open={quickCreationOpen}
+          onClose={handleQuickCreationClose}
+          setAdvancedModalOpen={setAdvancedModalOpen}
+          connected={connected}
+          publicKey={publicKey}
+        />
+        <AdvancedModal
+          formOpen={advancedModalOpen}
+          setFormOpen={setAdvancedModalOpen}
+          connected={connected}
+          publicKey={publicKey}
+          handleAdvancedModalClose={handleAdvancedModalClose}
+          handleAdvancedModalOpen={handleAdvancedModalOpen}
+        />
       </div>
     </div>
   );

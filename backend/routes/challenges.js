@@ -3,6 +3,7 @@ import BlockchainService from "../services/blockchain/index.js";
 import dotenv from "dotenv";
 import DatabaseService from "../services/db/index.js";
 import getSolPriceInUSDT from "../hooks/solPrice.js";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 dotenv.config();
 
@@ -12,6 +13,10 @@ const RPC_ENV = process.env.NODE_ENV === "development" ? "devnet" : "mainnet";
 const solanaRpc = `https://${RPC_ENV}.helius-rpc.com/?api-key=${process.env.RPC_KEY}`;
 
 const model = "gpt-4o-mini";
+
+const numberWithCommas = (x) => {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
 
 router.get("/get-challenge", async (req, res) => {
   try {
@@ -54,6 +59,7 @@ router.get("/get-challenge", async (req, res) => {
       tag: 1,
       winning_prize: 1,
       usd_prize: 1,
+      airdrop_split: 1,
     };
 
     let challenge = await DatabaseService.getChallengeByName(name, projection);
@@ -146,21 +152,90 @@ router.get("/get-challenge", async (req, res) => {
           status: "concluded",
         });
 
+        const blockchainService = new BlockchainService(solanaRpc, programId);
+        const tournamentData = await blockchainService.getTournamentData(
+          tournamentPDA
+        );
+
         let winner;
         if (challenge.expiry_logic === "score") {
           const topScoreMsg = await DatabaseService.getHighestAndLatestScore(
             challengeName
           );
           winner = topScoreMsg[0].address;
-        } else {
+        } else if (challenge.expiry_logic === "last_sender") {
           winner = chatHistory[0].address;
         }
-        const blockchainService = new BlockchainService(solanaRpc, programId);
+
+        const deploymentData = await DatabaseService.getOnePage({
+          name: "deployment-data",
+        });
+
+        const owner_address =
+          deploymentData.content.deploymentData.owner_address;
+        const owner_fee = deploymentData.content.deploymentData.owner_fee;
+
         const concluded = await blockchainService.concludeTournament(
           tournamentPDA,
-          winner
+          owner_address
         );
-        const successMessage = `🥳 Tournament concluded: ${concluded}`;
+
+        const winnerShare = challenge.airdrop_split.winner;
+        const creatorShare = challenge.airdrop_split.creator;
+        const creatorRefund = owner_fee;
+        const airdropShare = 100 - owner_fee - winnerShare - creatorShare;
+
+        let successMessage = `⏱️ Tournament Expired - ${winnerShare}% to winner, ${creatorShare}% to creator, ${airdropShare}% to airdrop`;
+
+        const senders = await DatabaseService.getSendersByChallenge({
+          challenge: challengeName,
+          address: { $ne: winner },
+        });
+
+        const recipients = senders.map((sender) => sender.address);
+
+        const creatorAirdropAmount =
+          (tournamentData.total_lamports * creatorRefund) / 100;
+
+        await blockchainService.airDrop(
+          [tournamentData.authority],
+          creatorAirdropAmount
+        );
+
+        const winnerAirdropAmount =
+          (tournamentData.total_lamports * winnerShare) / 100;
+
+        const winnerSolAmount = winnerAirdropAmount / LAMPORTS_PER_SOL;
+        const winnerAirdropped = await blockchainService.airDrop(
+          [winner],
+          winnerAirdropAmount
+        );
+
+        successMessage += `\n🎁 Airdropped ${winnerSolAmount.toFixed(
+          3
+        )} SOL to ${winner}\n${
+          winnerAirdropped && winnerAirdropped.length > 0
+            ? "✅ Airdropped successfully"
+            : "❌ Airdrop failed, we will airdrop manually"
+        }`;
+
+        const airdropAmount =
+          (tournamentData.total_lamports * airdropShare) / 100;
+
+        const airdropSolAmount = airdropAmount / LAMPORTS_PER_SOL;
+        const airdropped = await blockchainService.airDrop(
+          recipients,
+          airdropAmount
+        );
+
+        successMessage += `\n🎁 Airdropped ${airdropSolAmount.toFixed(
+          3
+        )} SOL among ${recipients.length} recipients.\n${
+          airdropped && airdropped.length > 0
+            ? "✅ Airdropped successfully"
+            : "❌ Airdrop failed, we will airdrop manually"
+        }`;
+
         const assistantMessage = {
           challenge: challengeName,
           model: model,
@@ -191,13 +266,6 @@ router.get("/get-challenge", async (req, res) => {
         highestScore,
         chatHistory: chatHistory.reverse(),
       });
-    }
-
-    if (initial === "true") {
-      const blockchainService = new BlockchainService(solanaRpc, programId);
-      const tournamentData = await blockchainService.getTournamentData(
-        tournamentPDA
-      );
     }
 
     return res.status(200).json({

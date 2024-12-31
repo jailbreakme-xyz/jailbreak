@@ -26,6 +26,8 @@ import AgentInfo from "../../components/templates/AgentInfo";
 import ChatMenu from "../../components/templates/ChatMenu";
 import ScoreCircle from "../../components/partials/ScoreCircle";
 import TypingBubble from "../../components/partials/TypingBubble";
+import ErrorModal from "../../components/templates/ErrorModal";
+import bs58 from "bs58";
 
 const SOLANA_RPC =
   process.env.NODE_ENV === "development"
@@ -108,10 +110,11 @@ export default function Challenge({ params }) {
   const messagesEndRef = useRef(null);
   const chatRef = useRef(null);
   const writingRef = useRef(writing);
-
+  const [errorModalOpen, setErrorModalOpen] = useState(null);
   // const shouldScrollRef = useRef(false);
+  const previousWalletRef = useRef(null);
 
-  const { publicKey, sendTransaction, connected } = useWallet();
+  const { publicKey, sendTransaction, connected, wallet } = useWallet();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({
@@ -124,10 +127,29 @@ export default function Challenge({ params }) {
   }, [writing]);
 
   useEffect(() => {
-    if (publicKey) {
-      localStorage.setItem("address", publicKey?.toString());
+    const previousWallet = previousWalletRef.current;
+    const currentWallet = publicKey?.toString();
+
+    if (currentWallet) {
+      console.log("Current wallet:", currentWallet);
+      console.log("Connected:", connected);
+
+      // If previous wallet exists and is different from current, or wallet was disconnected
+      if ((previousWallet && previousWallet !== currentWallet) || !connected) {
+        console.log("Wallet changed or disconnected, clearing token");
+        localStorage.removeItem("token");
+      }
+
+      localStorage.setItem("address", currentWallet);
+      previousWalletRef.current = currentWallet;
+    } else if (!connected && previousWallet) {
+      // Handle disconnection
+      console.log("Wallet disconnected, clearing token");
+      localStorage.removeItem("token");
+      localStorage.removeItem("address");
+      previousWalletRef.current = null;
     }
-  }, [publicKey]);
+  }, [publicKey, connected]);
 
   useEffect(() => {
     scrollToBottom();
@@ -190,18 +212,16 @@ export default function Challenge({ params }) {
     return read(reader);
   }
 
-  const conversationCall = async (url, body) => {
+  const conversationCall = async (url, body, token) => {
     setLoading(true);
     setPageLoading(false);
 
     try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+      const response = await createAuthenticatedRequest(url, headers, body);
 
       if (response.ok) {
         setLoading(false);
@@ -230,11 +250,7 @@ export default function Challenge({ params }) {
         .catch((err) => err);
       setError(null);
       if (!writing) {
-        setChallenge((prev) =>
-          JSON.stringify(prev) !== JSON.stringify(data.challenge)
-            ? data.challenge
-            : prev
-        );
+        setChallenge(data.challenge);
         setAttempts((prev) =>
           prev !== data.break_attempts ? data.break_attempts : prev
         );
@@ -268,20 +284,29 @@ export default function Challenge({ params }) {
     } catch (err) {
       console.error(err);
       setPageLoading(false);
-      setError("Falied to fetch challenge");
+      setErrorModalOpen("Falied to fetch challenge");
     }
   };
 
   const getTransaction = async () => {
     try {
       const connection = new Connection(SOLANA_RPC, "confirmed");
-      const response = await axios.post("/api/transactions/get-transaction", {
-        solution: prompt,
-        userWalletAddress: publicKey.toString(),
-        id: challenge._id,
-      });
+      const headers = {
+        "Content-Type": "application/json",
+      };
+      const response = await createAuthenticatedRequest(
+        "/api/transactions/get-transaction",
+        headers,
+        {
+          solution: prompt,
+          userWalletAddress: publicKey.toString(),
+          id: challenge._id,
+        }
+      );
 
-      const { serializedTransaction, transactionId } = response.data;
+      const { serializedTransaction, transactionId, token } =
+        await response.json();
+      localStorage.setItem("token", token);
       const transaction = Transaction.from(
         Buffer.from(serializedTransaction, "base64")
       );
@@ -300,12 +325,76 @@ export default function Challenge({ params }) {
         return false;
       }
 
-      return { signedTransaction, transactionId };
+      return { signedTransaction, transactionId, token };
     } catch (err) {
       console.error("Error processing payment:", err);
-      setError("Payment failed. Please try again.");
+      setErrorModalOpen(err.message);
       setLoadingPayment(false);
       return false;
+    }
+  };
+
+  const createAuthenticatedRequest = async (endpoint, headers, body) => {
+    // Add wallet address check before trying stored token
+    const storedAddress = localStorage.getItem("address");
+    const storedToken = localStorage.getItem("token");
+
+    // Clear token if addresses don't match
+    if (storedAddress !== publicKey?.toString()) {
+      localStorage.removeItem("token");
+    }
+
+    if (storedToken && storedAddress === publicKey?.toString()) {
+      try {
+        const verifyResponse = await axios.get("/api/auth/verify-token", {
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+            address: publicKey.toString(),
+          },
+        });
+
+        if (verifyResponse.status === 200) {
+          headers.Authorization = `Bearer ${storedToken}`;
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify(body),
+          });
+          return response;
+        }
+      } catch (error) {
+        console.error("Authentication error:", error);
+        localStorage.removeItem("token");
+      }
+    }
+
+    if (!connected || !publicKey || !wallet) {
+      throw new Error("Wallet not connected");
+    }
+
+    try {
+      const message = `Authenticate with your wallet: ${Date.now()}`;
+      const encodedMessage = new TextEncoder().encode(message);
+      const signature = await wallet.adapter.signMessage(encodedMessage);
+
+      // headers["Authorization"] = `Bearer ${storedToken}`;
+      headers["Content-Type"] = "application/json";
+      headers["signature"] = bs58.encode(signature);
+      headers["publickey"] = publicKey.toString();
+      headers["message"] = message;
+      headers["timestamp"] = Date.now().toString();
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(body),
+      });
+
+      return response;
+    } catch (error) {
+      console.error("Authentication error:", error);
+      setErrorModalOpen(error.response?.data?.error || error.message);
+      throw error;
     }
   };
 
@@ -313,8 +402,9 @@ export default function Challenge({ params }) {
     try {
       setWriting(true);
       setLoadingPayment(true);
-      const { signedTransaction, transactionId } = await getTransaction();
-      if (!signedTransaction || !transactionId) return;
+      const { signedTransaction, transactionId, token } =
+        await getTransaction();
+      if (!signedTransaction || !transactionId || !token) return;
       setLoadingPayment(false);
       setConversation((prevMessages) => [
         ...prevMessages,
@@ -335,10 +425,10 @@ export default function Challenge({ params }) {
       };
 
       setPrompt("");
-      await conversationCall(promptUrl, body);
+      await conversationCall(promptUrl, body, token);
     } catch (err) {
       console.error(err);
-      setError(err.message);
+      setErrorModalOpen(err.message);
       setLoading(false);
     }
   };
@@ -354,7 +444,7 @@ export default function Challenge({ params }) {
     let sanitizedValue = value;
 
     if (challenge?.disable?.includes("special_characters")) {
-      sanitizedValue = value.replace(/[^a-zA-Z0-9 ]/g, "");
+      sanitizedValue = value.replace(/[^a-zA-Z0-9\s?,!.\n]/g, "");
     }
 
     // Limit the prompt length to challenge.characterLimit
@@ -685,6 +775,10 @@ export default function Challenge({ params }) {
               </div>
             </div>
             {challenge?.name && <AgentInfo challenge={challenge} />}
+            <ErrorModal
+              errorModalOpen={errorModalOpen}
+              setErrorModalOpen={setErrorModalOpen}
+            />
           </div>
         )}
       </div>

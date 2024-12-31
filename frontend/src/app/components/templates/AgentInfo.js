@@ -95,25 +95,25 @@ export default function AgentInfo({ challenge }) {
       style={{ textAlign: "left", margin: "0px 0px 0px 0px" }}
       className="chatInfoSection"
     >
-      {(challenge?.custom_rules || challenge?.tldr) && (
-        <div className="statsWrapper" style={{ marginTop: "0px" }}>
-          <h4 style={styles.customRulesTitle}>📜 Settings & Rules</h4>
-          <hr />
+      <div className="statsWrapper" style={{ marginTop: "0px" }}>
+        <h4 style={styles.customRulesTitle}>📜 Settings & Rules</h4>
+        <hr />
+        {(challenge?.custom_rules || challenge?.tldr) && (
           <p style={styles.tldr}>
             {challenge?.tldr ? challenge?.tldr : challenge?.custom_rules}
           </p>
-          <p style={styles.language}>
-            <FaCaretRight size={18} /> Language: {challenge?.language}
-          </p>
-          <p style={styles.customRules}>
-            <FaCaretRight size={18} /> Message fees increase the prize pool.
-          </p>
-          <p style={styles.customRules}>
-            <FaCaretRight size={18} /> Developer Fee: {challenge?.developer_fee}
-            %
-          </p>
-        </div>
-      )}
+        )}
+        <p style={styles.language}>
+          <FaCaretRight size={18} /> Language: {challenge?.language}
+        </p>
+        <p style={styles.customRules}>
+          <FaCaretRight size={18} /> Message fees increase the prize pool.
+        </p>
+        <p style={styles.customRules}>
+          <FaCaretRight size={18} /> Developer Fee: {challenge?.developer_fee}%
+        </p>
+      </div>
+
       <div className="statsWrapper" style={{ marginTop: "0px" }}>
         <h4 style={styles.toolsTitle}>💬 Chat Details</h4>
         <hr />
@@ -123,14 +123,14 @@ export default function AgentInfo({ challenge }) {
           </span>{" "}
           ~{numberWithCommas(challenge?.characterLimit)}
         </p>
-        {challenge?.charactersPerWord && (
-          <p style={styles.customRules}>
-            <span>
-              <FaCaretRight size={18} /> Characters Per Word:
-            </span>{" "}
-            {challenge?.charactersPerWord}
-          </p>
-        )}
+        <p style={styles.customRules}>
+          <span>
+            <FaCaretRight size={18} /> Characters Per Word:
+          </span>{" "}
+          {challenge?.charactersPerWord
+            ? challenge?.charactersPerWord
+            : "Unlimited"}
+        </p>
         <p style={styles.customRules}>
           <span>
             <FaCaretRight size={18} /> Context Window:
@@ -147,10 +147,10 @@ export default function AgentInfo({ challenge }) {
         <p style={styles.customRules}>
           <span>
             <FaCaretRight size={18} />
-            Special Characters:
+            Dangerous Characters:
           </span>{" "}
           {challenge?.disable.includes("special_characters")
-            ? "Disabled"
+            ? "Disabled (Allowed: ? | ! | . | , |)"
             : "Allowed"}
         </p>
       </div>

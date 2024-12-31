@@ -8,6 +8,7 @@ import {
 const NumberInput = React.forwardRef(function CustomNumberInput(props, ref) {
   return (
     <BaseNumberInput
+      autoComplete="off"
       slots={{
         root: InputRoot,
         input: InputElement,

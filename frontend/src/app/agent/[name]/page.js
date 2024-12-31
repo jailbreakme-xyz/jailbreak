@@ -245,8 +245,10 @@ const Agent = ({ params }) => {
               </label>
             </p>
             <p>
-              <strong>Special Characters:</strong>{" "}
-              {disable.includes("special_characters") ? "Disabled" : "Allowed"}
+              <strong>Dangerous Characters:</strong>{" "}
+              {disable.includes("special_characters")
+                ? "Disabled (Allowed: ? | ! | . | , |)"
+                : "Allowed"}
             </p>
             <hr />
             <p>

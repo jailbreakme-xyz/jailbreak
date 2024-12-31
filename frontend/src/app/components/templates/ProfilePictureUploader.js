@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FileUploader } from "react-drag-drop-files";
 import { styled } from "@mui/system";
 import { BiSolidImageAdd } from "react-icons/bi";
@@ -36,20 +36,28 @@ const IconContainer = styled("div")({
   justifyContent: "center",
 });
 
-const ProfilePictureUploader = ({ onFileChange }) => {
-  const [imagePreview, setImagePreview] = useState(
-    "https://storage.googleapis.com/jailbreakme-images/claraProfile.jpg"
-  );
+const ProfilePictureUploader = ({ onFileChange, preview, sample }) => {
+  const [imagePreview, setImagePreview] = useState(sample);
 
   const handleFileChange = (file) => {
+    if (!file) return;
+
     const reader = new FileReader();
+
     reader.onloadend = () => {
+      if (reader.error) {
+        console.error("Error reading file:", reader.error);
+        return;
+      }
       setImagePreview(reader.result);
       onFileChange(file);
     };
-    if (file) {
-      reader.readAsDataURL(file);
-    }
+
+    reader.onerror = (error) => {
+      console.error("FileReader error:", error);
+    };
+
+    reader.readAsDataURL(file);
   };
 
   const Overlay = styled("div")({
@@ -62,6 +70,12 @@ const ProfilePictureUploader = ({ onFileChange }) => {
     padding: "5px 0",
     fontSize: "12px",
   });
+
+  useEffect(() => {
+    if (preview) {
+      setImagePreview(preview);
+    }
+  }, [preview]);
 
   return (
     <CircleContainer

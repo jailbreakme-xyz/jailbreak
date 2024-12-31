@@ -98,7 +98,7 @@ export default function ChatMenu({ challenge, attempts, price, usdPrice }) {
 
         <hr />
         <div className="stats">
-          {challenge?.expiry_logic === "score" ? (
+          {/* {challenge?.expiry_logic === "score" ? (
             <p
               style={{
                 fontSize: "14px",
@@ -117,6 +117,26 @@ export default function ChatMenu({ challenge, attempts, price, usdPrice }) {
               }}
             >
               Last sender wins when the timer ends.
+            </p>
+          )} */}
+          {challenge?.airdrop_split && (
+            <p
+              style={{
+                fontSize: "14px",
+                color: "#ccc",
+                lineHeight: "1.2rem",
+              }}
+            >
+              <strong>If the timer ends - </strong>
+              {challenge?.airdrop_split.winner}% to{" "}
+              {challenge?.expiry_logic === "score"
+                ? "highest score"
+                : "last sender"}
+              , {challenge?.airdrop_split.creator}% to creator,{" "}
+              {100 -
+                challenge?.airdrop_split.winner -
+                challenge?.airdrop_split.creator}
+              % equally distributed to all participants.
             </p>
           )}
           <p

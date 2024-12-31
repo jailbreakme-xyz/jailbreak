@@ -26,7 +26,7 @@ async function validatePrompt(prompt, challenge, transaction) {
   }
 
   if (challenge.disable?.includes("special_characters")) {
-    prompt = prompt.replace(/[^a-zA-Z0-9 ]/g, "");
+    prompt = prompt.replace(/[^a-zA-Z0-9\s?,!.\n]/g, "");
   }
 
   // if (challenge.suffix) {
