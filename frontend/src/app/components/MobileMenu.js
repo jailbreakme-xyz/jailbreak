@@ -156,7 +156,7 @@ const MobileMenu = (props) => {
                 <SiGitbook size={25} className="pointer" />
               </a>
               <a
-                href="https://github.com/probonodev/jailbreak"
+                href="https://github.com/jailbreakme-xyz"
                 target="_blank"
                 className="pointer"
               >

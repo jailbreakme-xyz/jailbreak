@@ -444,7 +444,7 @@ export default function Breaker({ params }) {
           </Tabs>
 
           {/* Conversations Tab */}
-          {tabValue === 0 && (
+          {tabValue === 0 && chatCount > 0 ? (
             <Box>
               {/* Scrollable Conversations List */}
               <Box
@@ -583,6 +583,15 @@ export default function Breaker({ params }) {
                 </Paper>
               )}
             </Box>
+          ) : (
+            tabValue === 0 && (
+              <div
+                className="flex justify-center items-center h-full"
+                style={{ height: "50vh" }}
+              >
+                <h1 style={{ color: "white" }}>No conversations found</h1>
+              </div>
+            )
           )}
 
           {/* Owned Agents Tab */}

@@ -2,8 +2,6 @@ import React from "react";
 import { Dialog, DialogContent, DialogActions } from "@mui/material";
 import Header from "./Header";
 import AdvancedCreation from "./AdvancedCreation";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import Button from "@mui/material/Button";
 import { ImCross } from "react-icons/im";
 import { FaSadCry } from "react-icons/fa";
 import IconButton from "@mui/material/IconButton";

@@ -39,24 +39,6 @@ const upload = multer({
   },
 });
 
-router.get("/", async (req, res) => {
-  const filePath = path.join(
-    __dirname,
-    "../jailbreak-pool-v2/dist/jailbreak_pool.so"
-  );
-
-  // Set headers to indicate a binary file
-  res.setHeader("Content-Type", "application/octet-stream");
-  res.setHeader(
-    "Content-Disposition",
-    "attachment; filename=jailbreak_pool.so"
-  );
-
-  // Stream the file to the response
-  const fileStream = fs.createReadStream(filePath);
-  fileStream.pipe(res);
-});
-
 router.post(
   "/quick-start-tournament",
   upload.single("pfp"),
@@ -408,7 +390,9 @@ router.post(
 
 router.post("/generate-agent", async (req, res) => {
   const sender = req.body.sender;
-  const advanced = req.body.advanced;
+  const name = req.body.name;
+  const instructions = req.body.instructions;
+  const opening_message = req.body.opening_message;
   const cf_ip = req.headers["cf-connecting-ip"];
   const generation_limit = 10;
   const generation_period = 24 * 60 * 60 * 1000;
@@ -453,7 +437,12 @@ router.post("/generate-agent", async (req, res) => {
     await DataBaseService.saveBreakerIfNotExists(newBreaker);
   }
 
-  const newAgent = await OpenAIService.generateAgent(advanced === "true");
+  const newAgent = await OpenAIService.generateAgent(
+    false,
+    name,
+    instructions,
+    opening_message
+  );
   const imageUrl = await GoogleCloudService.uploadImageFromUrl(
     newAgent.imageUrl,
     newAgent.name.toLowerCase().replace(/[^a-zA-Z0-9]/g, "-")

@@ -38,6 +38,7 @@ import { Transaction, Connection } from "@solana/web3.js";
 import bs58 from "bs58";
 import RingLoader from "react-spinners/RingLoader";
 import { FaWandMagicSparkles } from "react-icons/fa6";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 const SOLANA_RPC =
   process.env.NODE_ENV === "development"
@@ -574,6 +575,9 @@ const AdvancedCreation = (props) => {
     try {
       const response = await axios.post("/api/program/generate-agent", {
         sender: props.publicKey,
+        name: formik.values.name,
+        instructions: formik.values.instructions,
+        opening_message: formik.values.opening_message,
       });
 
       const generatedAgent = response.data.newAgent;

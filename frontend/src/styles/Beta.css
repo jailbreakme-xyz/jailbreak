@@ -6,6 +6,7 @@
         justify-items: center;
     }
 
+
 .beta-container {
     width: 80%;
     max-width: 1460px;
@@ -118,8 +119,8 @@ padding: 5px;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    width: 95%;
-    padding: 60px 30px;
+    /* width: 95%; */
+    padding: 60px;
     margin: 30px auto 10px;
     background-color: #181726;
     border-radius: 20px;
@@ -143,7 +144,7 @@ padding: 5px;
   font-size: 16px;
 }
 .beta-content-left {
-    width: 55%;
+    width: 50%;
 }
 .beta-breakers-header {
   display: flex;
