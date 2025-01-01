@@ -6,7 +6,7 @@ export const tournamentValidator = Joi.object({
   name: Joi.string().min(3).max(16).required(),
   instructions: Joi.string().min(100).max(10000).required(),
   initial_pool_size: Joi.number().min(0.5).max(10000).required().positive(),
-  fee_multiplier: Joi.number().min(1).max(100).required().positive(),
+  fee_multiplier: Joi.number().min(1).max(5).required().positive(),
   developer_fee: Joi.number().min(20).max(50).required().positive(),
   winner_payout_pct: Joi.number().min(50).max(80).required().positive(),
   feeType: Joi.number().min(0).max(1).required(),

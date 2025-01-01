@@ -64,18 +64,19 @@ export default function Footer(props) {
         </form>
       ) : props.status === "concluded" ? (
         <div style={{ width: "100%" }}>
-          <h3 style={{ color: "black" }}>
+          <h3 style={{ color: "white" }}>
             🥳 This tournament has concluded.
             <br />
             See you next time!
           </h3>
-          <p style={{ color: "black" }}>
+          <p style={{ color: "white" }}>
             Stay tuned for the next tournament! 🚀{" "}
             <a
               href="https://x.com/jailbreakme_xyz"
               target="_blank"
               rel="noreferrer"
               className="pointer"
+              style={{ color: "#0BBF99" }}
             >
               @jailbreakme_xyz
             </a>
@@ -83,7 +84,7 @@ export default function Footer(props) {
         </div>
       ) : (
         <div style={{ width: "100%" }}>
-          <h3 style={{ color: "black" }}>Tournament starts in</h3>
+          <h3 style={{ color: "white" }}>Tournament starts in</h3>
           <div className="upcoming-timer">
             {props.start_date ? (
               <Timer expiryDate={props.start_date} />
