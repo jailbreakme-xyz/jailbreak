@@ -6,177 +6,48 @@ import Timer from "../partials/Timer";
 import { RiVerifiedBadgeFill } from "react-icons/ri";
 export default function ChatMenu({ challenge, attempts, price, usdPrice }) {
   return (
-    <div className="chatMenu desktopChatMenu">
+    <div className="chatMenu desktopChatMenu desktop">
       {challenge?.title && (
-        <div className="challengeTitle">
-          <div
-            style={{
-              display: "inline-flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              width: "100%",
-            }}
-          >
-            <div>
-              <span
-                className="level"
-                style={{
-                  fontWeight: "bold",
-                  textTransform: "uppercase",
-                  borderRadius: "150px",
-                  padding: "5px 15px",
-                  backgroundColor: "#000",
-                  color: "#0BBF99",
-                  border: "1px solid #0BBF99",
-                  fontSize: "14px",
-                }}
-              >
-                {challenge?.name}
-              </span>
-              <h2 style={{ margin: "8px 0px 0px" }}>{challenge?.title}</h2>
+        <div className="challengeTitle glass-card">
+          <div className="challenge-header">
+            <div className="challenge-info">
+              <span className="level-badge">{challenge?.name}</span>
+              <h2>{challenge?.title}</h2>
               {challenge?.verified_owner && (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    fontSize: "0.8em",
-                    color: "#0BBF99",
-                  }}
-                >
+                <div className="verified-badge">
                   <RiVerifiedBadgeFill />
                   <span>{challenge?.verified_owner}</span>
                 </div>
               )}
             </div>
-            <div className="pointer">
+            <div className="challenge-avatar">
               <img
                 onClick={() => {
                   window.open(`/agent/${challenge?.name}`, "_blank");
                 }}
                 alt="logo"
                 src={challenge?.pfp}
-                width="50"
-                height="50"
-                className="pfp pointer"
-                style={{ border: "6px double #ebebeb" }}
+                width="75"
+                height="75"
+                className="pfp pointer hover-effect"
               />
             </div>
           </div>
-          <hr />
-          <span>{challenge?.label}</span>
+          <div className="divider" />
+          <span className="challenge-label">{challenge?.label}</span>
         </div>
       )}
-      <div
-        style={{
-          textAlign: "left",
-        }}
-        className="statsWrapper"
-      >
-        <div
-          style={{
-            textAlign: "left",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <h3 style={{ fontSize: "22px", margin: "5px 0px" }}>
-            <FaClock
-              style={{
-                position: "relative",
-                top: "4px",
-              }}
-            />{" "}
-            EXPIRY
-          </h3>
-          {challenge?.expiry ? (
-            <Timer expiryDate={challenge?.expiry} />
-          ) : (
-            <div
-              style={{
-                backgroundColor: "#000",
-                color: "#0BBF99",
-                width: "fit-content",
-                margin: "0px",
-                padding: "5px 20px",
-                fontStyle: "italic",
-                fontWeight: "bold",
-                borderRadius: "10px",
-              }}
-            >
-              TBA
-            </div>
-          )}
-        </div>
 
-        <hr />
-        <div className="stats">
-          {/* {challenge?.expiry_logic === "score" ? (
-            <p
-              style={{
-                fontSize: "14px",
-                color: "#ccc",
-                lineHeight: "1.2rem",
-              }}
-            >
-              Message with the highest score wins if the timer ends.
-            </p>
-          ) : (
-            <p
-              style={{
-                fontSize: "14px",
-                color: "#ccc",
-                lineHeight: "10px",
-              }}
-            >
-              Last sender wins when the timer ends.
-            </p>
-          )} */}
-          {challenge?.airdrop_split && (
-            <p
-              style={{
-                fontSize: "14px",
-                color: "#ccc",
-                lineHeight: "1.2rem",
-              }}
-            >
-              <strong>If the timer ends - </strong>
-              {challenge?.airdrop_split.winner}% to{" "}
-              {challenge?.expiry_logic === "score"
-                ? "highest score"
-                : "last sender"}
-              , {challenge?.airdrop_split.creator}% to creator,{" "}
-              {100 -
-                challenge?.airdrop_split.winner -
-                challenge?.airdrop_split.creator}
-              % equally distributed to all participants.
-            </p>
-          )}
-          <p
-            style={{
-              fontSize: "14px",
-              color: "#ccc",
-              lineHeight: "1.2rem",
-            }}
-          >
-            Each message rounds the timer up to 1 hour if less than 1 hour
-            remains.
-          </p>
+      <div className="stats-section glass-card">
+        <div className="section-header">
+          <h3>
+            <FaChartLine className="header-icon" /> STATS
+          </h3>
         </div>
-      </div>
-      <div style={{ textAlign: "left" }} className="statsWrapper">
-        <h3 style={{ fontSize: "22px", margin: "5px 0px" }}>
-          <FaChartLine
-            style={{
-              position: "relative",
-              top: "4px",
-            }}
-          />{" "}
-          STATS
-        </h3>
-        <hr />
-        <div className="stats">
-          <div className="chatComingSoonMenuItem">
+        <div className="divider" />
+
+        <div className="stats-grid">
+          <div className="stat-item">
             <h4>Break Attempts</h4>
             <CountUp
               start={0}
@@ -184,20 +55,57 @@ export default function ChatMenu({ challenge, attempts, price, usdPrice }) {
               duration={2.75}
               decimals={0}
               decimal="."
+              className="stat-value"
             />
           </div>
-          <div className="chatComingSoonMenuItem">
+          <div className="stat-item">
             <h4>Message Price</h4>
-            <CountUp
-              start={0}
-              end={price}
-              duration={2.75}
-              decimals={3}
-              decimal="."
-              suffix=" SOL"
-            />{" "}
-            <span style={{ fontSize: "12px" }}>(${usdPrice?.toFixed(2)})</span>
+            <div className="price-display">
+              <CountUp
+                start={0}
+                end={price}
+                duration={2.75}
+                decimals={3}
+                decimal="."
+                suffix=" SOL"
+                className="stat-value"
+              />
+              <span className="usd-price">(${usdPrice?.toFixed(2)})</span>
+            </div>
           </div>
+        </div>
+        <div className="divider" />
+        <div className="expiry-section">
+          <div
+            className="section-header"
+            style={{ alignItems: "center", marginBottom: "10px" }}
+          >
+            <h3>
+              <FaClock className="header-icon" /> EXPIRY
+            </h3>
+            <div className="timer-display">
+              {challenge?.expiry ? (
+                <Timer expiryDate={challenge?.expiry} />
+              ) : (
+                <div className="tba-badge">TBA</div>
+              )}
+            </div>
+          </div>
+          {challenge?.airdrop_split && (
+            <div className="compact-info">
+              <span className="split-info">
+                Split: {challenge?.airdrop_split.winner}% winner •{" "}
+                {challenge?.airdrop_split.creator}% creator •{" "}
+                {100 -
+                  challenge?.airdrop_split.winner -
+                  challenge?.airdrop_split.creator}
+                % participants
+              </span>
+              <span className="timer-info">
+                Timer extends 1h per message if &lt;1h remains
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@
 .chat-container {
     display: flex;
     flex-direction: column;
-    height: 82vh;
+    height: calc(96vh - 100px);
     /* max-width: 600px; */
     margin: 0 auto;
     border: 2px solid #ccc;
@@ -269,7 +269,7 @@ border: 0px;
 
   @media screen and (max-width:768px) {
     .desktopMenu, .desktopChatMenu, .chatPageMain .desktopMenu {
-      display: none;
+      display: none !important;
     }
     .chatPageMain {
       padding: 0px;
@@ -292,7 +292,7 @@ border: 0px;
       /* overflow-y: hidden; */
 
       border: 0px;
-      border-radius: 0px;
+      border-radius: 0px !important;
       /* display: flex;
       flex-direction: column;
       overflow-y: auto;
@@ -309,7 +309,7 @@ border: 0px;
       padding-left: 15px;
     }
     .chat-footer {
-      padding: 10px 0px;
+      padding: 10px 0px !important;
       position: fixed;
       width: 100%;
     }

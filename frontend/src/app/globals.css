@@ -241,6 +241,7 @@ padding-bottom: 0px;
 
 .chatMenu {
   width: 25%;
+  gap: 8px;
 }
 .mainMenu {
   width: 20%;
@@ -1118,6 +1119,7 @@ z-index: 99999999999999999 !important;
   column-gap: 20px;
   color: #0BBF99;
   padding: 20px 0px;
+  margin-top: 100px;
 }
 .advanced-creation-form hr {
   border-color: #0BBF99 !important;
@@ -1129,6 +1131,7 @@ z-index: 99999999999999999 !important;
 .advanced-creation-form .MuiCheckbox-root path {
   fill: #0BBF99 !important;
 }
+
 .styled-date-input {
   /* Add your desired styles for the input */
   padding: 8px;
@@ -1601,8 +1604,8 @@ height: 40px;
 }
 /* Hamburger Icon */
 .hamburgerIcon {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   cursor: pointer;
   z-index: 1100;
   background-color: #000;
@@ -2267,6 +2270,9 @@ font-size: 18px;
     display: flex;
     flex-direction: column;
     gap: 12px;
+  }
+  body {
+    padding-top: 82px !important;
   }
 }
 

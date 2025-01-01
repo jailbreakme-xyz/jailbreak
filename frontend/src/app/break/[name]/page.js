@@ -510,9 +510,25 @@ export default function Challenge({ params }) {
             )}
 
             <div className="conversationSection">
-              <div className="chat-container">
+              <div
+                className="chat-container"
+                style={{
+                  backgroundColor: "#0A0A0A",
+                  border: "1px solid #1a1a1a",
+                  borderRadius: "12px",
+                }}
+              >
                 {challenge?.name && (
-                  <div className="poolDiv" style={{ position: "relative" }}>
+                  <div
+                    className="poolDiv"
+                    style={{
+                      position: "relative",
+                      backgroundColor: "#141414",
+                      border: "1px solid #1a1a1a",
+                      borderRadius: "8px 8px 0px 0px",
+                      padding: "15px",
+                    }}
+                  >
                     <div
                       className="status-container"
                       style={{
@@ -588,10 +604,28 @@ export default function Challenge({ params }) {
                   ref={chatRef}
                   id="conversationContainer"
                   className="conversation"
+                  style={{
+                    backgroundColor: "#0A0A0A",
+                    border: "1px solid #1a1a1a",
+                    borderRadius: "0px",
+                    // padding: "15px",
+                    // marginBottom: "20px",
+                  }}
                 >
                   {conversation && conversation.length > 0
                     ? conversation.map((item, index) => (
-                        <div className={`chat-bubble ${item.role}`} key={index}>
+                        <div
+                          className={`chat-bubble ${item.role}`}
+                          key={index}
+                          // style={{
+                          //   backgroundColor:
+                          //     item.role === "user" ? "#141414" : "#0d0d0d",
+                          //   border: "1px solid #1a1a1a",
+                          //   borderRadius: "8px",
+                          //   padding: "15px",
+                          //   marginBottom: "10px",
+                          // }}
+                        >
                           {item.role === "user" ? (
                             <>
                               <div className="message">
@@ -740,7 +774,15 @@ export default function Challenge({ params }) {
                   )}
                   <div ref={messagesEndRef}></div>
                 </div>
-                <div className="chat-footer">
+                <div
+                  className="chat-footer"
+                  style={{
+                    backgroundColor: "#141414",
+                    border: "1px solid #1a1a1a",
+                    borderRadius: "0px 0px 8px 8px",
+                    padding: "15px",
+                  }}
+                >
                   <Footer
                     status={challenge?.status}
                     value={prompt}
