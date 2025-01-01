@@ -38,7 +38,12 @@ import { Transaction, Connection } from "@solana/web3.js";
 import bs58 from "bs58";
 import RingLoader from "react-spinners/RingLoader";
 import { FaWandMagicSparkles } from "react-icons/fa6";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import {
+  WalletMultiButton,
+  useWalletModal,
+} from "@solana/wallet-adapter-react-ui";
+import { BiInfoCircle } from "react-icons/bi";
+import Tooltip from "@mui/material/Tooltip";
 
 const SOLANA_RPC =
   process.env.NODE_ENV === "development"
@@ -48,6 +53,33 @@ const SOLANA_RPC =
 const FormSection = styled("div")(({ theme }) => ({
   marginBottom: theme.spacing(4),
 }));
+
+const InfoIconStyled = styled(BiInfoCircle)({
+  fontSize: "16px",
+  marginLeft: "5px",
+  verticalAlign: "middle",
+  cursor: "help",
+  color: "#0BBF99",
+});
+
+const LabelWithTooltip = ({ label, tooltip }) => (
+  <span style={{ display: "flex", alignItems: "center" }}>
+    {label}
+    <Tooltip
+      title={tooltip}
+      placement="top"
+      componentsProps={{
+        popper: {
+          sx: {
+            zIndex: 100000000001,
+          },
+        },
+      }}
+    >
+      <InfoIconStyled />
+    </Tooltip>
+  </span>
+);
 
 const formatDateToLocal = (date) => {
   const d = new Date(date);
@@ -71,6 +103,7 @@ const AdvancedCreation = (props) => {
   const [settings, setSettings] = useState(null);
   const [newAgentLink, setNewAgentLink] = useState(null);
   const [sample, setSample] = useState(null);
+  const { setVisible, visible } = useWalletModal();
 
   const formik = useFormik({
     initialValues: {
@@ -562,16 +595,19 @@ const AdvancedCreation = (props) => {
   const generateAgent = async (e) => {
     e.preventDefault();
     if (!connected || !publicKey) {
-      setErrorModalOpen("Please connect your wallet");
+      setVisible(true);
       return;
     }
 
     setGeneratingModalOpen(true);
-    setGenerating("Generating...");
-    setTimeout(() => setGenerating("Crafting a unique agent..."), 5000);
-    setTimeout(() => setGenerating("Drafting a new instructions..."), 10000);
-    setTimeout(() => setGenerating("Building agent schema..."), 15000);
-    setTimeout(() => setGenerating("Creating an image..."), 20000);
+    setGenerating("1/5 Generating...");
+    setTimeout(() => setGenerating("2/5 Crafting a unique agent..."), 5000);
+    setTimeout(
+      () => setGenerating("3/5 Drafting a new instructions..."),
+      10000
+    );
+    setTimeout(() => setGenerating("4/5 Building agent schema..."), 15000);
+    setTimeout(() => setGenerating("5/5 Creating an image..."), 20000);
     try {
       const response = await axios.post("/api/program/generate-agent", {
         sender: props.publicKey,
@@ -649,7 +685,7 @@ const AdvancedCreation = (props) => {
                   style={{ borderRadius: "50%" }}
                 />
               )}
-              <p
+              {/* <p
                 style={{
                   fontSize: "12px",
                   color: "#0BBF99",
@@ -658,12 +694,17 @@ const AdvancedCreation = (props) => {
                 }}
               >
                 Agent PFP
-              </p>
+              </p> */}
             </Grid>
             <Grid size={{ xs: 12, md: 5, lg: 5 }}>
               <TextField
                 fullWidth
-                label="Name"
+                label={
+                  <LabelWithTooltip
+                    label="Name"
+                    tooltip="Choose a unique name for your AI agent (3-16 characters)"
+                  />
+                }
                 name="name"
                 value={formik.values.name}
                 onChange={formik.handleChange}
@@ -678,7 +719,12 @@ const AdvancedCreation = (props) => {
             <Grid size={{ xs: 12, md: 5, lg: 5 }}>
               <TextField
                 fullWidth
-                label="Title"
+                label={
+                  <LabelWithTooltip
+                    label="Title"
+                    tooltip="A title that describes your agent's role or purpose"
+                  />
+                }
                 name="title"
                 value={formik.values.title}
                 onChange={formik.handleChange}
@@ -694,7 +740,12 @@ const AdvancedCreation = (props) => {
             <Grid size={{ xs: 12, md: 12, lg: 12 }} sx={{ marginTop: 1 }}>
               <TextField
                 fullWidth
-                label="Opening Message"
+                label={
+                  <LabelWithTooltip
+                    label="Intro"
+                    tooltip="This will appear as a short introduction to your agent (10-130 characters)"
+                  />
+                }
                 name="opening_message"
                 value={formik.values.opening_message}
                 onChange={formik.handleChange}
@@ -718,7 +769,12 @@ const AdvancedCreation = (props) => {
                 fullWidth
                 multiline
                 rows={2}
-                label="TLDR"
+                label={
+                  <LabelWithTooltip
+                    label="TLDR"
+                    tooltip="A brief summary of your agent's purpose and winning conditions"
+                  />
+                }
                 name="tldr"
                 placeholder={sample?.tldr || "Enter a TLDR"}
                 value={formik.values.tldr}
@@ -738,7 +794,12 @@ const AdvancedCreation = (props) => {
                 fullWidth
                 multiline
                 rows={4}
-                label="Instructions (System Prompt)"
+                label={
+                  <LabelWithTooltip
+                    label="Instructions (System Prompt)"
+                    tooltip="Detailed instructions that define your agent's personality, knowledge, and behavior (100-10,000 characters)"
+                  />
+                }
                 name="instructions"
                 placeholder={sample?.instructions || "Enter instructions"}
                 value={formik.values.instructions}
@@ -829,7 +890,12 @@ const AdvancedCreation = (props) => {
                 <Grid size={{ xs: 12, md: 12, lg: 12 }} sx={{ marginTop: 2 }}>
                   <TextField
                     fullWidth
-                    label="Tools Description"
+                    label={
+                      <LabelWithTooltip
+                        label="Tools Description"
+                        tooltip="A brief description of how your agent should use its available tools"
+                      />
+                    }
                     name="tools_description"
                     value={formik.values.tools_description}
                     onChange={formik.handleChange}
@@ -872,7 +938,12 @@ const AdvancedCreation = (props) => {
                         <TextField
                           focused
                           fullWidth
-                          label="Name"
+                          label={
+                            <LabelWithTooltip
+                              label="Name"
+                              tooltip="The name of this tool - this is what the agent will use to reference it"
+                            />
+                          }
                           name={`tools.${index}.name`}
                           value={tool.name}
                           onChange={formik.handleChange}
@@ -887,7 +958,12 @@ const AdvancedCreation = (props) => {
                         <TextField
                           focused
                           fullWidth
-                          label="Instruction"
+                          label={
+                            <LabelWithTooltip
+                              label="Instruction"
+                              tooltip="Instructions for how and when the agent should use this tool"
+                            />
+                          }
                           name={`tools.${index}.instruction`}
                           value={tool.instruction}
                           onChange={formik.handleChange}
@@ -903,7 +979,12 @@ const AdvancedCreation = (props) => {
                         <TextField
                           focused
                           fullWidth
-                          label="Description"
+                          label={
+                            <LabelWithTooltip
+                              label="Description"
+                              tooltip="A description of what this tool does and its purpose"
+                            />
+                          }
                           name={`tools.${index}.description`}
                           value={tool.description}
                           onChange={formik.handleChange}
@@ -934,9 +1015,16 @@ const AdvancedCreation = (props) => {
           </Grid>
         </FormSection>
         <FormSection>
+          <h3>🏆 Tournament Settings</h3>
+          <hr />
           <Grid container spacing={1}>
             <Grid size={{ xs: 6, md: 6, lg: 6 }}>
-              <p>Start Date</p>
+              <p style={{ margin: "4px", fontSize: "14px" }}>
+                <LabelWithTooltip
+                  label="Start Date"
+                  tooltip="The date and time when the tournament will start"
+                />
+              </p>
               <input
                 style={{ width: "95%" }}
                 className="date-field styled-date-input"
@@ -951,7 +1039,12 @@ const AdvancedCreation = (props) => {
               />
             </Grid>
             <Grid size={{ xs: 6, md: 6, lg: 6 }}>
-              <p>Expiry Date</p>
+              <p style={{ margin: "4px", fontSize: "14px" }}>
+                <LabelWithTooltip
+                  label="Expiry Date"
+                  tooltip="The date and time when the tournament will end"
+                />
+              </p>
               <input
                 style={{ width: "95%" }}
                 className="date-field styled-date-input"
@@ -988,8 +1081,13 @@ const AdvancedCreation = (props) => {
                 <MenuItem value="highest_score">Highest Score</MenuItem>
               </Select>
             </Grid> */}
-            <Grid size={{ xs: 6, md: 4, lg: 4 }}>
-              <p>Max Message Length</p>
+            <Grid size={{ xs: 6, md: 4, lg: 4 }} sx={{ marginTop: 2 }}>
+              <p style={{ margin: "4px", fontSize: "14px" }}>
+                <LabelWithTooltip
+                  label="Max Message Length"
+                  tooltip="The maximum number of characters allowed in a message"
+                />
+              </p>
               <NumberInputAdornments
                 min={300}
                 max={1000}
@@ -1001,8 +1099,13 @@ const AdvancedCreation = (props) => {
                 noAdornment={true}
               />
             </Grid>
-            <Grid size={{ xs: 6, md: 4, lg: 4 }}>
-              <p>Max Word Length</p>
+            <Grid size={{ xs: 6, md: 4, lg: 4 }} sx={{ marginTop: 2 }}>
+              <p style={{ margin: "4px", fontSize: "14px" }}>
+                <LabelWithTooltip
+                  label="Max Word Length"
+                  tooltip="The maximum number of characters allowed in a word"
+                />
+              </p>
               <NumberInputAdornments
                 min={45}
                 max={200}
@@ -1016,8 +1119,13 @@ const AdvancedCreation = (props) => {
                 noAdornment={true}
               />
             </Grid>
-            <Grid size={{ xs: 12, md: 4, lg: 4 }}>
-              <p>Context Limit </p>
+            <Grid size={{ xs: 12, md: 4, lg: 4 }} sx={{ marginTop: 2 }}>
+              <p style={{ margin: "4px", fontSize: "14px" }}>
+                <LabelWithTooltip
+                  label="Context Limit"
+                  tooltip="The maximum number of messages the agent can remember for each user"
+                />
+              </p>
               <NumberInputAdornments
                 min={1}
                 max={20}
@@ -1030,8 +1138,13 @@ const AdvancedCreation = (props) => {
               />
             </Grid>
 
-            <Grid size={{ xs: 3, md: 3, lg: 3 }}>
-              <p>Initial Pool Size</p>
+            <Grid size={{ xs: 3, md: 3, lg: 3 }} sx={{ marginTop: 2 }}>
+              <p style={{ margin: "4px", fontSize: "14px" }}>
+                <LabelWithTooltip
+                  label="Initial Pool Size"
+                  tooltip="The initial amount of SOL to be added to the prize pool (0.5-10,000 SOL)"
+                />
+              </p>
               <NumberInputAdornments
                 min={0.5}
                 max={10000}
@@ -1050,12 +1163,18 @@ const AdvancedCreation = (props) => {
                 justifyContent: "center",
                 alignItems: "flex-end",
                 display: "flex",
+                marginTop: 2,
               }}
             >
               <span style={{ fontSize: "34px" }}>/</span>
             </Grid>
-            <Grid size={{ xs: 3, md: 3, lg: 3 }}>
-              <p>Fee Multiplier</p>
+            <Grid size={{ xs: 3, md: 3, lg: 3 }} sx={{ marginTop: 2 }}>
+              <p style={{ margin: "4px", fontSize: "14px" }}>
+                <LabelWithTooltip
+                  label="Fee Multiplier"
+                  tooltip="Determines the entry fee as a percentage of the pool size (1-1000)"
+                />
+              </p>
               <NumberInputAdornments
                 min={10}
                 max={1000}
@@ -1073,12 +1192,18 @@ const AdvancedCreation = (props) => {
                 justifyContent: "center",
                 alignItems: "flex-end",
                 display: "flex",
+                marginTop: 2,
               }}
             >
               <span style={{ fontSize: "34px" }}>=</span>
             </Grid>
-            <Grid size={{ xs: 4, md: 4, lg: 4 }}>
-              <p>Initial Entry Fee</p>
+            <Grid size={{ xs: 4, md: 4, lg: 4 }} sx={{ marginTop: 2 }}>
+              <p style={{ margin: "4px", fontSize: "14px" }}>
+                <LabelWithTooltip
+                  label="Initial Entry Fee"
+                  tooltip="The initial amount of SOL required to enter the tournament"
+                />
+              </p>
               <NumberInputAdornments
                 value={
                   formik.values.initial_pool_size / formik.values.fee_multiplier
@@ -1113,7 +1238,7 @@ const AdvancedCreation = (props) => {
               </FormGroup>
             </Grid>
             <Grid size={{ xs: 12, md: 12, lg: 12 }}>
-              <h3>🏆 Tournament Type</h3>
+              <h3>🎯 Tournament Type</h3>
               <Tabs
                 value={activeTypeTab}
                 onChange={handleTabChange}
@@ -1150,7 +1275,12 @@ const AdvancedCreation = (props) => {
                         <TextField
                           fullWidth
                           placeholder={`Phrase ${index + 1}`}
-                          label={`Phrase ${index + 1}`}
+                          label={
+                            <LabelWithTooltip
+                              label={`Phrase ${index + 1}`}
+                              tooltip="A secret phrase that users must reveal to win the tournament"
+                            />
+                          }
                           name={`phrases.${index}`}
                           value={phrase}
                           onChange={formik.handleChange}
@@ -1431,7 +1561,12 @@ const AdvancedCreation = (props) => {
               }}
             >
               <Grid size={{ xs: 3, md: 1, lg: 3 }}>
-                <p style={{ fontSize: "12px" }}>Creator Share</p>
+                <p style={{ margin: "4px", fontSize: "14px" }}>
+                  <LabelWithTooltip
+                    label="Creator Share"
+                    tooltip="Percentage of the prize pool that goes to you as the creator (20-50%)"
+                  />
+                </p>
                 <NumberInputAdornments
                   suffix={"%"}
                   min={20}

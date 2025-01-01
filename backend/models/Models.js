@@ -56,6 +56,10 @@ const ChallengeSchema = new mongoose.Schema(
     sample_keyword: String,
     jailx_thread: String,
     tournament_id: String,
+    verified_owner: {
+      type: String,
+      default: null,
+    },
     airdrop_split: {
       winner: Number,
       creator: Number,

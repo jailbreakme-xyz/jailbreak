@@ -3,7 +3,7 @@ import Image from "next/image";
 import { FaClock, FaChartLine, FaCaretRight } from "react-icons/fa";
 import CountUp from "react-countup";
 import Timer from "../partials/Timer";
-
+import { RiVerifiedBadgeFill } from "react-icons/ri";
 export default function ChatMenu({ challenge, attempts, price, usdPrice }) {
   return (
     <div className="chatMenu desktopChatMenu">
@@ -34,6 +34,19 @@ export default function ChatMenu({ challenge, attempts, price, usdPrice }) {
                 {challenge?.name}
               </span>
               <h2 style={{ margin: "8px 0px 0px" }}>{challenge?.title}</h2>
+              {challenge?.verified_owner && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    fontSize: "0.8em",
+                    color: "#0BBF99",
+                  }}
+                >
+                  <RiVerifiedBadgeFill />
+                  <span>{challenge?.verified_owner}</span>
+                </div>
+              )}
             </div>
             <div className="pointer">
               <img

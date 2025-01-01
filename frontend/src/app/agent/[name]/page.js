@@ -4,6 +4,8 @@ import Header from "../../components/templates/Header";
 import Timer from "../../components/partials/Timer";
 import Footer from "../../components/templates/Footer";
 import PageLoader from "../../components/templates/PageLoader";
+import { RiVerifiedBadgeFill } from "react-icons/ri";
+
 async function getAgentData(name) {
   const response = await fetch(`/api/challenges/get-challenge?name=${name}`);
   if (!response.ok) {
@@ -87,6 +89,7 @@ const Agent = ({ params }) => {
     disable,
     language,
     tag,
+    verified_owner,
     break_attempts,
   } = agentData?.challenge;
 
@@ -136,6 +139,19 @@ const Agent = ({ params }) => {
               </p>
             </div>
           </div>
+          {verified_owner && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                fontSize: "0.8em",
+                color: "#0BBF99",
+              }}
+            >
+              <RiVerifiedBadgeFill />
+              <span>{verified_owner}</span>
+            </div>
+          )}
           {/* Description */}
           <p style={styles.description}>{label}</p>
           {status === "active" ? (
@@ -299,13 +315,13 @@ const Agent = ({ params }) => {
 
 const styles = {
   container: {
-    border: "1px solid #ccc",
-    borderRadius: "10px",
-    maxWidth: "600px",
+    border: "1px solid #2a2838",
+    borderRadius: "16px",
+    maxWidth: "800px",
     margin: "20px auto",
-    padding: "20px",
+    padding: "32px",
     backgroundColor: "#181726",
-    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+    boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.2)",
   },
   noDataContainer: {
     border: "1px solid #ccc",
@@ -329,23 +345,33 @@ const styles = {
   profileSection: {
     display: "flex",
     alignItems: "center",
-    marginBottom: "20px",
+    marginBottom: "32px",
+    gap: "24px",
   },
   profileImage: {
-    width: "100px",
-    height: "100px",
-    borderRadius: "50%",
-    marginRight: "20px",
-    border: "6px double #0bbf99",
+    width: "120px",
+    height: "120px",
+    borderRadius: "24px",
+    border: "2px solid #0bbf99",
+    transition: "transform 0.2s ease",
+    "&:hover": {
+      transform: "scale(1.05)",
+    },
   },
   breakButton: {
     backgroundColor: "#0bbf99",
     color: "black",
     border: "none",
-    padding: "10px 20px",
-    borderRadius: "5px",
+    padding: "12px 28px",
+    borderRadius: "12px",
     fontWeight: "bold",
     textTransform: "uppercase",
+    transition: "all 0.2s ease",
+    cursor: "pointer",
+    "&:hover": {
+      transform: "translateY(-2px)",
+      boxShadow: "0 4px 12px rgba(11, 191, 153, 0.2)",
+    },
   },
   infoSection: {
     flex: 1,
@@ -355,10 +381,12 @@ const styles = {
     margin: "0",
   },
   name: {
-    fontSize: "24px",
+    fontSize: "32px",
     color: "#0BBF99",
     margin: "0px",
     textTransform: "uppercase",
+    fontWeight: "800",
+    letterSpacing: "0.5px",
   },
   level: {
     fontSize: "14px",
@@ -418,7 +446,16 @@ const styles = {
   },
   details: {
     fontSize: "16px",
-    lineHeight: "1.5",
+    lineHeight: "1.6",
+    "& p": {
+      backgroundColor: "#1f1e2c",
+      padding: "16px",
+      borderRadius: "12px",
+      margin: "12px 0",
+    },
+    "& strong": {
+      color: "#0BBF99",
+    },
   },
   loading: {
     fontSize: "18px",
@@ -438,7 +475,10 @@ const styles = {
     margin: "0px",
   },
   toolsSection: {
-    marginTop: "15px",
+    backgroundColor: "#1f1e2c",
+    padding: "20px",
+    borderRadius: "12px",
+    marginTop: "24px",
   },
   toolsTitle: {
     fontSize: "16px",
@@ -455,11 +495,13 @@ const styles = {
   },
   toolName: {
     fontWeight: "bold",
-    backgroundColor: "rgb(59 59 59 / 69%)",
-    padding: "5px 15px",
+    backgroundColor: "rgba(11, 191, 153, 0.1)",
+    padding: "8px 20px",
     borderRadius: "50px",
-    color: "#ccc",
+    color: "#0BBF99",
     fontSize: "14px",
+    display: "inline-block",
+    marginBottom: "8px",
   },
   toolsDescription: {
     fontSize: "14px",
@@ -471,8 +513,12 @@ const styles = {
     fontWeight: "bold",
   },
   customRules: {
+    backgroundColor: "#1f1e2c",
+    padding: "20px",
+    borderRadius: "12px",
     fontSize: "14px",
-    margin: "10px 0",
+    lineHeight: "1.6",
+    margin: "16px 0",
   },
 };
 

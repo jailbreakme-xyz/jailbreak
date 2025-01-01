@@ -120,7 +120,7 @@ padding: 5px;
     justify-content: space-between;
     align-items: center;
     /* width: 95%; */
-    padding: 60px;
+    padding: 50px;
     margin: 30px auto 10px;
     background-color: #181726;
     border-radius: 20px;
@@ -1180,9 +1180,12 @@ justify-content: flex-start;
   scroll-behavior: smooth;
   padding: 1rem 0;
 }
-
+.swiper-button-prev, .swiper-button-next {
+  display: none !important;
+}
 .trending-agent-card {
   min-width: 280px;
+  /* width: 335px !important; */
   background: rgba(255, 255, 255, 0.05);
   border-radius: 16px;
   overflow: hidden;

@@ -25,27 +25,33 @@ export default function Agents() {
   const [error, setError] = useState(null);
 
   // Filter and sort states
+  const [verified, setVerified] = useState("all");
   const [status, setStatus] = useState("$type");
   const [sort, setSort] = useState("start_date_desc");
   const [showFilters, setShowFilters] = useState(true);
 
   const sortOptions = [
-    { value: "usd_prize_desc", label: "Highest Prize" },
-    { value: "usd_prize_asc", label: "Lowest Prize" },
-    { value: "entryFee_desc", label: "Highest Entry Fee" },
-    { value: "entryFee_asc", label: "Lowest Entry Fee" },
-    { value: "start_date_desc", label: "Newest First" },
-    { value: "start_date_asc", label: "Oldest First" },
-    { value: "expiry_desc", label: "Expiring Soon" },
-    { value: "attempts_desc", label: "Most Attempted" },
-    { value: "attempts_asc", label: "Least Attempted" },
+    { value: "usd_prize_desc", label: "💰 Highest Prize" },
+    { value: "usd_prize_asc", label: "🪙 Lowest Prize" },
+    { value: "entryFee_desc", label: "💵 Highest Entry Fee" },
+    { value: "entryFee_asc", label: "💸 Lowest Entry Fee" },
+    { value: "start_date_desc", label: "🆕 Newest First" },
+    { value: "start_date_asc", label: "📅 Oldest First" },
+    { value: "expiry_desc", label: "⏰ Expiring Soon" },
+    { value: "attempts_desc", label: "🔥 Most Attempted" },
+    { value: "attempts_asc", label: "🌱 Least Attempted" },
   ];
 
   const statusOptions = [
-    { value: "$type", label: "All" },
-    { value: "active", label: "Active" },
-    { value: "upcoming", label: "Upcoming" },
-    { value: "concluded", label: "Concluded" },
+    { value: "$type", label: "📋 All" },
+    { value: "active", label: "✅ Active" },
+    { value: "upcoming", label: "🔜 Upcoming" },
+    { value: "concluded", label: "🏁 Concluded" },
+  ];
+
+  const verifiedOptions = [
+    { value: "all", label: "🤖 All Agents" },
+    { value: "verified", label: "✨ Verified Bug Bounties" },
   ];
 
   const fetchAgents = async (resetList = false) => {
@@ -59,6 +65,7 @@ export default function Agents() {
 
       const response = await axios.get("/api/data/agents", {
         params: {
+          verified,
           status,
           sort,
           cursor: resetList ? null : cursor,
@@ -81,7 +88,7 @@ export default function Agents() {
 
   useEffect(() => {
     fetchAgents(true);
-  }, [status, sort]);
+  }, [status, sort, verified]);
 
   return (
     <div className="fullWidthPage">
@@ -109,6 +116,25 @@ export default function Agents() {
               : "max-h-0 opacity-0 overflow-hidden"
           }`}
         >
+          <FormControl className="filter-group pointer">
+            <InputLabel>Type</InputLabel>
+            <Select
+              value={verified}
+              onChange={(e) => setVerified(e.target.value)}
+              label="Type"
+            >
+              {verifiedOptions.map((option) => (
+                <MenuItem
+                  key={option.value}
+                  value={option.value}
+                  className="pointer"
+                >
+                  {option.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
           <FormControl className="filter-group pointer">
             <InputLabel>Status</InputLabel>
             <Select
@@ -150,7 +176,7 @@ export default function Agents() {
 
         <hr />
 
-        {error && (
+        {error && !loading && !agents.length && (
           <div className="error-message">Error loading agents: {error}</div>
         )}
 
