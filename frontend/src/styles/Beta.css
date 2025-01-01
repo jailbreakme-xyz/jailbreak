@@ -21,6 +21,7 @@
     box-shadow: none;
     border-radius: 0px;
     border-bottom: 2px solid #ebebeb;
+    z-index: 99999;
 }
 .fullWidthPage .beta-container {
   width: 90%;
@@ -55,18 +56,37 @@
   border: 2px solid #0BBF99;
 }
 .beta-header {
-    /* background-color: #ebebeb; */
-    border-radius: 0px 0px 50px 50px;
-    padding: 30px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    transition: all 0.3s ease-in-out;
     display: flex;
-    justify-content: space-between;
-    align-items: center;    
-    width: 95%;
-    margin: 0px auto;
-    border: 2px solid #ccc;
-    border-top: none;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
+.beta-header.sticky {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.popover-item {
+  padding: 15px 20px;
+  cursor: pointer;
+}
+
+.popover-item:hover {
+  background-color: #000;
+  color: #0BBF99;
+}
+.beta-header.sticky .wallet-adapter-button {
+border-color: #0BBF99;
+}
+body {
+    padding-top: 100px; 
+}
+
 .beta-header  .socialIcons {
     justify-content: flex-end !important;
 }
@@ -710,7 +730,7 @@ font-size: 12px;
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      column-gap: 10px;
+      column-gap: 5px;
       width: 85%;
       padding: 15px 10px;
     }
@@ -722,8 +742,8 @@ font-size: 12px;
       justify-content: flex-end;
     }
     .beta-mobile-header-left img:first-child {
-      width: 40px;
-      height: 40px;
+      width: 30px;
+      height: 30px;
       border-radius: 50px;
       border: 6px double #000;
       padding: 5px;
@@ -983,7 +1003,9 @@ justify-content: flex-start;
   align-items: center;
   gap: 1rem;
 }
-
+.challenge-info h2 {
+  margin: 5px 0px 0px;
+}
 .challenge-pfp {
   width: 40px;
   height: 40px;
@@ -1458,3 +1480,333 @@ justify-content: flex-start;
   position: relative;
 }
 
+.mainMenu.open {
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: auto; 
+  -webkit-overflow-scrolling: touch;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.challenge-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.challenge-header .challenge-info {
+  display: block;
+}
+
+.level-badge {
+  font-weight: bold;
+  text-transform: uppercase;
+  border-radius: 150px;
+  padding: 5px 15px;
+  background-color: rgba(11, 191, 153, 0.1);
+  color: #0BBF99;
+  border: 1px solid #0BBF99;
+  font-size: 14px;
+  display: inline-block;
+}
+
+.verified-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8em;
+  color: #0BBF99;
+}
+
+.challenge-avatar img.pfp {
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+
+.challenge-avatar img.pfp:hover {
+  transform: scale(1.05);
+}
+
+.divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 15px 0;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.section-header h3 {
+  margin: 0px;
+}
+.header-icon {
+  position: relative;
+  top: 2px;
+  margin-right: 8px;
+}
+
+.tba-badge {
+  background-color: rgba(11, 191, 153, 0.1);
+  color: #0BBF99;
+  padding: 5px 20px;
+  font-style: italic;
+  font-weight: bold;
+  border-radius: 10px;
+}
+
+.stats-grid {
+  display: grid;
+  /* grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); */
+  gap: 5px;
+}
+
+.stats-grid .stat-item {
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+
+.stats-grid .stat-item:hover {
+  transform: translateY(-2px);
+}
+
+.stat-item h4 {
+  color: #888;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.stats-grid .stat-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #0BBF99;
+}
+
+.price-display {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  flex-direction: column;
+}
+
+.usd-price {
+  font-size: 12px;
+  color: #888;
+  margin: 0px auto;
+}
+
+.info-text {
+  font-size: 14px;
+  color: #ccc;
+  line-height: 1.4;
+  margin: 10px 0;
+}
+
+.challenge-label {
+  color: #888;
+  font-size: 14px;
+}
+
+.stats-content {
+  text-align: left;
+  font-size: 14px;
+}
+
+.chatMenu.desktopChatMenu {
+  height: calc(96vh - 100px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.glass-card {
+  flex-shrink: 0;
+}
+
+.challengeTitle.glass-card {
+  flex: 0 0 auto;
+}
+
+.stats-section.glass-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.expiry-section {
+  margin-top: 5px;
+}
+
+.timer-display {
+  text-align: center;
+}
+
+.compact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12px;
+  color: #888;
+}
+
+.split-info, .timer-info {
+  text-align: left;
+}
+
+/* Adjust existing styles */
+.stats-grid {
+  padding: 10px 0;
+}
+
+.stats-grid .stat-item {
+  padding: 12px;
+}
+
+.divider {
+  margin: 12px 0;
+}
+
+/* Make sure the container doesn't scroll */
+.chatMenu::-webkit-scrollbar {
+  display: none;
+}
+
+.agentInfo {
+  height: calc(96vh - 100px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  width: 25%;
+}
+
+.agentInfo .glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.agentInfo .section-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.agentInfo .info-block {
+  margin: 15px 0;
+}
+
+.agentInfo .info-text {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #ccc;
+  text-align: left;
+}
+
+.agentInfo .info-grid {
+  display: grid;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.agentInfo .info-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.agentInfo .item-icon {
+  color: #0BBF99;
+  flex-shrink: 0;
+}
+
+.agentInfo .label {
+  color: #888;
+  margin-right: 4px;
+}
+
+.agentInfo .value {
+  color: #fff;
+  font-weight: 500;
+}
+
+.agentInfo .tools-grid {
+  display: grid;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.agentInfo .tool-item {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  padding: 12px;
+  transition: transform 0.3s ease;
+}
+
+.agentInfo .tool-item:hover {
+  transform: translateY(-2px);
+}
+
+.agentInfo .tool-name {
+  display: block;
+  font-weight: bold;
+  color: #0BBF99;
+  margin-bottom: 4px;
+}
+
+.agentInfo .tool-description {
+  display: block;
+  font-size: 13px;
+  color: #888;
+}
+
+.agentInfo .glass-card:last-child {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Custom scrollbar */
+.agentInfo::-webkit-scrollbar {
+  width: 6px;
+}
+
+.agentInfo::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.agentInfo::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.agentInfo::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}

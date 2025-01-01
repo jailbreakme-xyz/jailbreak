@@ -24,7 +24,7 @@ export default function AdvancedModal({
       fullScreen
       className="fullWidthPage fullScreenDialog"
     >
-      <Header />
+      {/* <Header /> */}
       <DialogContent sx={{ p: { xs: 0, md: 2 } }}>
         <AdvancedCreation
           sample={sample}
