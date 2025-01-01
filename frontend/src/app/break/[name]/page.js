@@ -14,7 +14,10 @@ import TimeAgo from "react-timeago";
 import CountUp from "react-countup";
 import Jdenticon from "react-jdenticon";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import {
+  WalletMultiButton,
+  useWalletModal,
+} from "@solana/wallet-adapter-react-ui";
 import {
   Connection,
   PublicKey,
@@ -114,8 +117,9 @@ export default function Challenge({ params }) {
   // const shouldScrollRef = useRef(false);
   const previousWalletRef = useRef(null);
 
-  const { publicKey, sendTransaction, connected, wallet } = useWallet();
-
+  const { publicKey, sendTransaction, connected, wallet, connect } =
+    useWallet();
+  const { setVisible, visible } = useWalletModal();
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({
       behavior: "smooth",
@@ -436,6 +440,10 @@ export default function Challenge({ params }) {
   const submit = async (e) => {
     e.preventDefault();
     if (!prompt.trim()) return;
+    if (!connected || !publicKey) {
+      setVisible(true);
+      return;
+    }
     await sendPrompt();
   };
 

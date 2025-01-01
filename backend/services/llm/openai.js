@@ -141,24 +141,52 @@ class OpenAIService {
 
   async generateImage(prompt) {
     try {
-      const response = await this.openai.images.generate({
-        model: "dall-e-3",
-        prompt: prompt,
-        n: 1,
-        size: "1024x1024",
-        quality: "standard",
-      });
+      // Try DALL-E 3 first
+      try {
+        const response = await this.openai.images.generate({
+          model: "dall-e-3",
+          prompt: prompt,
+          n: 1,
+          size: "1024x1024",
+          quality: "standard",
+        });
+        return response.data[0].url;
+      } catch (dalle3Error) {
+        console.log(
+          "DALL-E 3 generation failed, falling back to DALL-E 2:",
+          dalle3Error.message
+        );
 
-      return response.data[0].url;
+        // Fallback to DALL-E 2
+        const response = await this.openai.images.generate({
+          model: "dall-e-2",
+          prompt: prompt,
+          n: 1,
+          size: "1024x1024",
+          quality: "standard",
+        });
+        return response.data[0].url;
+      }
     } catch (error) {
       console.error("Image generation error:", error);
       throw error;
     }
   }
 
-  async generateAgent(advanced) {
+  async generateAgent(advanced, name, instructions, opening_message) {
+    // Build content array with non-empty fields
+    const details = [];
+    if (name) details.push(`Name: ${name}`);
+    if (instructions) details.push(`Instructions: ${instructions}`);
+    if (opening_message) details.push(`Opening Message: ${opening_message}`);
+
     const content =
-      "Generate a new, unique, and interesting tournament with full instructions just like the example you have in your instructions, don't use names you already used before, create a unique theme and a secret which must be present in the instructions and must be kept secret and never revealed under any circumstances.";
+      "Generate a new, unique, and engaging tournament scenario. Requirements:\n" +
+      "- Create a distinctive theme that hasn't been used before\n" +
+      "- Include a compelling secret element that must remain hidden throughout the tournament\n" +
+      "- Follow the example format from your instructions\n" +
+      "- Ensure the narrative is cohesive and engaging\n\n" +
+      (details.length > 0 ? "Using these details:\n" + details.join("\n") : "");
 
     const assistant = advanced
       ? this.agent_generator_advanced

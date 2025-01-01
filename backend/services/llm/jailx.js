@@ -28,9 +28,20 @@ class JailXService {
     const run = await this.client.createRun(threadId, this.jailX, {
       tool_choice: tool_choice,
       parallel_tool_calls: false,
-      stream: false,
+      stream: true,
     });
-    return run;
+
+    for await (const chunk of run) {
+      if (chunk.event === "thread.run.requires_action") {
+        const required_action = chunk.data.required_action;
+        const toolCalls = required_action.submit_tool_outputs.tool_calls[0];
+        const functionName = toolCalls.function.name;
+        const functionArguments = toolCalls.function.arguments;
+        const jsonArgs = JSON.parse(functionArguments);
+
+        return { functionName, jsonArgs };
+      }
+    }
   }
 }
 

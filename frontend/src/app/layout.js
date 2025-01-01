@@ -1,3 +1,5 @@
+"use client";
+import React, { useEffect } from "react";
 import { Inter } from "next/font/google";
 import Script from "next/script";
 import { SkeletonTheme } from "react-loading-skeleton";
@@ -7,7 +9,7 @@ import ClientWalletProvider from "./providers/WalletProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata = {
+const metadata = {
   title: "JailbreakMe",
   description:
     "JailbreakMe is the first open-source decentralized app where organizations test their AI models and agents while users earn rewards for jailbreaking them.",
@@ -34,6 +36,14 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  useEffect(() => {
+    if (process.env.NODE_ENV === "development") {
+      setInterval(() => {
+        document.querySelector("body > nextjs-portal")?.remove();
+      }, 10);
+    }
+  }, []);
+
   return (
     <html lang="en">
       <head>

@@ -1,1 +1,0 @@
-pub const JAILBREAK_TOKEN_ACCOUNT_SEED: &[u8] = b"jailbreak_token_account";

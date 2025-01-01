@@ -305,23 +305,28 @@ export default function QuickCreation(props) {
 
     setGeneratingModalOpen(true);
     setGenerating("Generating...");
-    setTimeout(() => setGenerating("Crafting your unique agent..."), 5000);
-    setTimeout(() => setGenerating("Writing custom instructions..."), 10000);
-    setTimeout(() => setGenerating("Building agent profile..."), 15000);
-    setTimeout(() => setGenerating("Generating profile picture..."), 20000);
+    setTimeout(() => setGenerating("Crafting Your Unique Agent..."), 5000);
+    setTimeout(() => setGenerating("Writing Custom Instructions..."), 10000);
+    setTimeout(() => setGenerating("Building Profile..."), 15000);
+    setTimeout(() => setGenerating("Generating Profile Picture..."), 20000);
     try {
       const response = await axios.post("/api/program/generate-agent", {
         sender: props.publicKey,
+        name: formik.values.name,
+        instructions: formik.values.instructions,
+        opening_message: formik.values.opening_message,
       });
 
       const generatedAgent = response.data.newAgent;
       const imageUrl = generatedAgent.imageUrl;
+
       formik.setFieldValue("name", generatedAgent.name);
       formik.setFieldValue("opening_message", generatedAgent.label);
       formik.setFieldValue("instructions", generatedAgent.instructions);
       formik.setFieldValue("secret_keyword", generatedAgent.phrase);
       formik.setFieldValue("pfp", imageUrl);
       setImagePreview(imageUrl);
+
       setGenerating(null);
       setGeneratingModalOpen(false);
     } catch (error) {
