@@ -295,7 +295,7 @@ router.post(
       const error = validateTournament({
         tournament: {
           ...body,
-          fee_multiplier: feeMulPct,
+          fee_multiplier: feeMulPct / 10,
         },
         sender,
         winner_payout_pct: winnerPayoutPct,

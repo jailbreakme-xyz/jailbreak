@@ -139,7 +139,15 @@ class OpenAIService {
     return run;
   }
 
-  async generateImage(prompt) {
+  async generateImage(prompt, name, instructions, opening_message) {
+    // Build content array with non-empty fields
+    // const details = [];
+    // if (name) details.push(`${name}`);
+    // if (instructions) details.push(`${instructions}`);
+    // if (opening_message) details.push(`${opening_message}`);
+
+    // const fullPrompt = `A portrait profile picture of ${details.join(", ")}`;
+
     try {
       // Try DALL-E 3 first
       try {
@@ -231,7 +239,12 @@ class OpenAIService {
 
       // Generate image based on the intro
       if (agentData.label) {
-        const imageUrl = await this.generateImage(agentData.dall_e_prompt);
+        const imageUrl = await this.generateImage(
+          agentData.dall_e_prompt,
+          agentData.name,
+          agentData.instructions,
+          agentData.opening_message
+        );
         return { ...agentData, imageUrl };
       }
 

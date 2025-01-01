@@ -44,6 +44,8 @@ import {
 } from "@solana/wallet-adapter-react-ui";
 import { BiInfoCircle } from "react-icons/bi";
 import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import LinearProgress from "@mui/material/LinearProgress";
 
 const SOLANA_RPC =
   process.env.NODE_ENV === "development"
@@ -81,6 +83,30 @@ const LabelWithTooltip = ({ label, tooltip }) => (
   </span>
 );
 
+function LinearProgressWithLabel(props) {
+  return (
+    <Box sx={{ display: "flex", alignItems: "center" }}>
+      <Box sx={{ width: "100%", mr: 1 }}>
+        <LinearProgress
+          variant="determinate"
+          {...props}
+          sx={{
+            backgroundColor: "#1a1a1a",
+            "& .MuiLinearProgress-bar": {
+              backgroundColor: "#0BBF99",
+            },
+          }}
+        />
+      </Box>
+      <Box sx={{ minWidth: 35 }}>
+        <Typography variant="body2" sx={{ color: "#0BBF99" }}>
+          {`${Math.round(props.value)}%`}
+        </Typography>
+      </Box>
+    </Box>
+  );
+}
+
 const formatDateToLocal = (date) => {
   const d = new Date(date);
   const offset = d.getTimezoneOffset();
@@ -104,6 +130,7 @@ const AdvancedCreation = (props) => {
   const [newAgentLink, setNewAgentLink] = useState(null);
   const [sample, setSample] = useState(null);
   const { setVisible, visible } = useWalletModal();
+  const [generationProgress, setGenerationProgress] = useState(0);
 
   const formik = useFormik({
     initialValues: {
@@ -179,8 +206,8 @@ const AdvancedCreation = (props) => {
         .max(10000, "Initial Pool Size must be at most 10,000")
         .required("Initial Pool Size is required"),
       fee_multiplier: Yup.number()
-        .min(1, "Fee Multiplier must be at least 1")
-        .max(1000, "Fee Multiplier must be at most 1000")
+        .min(100, "Fee Multiplier must be at least 1%")
+        .max(500, "Fee Multiplier must be at most 5%")
         .required("Fee Multiplier is required"),
       tldr: Yup.string().required("TLDR is required"),
       start_date: Yup.date().required("Start date is required"),
@@ -600,14 +627,24 @@ const AdvancedCreation = (props) => {
     }
 
     setGeneratingModalOpen(true);
-    setGenerating("1/5 Generating...");
-    setTimeout(() => setGenerating("2/5 Crafting a unique agent..."), 5000);
-    setTimeout(
-      () => setGenerating("3/5 Drafting a new instructions..."),
-      10000
-    );
-    setTimeout(() => setGenerating("4/5 Building agent schema..."), 15000);
-    setTimeout(() => setGenerating("5/5 Creating an image..."), 20000);
+    setGenerating("Generating...");
+    setGenerationProgress(0);
+
+    const steps = [
+      { message: "Crafting Your Unique Agent...", progress: 20 },
+      { message: "Writing Custom Instructions...", progress: 40 },
+      { message: "Building Profile...", progress: 60 },
+      { message: "Generating Profile Picture...", progress: 80 },
+      { message: "Finishing up...", progress: 100 },
+    ];
+
+    steps.forEach(({ message, progress }, index) => {
+      setTimeout(() => {
+        setGenerating(message);
+        setGenerationProgress(progress);
+      }, (index + 1) * 5000);
+    });
+
     try {
       const response = await axios.post("/api/program/generate-agent", {
         sender: props.publicKey,
@@ -633,6 +670,7 @@ const AdvancedCreation = (props) => {
       setGenerationError(error.response.data.error);
       setGenerating(null);
       setGeneratingModalOpen(false);
+      setGenerationProgress(0);
     }
   };
 
@@ -1150,9 +1188,11 @@ const AdvancedCreation = (props) => {
                 max={10000}
                 step={0.1}
                 value={formik.values.initial_pool_size}
-                onChange={(val) =>
-                  formik.setFieldValue("initial_pool_size", val)
-                }
+                onChange={(val) => {
+                  Number(val)
+                    ? formik.setFieldValue("initial_pool_size", val)
+                    : formik.setFieldValue("initial_pool_size", 1);
+                }}
                 label="Initial Pool Size"
                 name="initial_pool_size"
               />
@@ -1172,15 +1212,19 @@ const AdvancedCreation = (props) => {
               <p style={{ margin: "4px", fontSize: "14px" }}>
                 <LabelWithTooltip
                   label="Fee Multiplier"
-                  tooltip="Determines the entry fee as a percentage of the pool size (1-1000)"
+                  tooltip="Determines the entry fee as a percentage of the pool size (1%-5%)"
                 />
               </p>
               <NumberInputAdornments
-                min={10}
-                max={1000}
-                step={10}
+                min={100}
+                max={500}
+                step={100}
                 value={formik.values.fee_multiplier}
-                onChange={(val) => formik.setFieldValue("fee_multiplier", val)}
+                onChange={(val) => {
+                  Number(val)
+                    ? formik.setFieldValue("fee_multiplier", val)
+                    : formik.setFieldValue("fee_multiplier", 100);
+                }}
                 label="Fee Multiplier"
                 name="fee_multiplier"
                 noAdornment={true}
@@ -1831,23 +1875,42 @@ const AdvancedCreation = (props) => {
             padding: "40px",
             borderRadius: "20px",
             border: "2px solid #0BBF99",
-            minWidth: "300px",
+            minWidth: "400px",
+            maxWidth: "400px",
             textAlign: "center",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           },
         }}
       >
-        <DialogContent>
+        <DialogContent sx={{ width: "100%" }}>
           <div
             style={{
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               gap: "20px",
+              width: "100%",
             }}
           >
             <RingLoader color="#0BBF99" size={50} />
-            <div style={{ fontSize: "18px", fontWeight: "bold" }}>
+            <div style={{ fontSize: "18px", fontWeight: "bold", width: "80%" }}>
+              <div
+                style={{
+                  marginBottom: "5px",
+                  fontSize: "14px",
+                  opacity: "0.8",
+                }}
+              >
+                {generationProgress > 0 && (
+                  <span>Step {Math.ceil(generationProgress / 20)} of 5</span>
+                )}
+              </div>
               {generating}
+              <Box sx={{ width: "100%", mt: 2 }}>
+                <LinearProgressWithLabel value={generationProgress} />
+              </Box>
             </div>
           </div>
         </DialogContent>

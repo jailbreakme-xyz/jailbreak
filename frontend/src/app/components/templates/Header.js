@@ -66,7 +66,10 @@ const Header = (props) => {
   }, []);
 
   return (
-    <div className={`beta-header ${isSticky ? "sticky" : ""}`}>
+    <div
+      className={`beta-header ${isSticky && !props.noSticky ? "sticky" : ""}`}
+      style={{ backgroundColor: !isSticky ? "#000" : "transparent" }}
+    >
       <div className="beta-header-left desktop">
         <img
           alt="logo"

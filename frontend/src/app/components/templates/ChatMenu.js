@@ -12,7 +12,11 @@ export default function ChatMenu({ challenge, attempts, price, usdPrice }) {
           <div className="challenge-header">
             <div className="challenge-info">
               <span className="level-badge">{challenge?.name}</span>
-              <h2>{challenge?.title}</h2>
+              <h4 style={{ margin: "8px 0px 4px", fontSize: "14px" }}>
+                {challenge?.title.length > 20 && challenge?.verified_owner
+                  ? challenge?.title.substring(0, 20) + "..."
+                  : challenge?.title}
+              </h4>
               {challenge?.verified_owner && (
                 <div className="verified-badge">
                   <RiVerifiedBadgeFill />
@@ -27,8 +31,8 @@ export default function ChatMenu({ challenge, attempts, price, usdPrice }) {
                 }}
                 alt="logo"
                 src={challenge?.pfp}
-                width="75"
-                height="75"
+                width="60"
+                height="60"
                 className="pfp pointer hover-effect"
               />
             </div>

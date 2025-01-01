@@ -144,7 +144,7 @@ export default function QuickCreation(props) {
         .required("Initial Pool Size is required"),
       fee_multiplier: Yup.number()
         .min(1, "Fee Multiplier must be at least 1")
-        .max(100, "Fee Multiplier must be at most 100")
+        .max(5, "Fee Multiplier must be at most 5")
         .required("Fee Multiplier is required"),
     }),
     onSubmit: (values) => {
@@ -738,7 +738,7 @@ export default function QuickCreation(props) {
                     <NumberInputAdornments
                       suffix={"%"}
                       min={1}
-                      max={100}
+                      max={5}
                       step={1}
                       value={formik.values.fee_multiplier}
                       onChange={(val) =>
