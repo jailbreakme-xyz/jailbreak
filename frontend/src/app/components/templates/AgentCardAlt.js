@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Button from "@mui/material/Button";
+import { RiVerifiedBadgeFill } from "react-icons/ri";
 
 const numbersWithCommas = (x) => {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -56,35 +57,35 @@ const AgentCardAlt = ({
           </div>
         </div>
         <div className="agent-content">
-          <h3 className="pointer" style={{ color: "white" }}>
-            {agent.name.length > 16
-              ? `${agent.name.slice(0, 16)}...`
-              : agent.name}{" "}
-            {/* {publicKey &&
-              connected &&
-              publicKey?.toString() === agent.owner?.toString() && (
-                <Button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleAdvancedModalOpen(agent);
+          <div>
+            <h3
+              className="pointer"
+              style={{ color: "white", marginBottom: "4px" }}
+            >
+              {agent.name.length > 16
+                ? `${agent.name.slice(0, 16)}...`
+                : agent.name}
+            </h3>
+            {agent.verified_owner && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  fontSize: "0.8em",
+                  color: "#0BBF99",
+                  marginBottom: "8px",
+                }}
+              >
+                <RiVerifiedBadgeFill
+                  style={{
+                    marginRight: "4px",
+                    verticalAlign: "middle",
                   }}
-                  variant="contained"
-                  disabled={agent.status === "active"}
-                  sx={{
-                    float: "right",
-                    backgroundColor: "#0BBF99",
-                    color: "#000",
-                    "&.Mui-disabled": {
-                      backgroundColor: "#0BBF99",
-                      opacity: 0.5,
-                      color: "#000",
-                    },
-                  }}
-                >
-                  Edit
-                </Button>
-              )} */}
-          </h3>
+                />
+                <span>{agent.verified_owner}</span>
+              </div>
+            )}
+          </div>
           <div className="agent-stats">
             <div className="stat-item">
               <span className="stat-label">Entry Fee</span>

@@ -60,6 +60,7 @@ router.get("/get-challenge", async (req, res) => {
       winning_prize: 1,
       usd_prize: 1,
       airdrop_split: 1,
+      verified_owner: 1,
     };
 
     let challenge = await DatabaseService.getChallengeByName(name, projection);

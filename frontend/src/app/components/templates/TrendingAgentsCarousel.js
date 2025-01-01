@@ -5,7 +5,7 @@ import "swiper/css/autoplay";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Autoplay, Navigation, FreeMode } from "swiper/modules";
-
+import { RiVerifiedBadgeFill } from "react-icons/ri";
 const numbersWithCommas = (x) => {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
@@ -113,7 +113,35 @@ export default function TrendingAgentsCarousel({ agents }) {
                     </div>
                   </div>
                   <div className="trending-agent-content">
-                    <h3 className="pointer">{agent.name}</h3>
+                    <div>
+                      <h3
+                        className="pointer"
+                        style={{ color: "white", marginBottom: "4px" }}
+                      >
+                        {agent.name.length > 16
+                          ? `${agent.name.slice(0, 16)}...`
+                          : agent.name}
+                      </h3>
+                      {agent.verified_owner && (
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            fontSize: "0.8em",
+                            color: "#0BBF99",
+                            marginBottom: "8px",
+                          }}
+                        >
+                          <RiVerifiedBadgeFill
+                            style={{
+                              marginRight: "4px",
+                              verticalAlign: "middle",
+                            }}
+                          />
+                          <span>{agent.verified_owner}</span>
+                        </div>
+                      )}
+                    </div>
                     <div className="trending-agent-stats">
                       <div className="stat-item">
                         <span className="stat-label">Entry Fee</span>

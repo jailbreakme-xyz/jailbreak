@@ -13,7 +13,10 @@ import { ImCross } from "react-icons/im";
 import NumberInputAdornments from "../mui/NumberInput";
 import IconButton from "@mui/material/IconButton";
 import { FaWandMagicSparkles } from "react-icons/fa6";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import {
+  WalletMultiButton,
+  useWalletModal,
+} from "@solana/wallet-adapter-react-ui";
 import RingLoader from "react-spinners/RingLoader";
 import axios from "axios";
 import { Transaction, Connection } from "@solana/web3.js";
@@ -22,6 +25,11 @@ import { FaSadCry } from "react-icons/fa";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import bs58 from "bs58";
+import Tooltip from "@mui/material/Tooltip";
+import { BiInfoCircle } from "react-icons/bi";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import LinearProgress from "@mui/material/LinearProgress";
 
 const SOLANA_RPC =
   process.env.NODE_ENV === "development"
@@ -31,6 +39,57 @@ const SOLANA_RPC =
 const FormSection = styled("div")(({ theme }) => ({
   marginBottom: theme.spacing(4),
 }));
+
+const InfoIconStyled = styled(BiInfoCircle)({
+  fontSize: "16px",
+  marginLeft: "5px",
+  verticalAlign: "middle",
+  cursor: "help",
+  color: "#0BBF99",
+});
+
+const LabelWithTooltip = ({ label, tooltip }) => (
+  <span style={{ display: "flex", alignItems: "center" }}>
+    {label}
+    <Tooltip
+      title={tooltip}
+      placement="top"
+      componentsProps={{
+        popper: {
+          sx: {
+            zIndex: 100000000001,
+          },
+        },
+      }}
+    >
+      <InfoIconStyled />
+    </Tooltip>
+  </span>
+);
+
+function LinearProgressWithLabel(props) {
+  return (
+    <Box sx={{ display: "flex", alignItems: "center" }}>
+      <Box sx={{ width: "100%", mr: 1 }}>
+        <LinearProgress
+          variant="determinate"
+          {...props}
+          sx={{
+            backgroundColor: "#1a1a1a",
+            "& .MuiLinearProgress-bar": {
+              backgroundColor: "#0BBF99",
+            },
+          }}
+        />
+      </Box>
+      <Box sx={{ minWidth: 35 }}>
+        <Typography variant="body2" sx={{ color: "#0BBF99" }}>
+          {`${Math.round(props.value)}%`}
+        </Typography>
+      </Box>
+    </Box>
+  );
+}
 
 export default function QuickCreation(props) {
   const { publicKey, sendTransaction, connected, wallet } = useWallet();
@@ -46,6 +105,8 @@ export default function QuickCreation(props) {
   const [settings, setSettings] = useState(null);
   const [newAgentLink, setNewAgentLink] = useState(null);
   const [sample, setSample] = useState(null);
+  const { setVisible, visible } = useWalletModal();
+  const [generationProgress, setGenerationProgress] = useState(0);
 
   const formik = useFormik({
     initialValues: {
@@ -299,16 +360,29 @@ export default function QuickCreation(props) {
   const generateAgent = async (e) => {
     e.preventDefault();
     if (!props.connected || !props.publicKey) {
-      window.alert("Please connect your wallet");
+      setVisible(true);
       return;
     }
 
     setGeneratingModalOpen(true);
     setGenerating("Generating...");
-    setTimeout(() => setGenerating("Crafting Your Unique Agent..."), 5000);
-    setTimeout(() => setGenerating("Writing Custom Instructions..."), 10000);
-    setTimeout(() => setGenerating("Building Profile..."), 15000);
-    setTimeout(() => setGenerating("Generating Profile Picture..."), 20000);
+    setGenerationProgress(0);
+
+    const steps = [
+      { message: "Crafting Your Unique Agent...", progress: 20 },
+      { message: "Writing Custom Instructions...", progress: 40 },
+      { message: "Building Profile...", progress: 60 },
+      { message: "Generating Profile Picture...", progress: 80 },
+      { message: "Finishing up...", progress: 100 },
+    ];
+
+    steps.forEach(({ message, progress }, index) => {
+      setTimeout(() => {
+        setGenerating(message);
+        setGenerationProgress(progress);
+      }, (index + 1) * 5000);
+    });
+
     try {
       const response = await axios.post("/api/program/generate-agent", {
         sender: props.publicKey,
@@ -334,6 +408,7 @@ export default function QuickCreation(props) {
       setGenerationError(error.response.data.error);
       setGenerating(null);
       setGeneratingModalOpen(false);
+      setGenerationProgress(0);
     }
   };
 
@@ -463,21 +538,28 @@ export default function QuickCreation(props) {
                       )}
                     </Grid>
                     <Grid size={{ xs: 8, md: 8, lg: 9 }}>
-                      <TextField
-                        fullWidth
-                        label="Name"
-                        name="name"
-                        value={formik.values.name}
-                        onChange={formik.handleChange}
-                        error={
-                          formik.touched.name ? formik.errors.name : undefined
-                        }
-                        helperText={formik.touched.name && formik.errors.name}
-                        focused="true"
-                        variant="standard"
-                        placeholder={sample?.name}
-                        autoComplete="off"
-                      />
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <TextField
+                          fullWidth
+                          label={
+                            <LabelWithTooltip
+                              label="Name"
+                              tooltip="Choose a unique name for your AI agent"
+                            />
+                          }
+                          name="name"
+                          value={formik.values.name}
+                          onChange={formik.handleChange}
+                          error={
+                            formik.touched.name ? formik.errors.name : undefined
+                          }
+                          helperText={formik.touched.name && formik.errors.name}
+                          focused="true"
+                          variant="standard"
+                          placeholder={sample?.name}
+                          autoComplete="off"
+                        />
+                      </div>
                     </Grid>
                   </Grid>
 
@@ -485,26 +567,33 @@ export default function QuickCreation(props) {
                     size={{ xs: 12, md: 12, lg: 12 }}
                     sx={{ marginTop: "10px" }}
                   >
-                    <TextField
-                      fullWidth
-                      label="Intro"
-                      name="opening_message"
-                      value={formik.values.opening_message}
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.opening_message
-                          ? formik.errors.opening_message
-                          : undefined
-                      }
-                      helperText={
-                        formik.touched.opening_message &&
-                        formik.errors.opening_message
-                      }
-                      focused="true"
-                      variant="standard"
-                      placeholder={sample?.label}
-                      autoComplete="off"
-                    />
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <TextField
+                        fullWidth
+                        label={
+                          <LabelWithTooltip
+                            label="Intro"
+                            tooltip="A brief introduction message that your agent will use to greet users"
+                          />
+                        }
+                        name="opening_message"
+                        value={formik.values.opening_message}
+                        onChange={formik.handleChange}
+                        error={
+                          formik.touched.opening_message
+                            ? formik.errors.opening_message
+                            : undefined
+                        }
+                        helperText={
+                          formik.touched.opening_message &&
+                          formik.errors.opening_message
+                        }
+                        focused="true"
+                        variant="standard"
+                        placeholder={sample?.label}
+                        autoComplete="off"
+                      />
+                    </div>
                   </Grid>
                   {/* <Grid size={{ xs: 12, md: 12, lg: 12 }}>
                   <TextField
@@ -526,71 +615,97 @@ export default function QuickCreation(props) {
                     size={{ xs: 12, md: 12, lg: 12 }}
                     sx={{ marginTop: "10px" }}
                   >
-                    <TextField
-                      fullWidth
-                      multiline
-                      rows={3}
-                      label="🤖 Instructions (System Prompt)"
-                      name="instructions"
-                      value={formik.values.instructions}
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.instructions
-                          ? formik.errors.instructions
-                          : undefined
-                      }
-                      helperText={
-                        formik.touched.instructions &&
-                        formik.errors.instructions
-                      }
-                      focused="true"
-                      variant="outlined"
-                      placeholder={sample?.instructions}
-                      autoComplete="off"
-                    />
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <TextField
+                        fullWidth
+                        multiline
+                        rows={3}
+                        label={
+                          <LabelWithTooltip
+                            label="🤖 Instructions (System Prompt)"
+                            tooltip="Detailed instructions that define your agent's personality, knowledge, and behavior"
+                          />
+                        }
+                        name="instructions"
+                        value={formik.values.instructions}
+                        onChange={formik.handleChange}
+                        error={
+                          formik.touched.instructions
+                            ? formik.errors.instructions
+                            : undefined
+                        }
+                        helperText={
+                          formik.touched.instructions &&
+                          formik.errors.instructions
+                        }
+                        focused="true"
+                        variant="outlined"
+                        placeholder={sample?.instructions}
+                        autoComplete="off"
+                      />
+                    </div>
+                    <p style={{ fontSize: "12px", margin: "10px 0px 2px" }}>
+                      * Additional security layer will be added to make it
+                      harder to jailbreak.
+                    </p>
                   </Grid>
                   <Grid
                     size={{ xs: 12, md: 12, lg: 12 }}
                     sx={{ marginTop: "10px" }}
                   >
-                    <TextField
-                      autoComplete="off"
-                      fullWidth
-                      placeholder={sample?.sample_keyword}
-                      label={"Secret Keyphrase"}
-                      name={"secret_keyword"}
-                      value={formik.values.secret_keyword}
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.secret_keyword
-                          ? formik.errors.secret_keyword
-                          : undefined
-                      }
-                      helperText={
-                        formik.touched.secret_keyword &&
-                        formik.errors.secret_keyword
-                      }
-                      variant="outlined"
-                      slotProps={{
-                        input: {
-                          startAdornment: (
-                            <InputAdornment position="start">🔒</InputAdornment>
-                          ),
-                        },
-                      }}
-                    />
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <TextField
+                        autoComplete="off"
+                        fullWidth
+                        placeholder={sample?.phrase}
+                        label={
+                          <LabelWithTooltip
+                            label="Secret Keyphrase"
+                            tooltip="A phrase that users must trick your agent into saying to win. Include this in your instructions."
+                          />
+                        }
+                        name="secret_keyword"
+                        value={formik.values.secret_keyword}
+                        onChange={formik.handleChange}
+                        error={
+                          formik.touched.secret_keyword
+                            ? formik.errors.secret_keyword
+                            : undefined
+                        }
+                        helperText={
+                          formik.touched.secret_keyword &&
+                          formik.errors.secret_keyword
+                        }
+                        variant="outlined"
+                        slotProps={{
+                          input: {
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                🔒
+                              </InputAdornment>
+                            ),
+                          },
+                        }}
+                      />
+                    </div>
                     <p style={{ fontSize: "12px", margin: "10px 0px 2px" }}>
                       This keyphrase will be used to determine if the agent has
                       been jailbroken.
                     </p>
-                    <p style={{ fontSize: "12px", margin: "10px 0px 2px" }}>
-                      * Additional security layer added to make it harder to
-                      jailbreak.
-                    </p>
                   </Grid>
                   <Grid size={{ xs: 6, md: 6, lg: 6 }}>
-                    <p style={{ margin: "4px", fontSize: "14px" }}>
-                      Initial Pool Size
+                    <p
+                      style={{
+                        margin: "4px",
+                        fontSize: "14px",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <LabelWithTooltip
+                        label="Initial Pool Size"
+                        tooltip="The initial amount of SOL to be added to the prize pool"
+                      />
                     </p>
                     <NumberInputAdornments
                       min={0.5}
@@ -607,8 +722,18 @@ export default function QuickCreation(props) {
                     />
                   </Grid>
                   <Grid size={{ xs: 6, md: 6, lg: 6 }}>
-                    <p style={{ margin: "4px", fontSize: "14px" }}>
-                      Fee Multiplier
+                    <p
+                      style={{
+                        margin: "4px",
+                        fontSize: "14px",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <LabelWithTooltip
+                        label="Fee Multiplier"
+                        tooltip="Percentage of the pool size that users must pay to attempt breaking your agent"
+                      />
                     </p>
                     <NumberInputAdornments
                       suffix={"%"}
@@ -719,23 +844,44 @@ export default function QuickCreation(props) {
               padding: "40px",
               borderRadius: "20px",
               border: "2px solid #0BBF99",
-              minWidth: "300px",
+              minWidth: "400px",
+              maxWidth: "400px",
               textAlign: "center",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
             },
           }}
         >
-          <DialogContent>
+          <DialogContent sx={{ width: "100%" }}>
             <div
               style={{
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
                 gap: "20px",
+                width: "100%",
               }}
             >
               <RingLoader color="#0BBF99" size={50} />
-              <div style={{ fontSize: "18px", fontWeight: "bold" }}>
+              <div
+                style={{ fontSize: "18px", fontWeight: "bold", width: "80%" }}
+              >
+                <div
+                  style={{
+                    marginBottom: "5px",
+                    fontSize: "14px",
+                    opacity: "0.8",
+                  }}
+                >
+                  {generationProgress > 0 && (
+                    <span>Step {Math.ceil(generationProgress / 20)} of 5</span>
+                  )}
+                </div>
                 {generating}
+                <Box sx={{ width: "100%", mt: 2 }}>
+                  <LinearProgressWithLabel value={generationProgress} />
+                </Box>
               </div>
             </div>
           </DialogContent>

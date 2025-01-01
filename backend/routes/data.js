@@ -6,6 +6,11 @@ const router = express.Router();
 router.get("/breakers", async (req, res) => {
   const limit = 100;
   const page = Number(req.query.page) || 1;
+
+  if (limit > 100) {
+    return res.status(400).json({ error: "Limit must be 100 or less" });
+  }
+
   const breakers = await DatabaseService.getTopBreakersAndChatters(page, limit);
   const count = await DatabaseService.getBreakersCount({ role: "user" });
 
@@ -21,6 +26,15 @@ router.get("/agents", async (req, res) => {
   try {
     const limit = Number(req.query.limit) || 100;
     const lastId = req.query.cursor || null;
+
+    if (limit > 100) {
+      return res.status(400).json({ error: "Limit must be 100 or less" });
+    }
+    // Add verified filter validation
+    const validVerified = ["all", "verified"];
+    const verified = validVerified.includes(req.query.verified)
+      ? req.query.verified
+      : "all";
 
     // Status filter with validation
     const validStatuses = ["active", "upcoming", "concluded"];
@@ -46,6 +60,7 @@ router.get("/agents", async (req, res) => {
 
     const result = await DatabaseService.getChallengesWithFilters({
       status,
+      verified,
       sort,
       limit,
       lastId,
@@ -62,6 +77,7 @@ router.get("/agents", async (req, res) => {
       hasMore: result.hasMore,
       sort,
       status: req.query.status || "all",
+      verified,
     });
   } catch (error) {
     res.status(400).json({ error: error.message });

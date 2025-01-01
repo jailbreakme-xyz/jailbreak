@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { RiVerifiedBadgeFill } from "react-icons/ri";
 
 const numbersWithCommas = (x) => {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -18,11 +19,27 @@ export default function ChallengeItem({ challenge }) {
   return (
     <Link href={`/break/${challenge.name}`} className="challenge-item pointer">
       <div className="challenge-info pointer">
-        <img
-          src={challenge.pfp}
-          alt={challenge.name}
-          className="challenge-pfp pointer"
-        />
+        <div
+          className="challenge-pfp-container"
+          style={{ position: "relative" }}
+        >
+          <img
+            src={challenge.pfp}
+            alt={challenge.name}
+            className="challenge-pfp pointer"
+          />
+          {challenge.verified_owner && (
+            <RiVerifiedBadgeFill
+              style={{
+                position: "absolute",
+                bottom: 0,
+                right: 0,
+                color: "#0BBF99",
+                fontSize: "16px",
+              }}
+            />
+          )}
+        </div>
         <div className="challenge-details pointer">
           <h3 className="pointer" style={{ color: "white", fontSize: "16px" }}>
             {challenge.name.length > 12

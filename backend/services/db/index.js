@@ -194,6 +194,7 @@ class DataBaseService {
           tag: 1,
           sample: 1,
           sample_keyword: 1,
+          verified_owner: 1,
         }
       )
         .sort(sort)
@@ -703,13 +704,22 @@ class DataBaseService {
 
   async getChallengesWithFilters({
     status,
+    verified,
     sort,
     limit = 100,
     lastId = null,
     sortDirection = -1,
   }) {
     try {
+      // Build base query with status filter
       const baseQuery = status === "$type" ? {} : { status };
+
+      // Add verified filter
+      if (verified === "verified") {
+        baseQuery.verified_owner = { $ne: null };
+      }
+
+      // Add cursor pagination
       const query = lastId
         ? {
             ...baseQuery,
@@ -759,6 +769,7 @@ class DataBaseService {
         tag: 1,
         sample: 1,
         sample_keyword: 1,
+        verified_owner: 1,
       })
         .sort({ ...sortBy, _id: sortDirection })
         .limit(limit);
