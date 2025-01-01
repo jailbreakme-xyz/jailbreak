@@ -55,11 +55,9 @@ router.post("/get-transaction", solanaAuth, async (req, res) => {
     const challengeName = challenge.name;
     const tournamentPDA = challenge.tournamentPDA;
     const solutionHash = hashString(solution);
+    const programId = challenge.idl.address;
 
-    const blockchainService = new BlockchainService(
-      solanaRpc,
-      challenge.idl.address
-    );
+    const blockchainService = new BlockchainService(solanaRpc, programId);
 
     const tournamentData = await blockchainService.getTournamentData(
       tournamentPDA
@@ -296,6 +294,10 @@ router.post(
         tournament: {
           ...body,
           fee_multiplier: feeMulPct / 10,
+          phrases:
+            body.tournament_type === "phrases"
+              ? body.phrases
+              : ["FUNCTION_CALL"],
         },
         sender,
         winner_payout_pct: winnerPayoutPct,

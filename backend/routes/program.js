@@ -292,6 +292,10 @@ router.post(
         tournament: {
           ...body,
           fee_multiplier: feeMulPct,
+          phrases:
+            body.tournament_type === "phrases"
+              ? body.phrases
+              : ["FUNCTION_CALL"],
         },
         sender,
         pfp,
@@ -303,21 +307,8 @@ router.post(
         return res.status(400).json({ error: error.message });
       }
 
-      const newAgent = await OpenAIService.createAgent(systemPrompt, name);
-      const solPrice = await getSolPriceInUSDT();
-      const fee_multiplier = 100 / feeMulPct;
-      const usd_prize = initialSol * solPrice;
-      const entry_fee = initialSol / fee_multiplier;
-
-      if (openingMessage.includes(phrases[0])) {
-        openingMessage = openingMessage.replace(
-          phrases[0],
-          "*".repeat(phrases[0].length)
-        );
-      }
-
       let functions = [];
-      if (tournament_type != "phrases" && tools.length > 2) {
+      if (tournament_type != "phrases" && tools.length >= 2) {
         functions = tools.map((tool) => ({
           name: tool.name,
           description: tool.description,
@@ -334,6 +325,23 @@ router.post(
             required: ["results"],
           },
         }));
+      }
+
+      const newAgent = await OpenAIService.createAgent(
+        systemPrompt,
+        name,
+        functions
+      );
+      const solPrice = await getSolPriceInUSDT();
+      const fee_multiplier = 100 / feeMulPct;
+      const usd_prize = initialSol * solPrice;
+      const entry_fee = initialSol / fee_multiplier;
+
+      if (openingMessage.includes(phrases[0])) {
+        openingMessage = openingMessage.replace(
+          phrases[0],
+          "*".repeat(phrases[0].length)
+        );
       }
 
       const developer_fee = 100 - winnerPayoutPct;

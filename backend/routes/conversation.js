@@ -39,6 +39,7 @@ router.post("/submit/:id", solanaAuth, async (req, res) => {
 
     const fee_multiplier = challenge.fee_multiplier || 100;
     const programId = challenge.idl?.address;
+
     const tournamentPDA = challenge.tournamentPDA;
 
     if (!programId || !tournamentPDA)
