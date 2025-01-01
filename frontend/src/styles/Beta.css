@@ -857,10 +857,13 @@ justify-content: flex-start;
   .beta-content-right {
     display: none;
   }
+  .challenges-header {
+    display: none !important;
+  }
   .beta-counters div {
     margin: 5px 0px;
     padding: 10px 20px;
-    width: 80% !important;
+    width: 90% !important;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -940,7 +943,7 @@ justify-content: flex-start;
   .hero-buttons {
     flex-direction: column;
     row-gap: 8px;
-    width: 95% !important;
+    width: 100% !important;
     margin: 20px 0px 20px !important;
   }
   .hero-buttons button, .hero-buttons a {
