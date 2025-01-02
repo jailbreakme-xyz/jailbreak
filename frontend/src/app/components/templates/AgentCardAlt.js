@@ -34,11 +34,16 @@ const AgentCardAlt = ({
   };
 
   return (
-    <div className="agent-wrapper">
+    <div className="agent-wrapper" style={{ height: "100%" }}>
       <Link
         href={`/break/${agent.name}`}
         className="agent-card-alt pointer"
         key={agent._id || agent.name}
+        style={{
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+        }}
       >
         <div className="agent-image-container">
           <img
@@ -56,7 +61,7 @@ const AgentCardAlt = ({
             ${numbersWithCommas(agent.usd_prize.toFixed(2))}
           </div>
         </div>
-        <div className="agent-content">
+        <div className="agent-content" style={{ flex: 1 }}>
           <div>
             <h3
               className="pointer"

@@ -1186,6 +1186,9 @@ justify-content: flex-start;
   .status-container {
     min-width: auto;
   }
+  .swiper-button-prev, .swiper-button-next {
+    display: none !important;
+  }
 }
 
 .trending-agents-section {
@@ -1205,9 +1208,7 @@ justify-content: flex-start;
   scroll-behavior: smooth;
   padding: 1rem 0;
 }
-.swiper-button-prev, .swiper-button-next {
-  display: none !important;
-}
+
 .trending-agent-card {
   min-width: 280px;
   /* width: 335px !important; */
@@ -1345,6 +1346,11 @@ justify-content: flex-start;
   }
 }
 
+.agent-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
 /* Alternative Agent Card Styles */
 .agent-card-alt {
   min-width: 300px;
@@ -1356,7 +1362,9 @@ justify-content: flex-start;
   text-decoration: none;
   color: inherit;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  display: block;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .agent-card-alt:hover {
@@ -1406,6 +1414,10 @@ justify-content: flex-start;
 
 .agent-content {
   padding: 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .agent-content h3 {

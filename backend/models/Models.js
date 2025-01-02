@@ -125,7 +125,9 @@ const pageSchema = new mongoose.Schema(
     name: String,
     content: Object,
   },
-  { collection: "pages" }
+  {
+    collection: process.env.NODE_ENV === "development" ? "pages_test" : "pages",
+  }
 );
 
 export const Pages = mongoose.model("Pages", pageSchema);
