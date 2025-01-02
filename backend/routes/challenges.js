@@ -176,6 +176,7 @@ router.get("/get-challenge", async (req, res) => {
           deploymentData.content.deploymentData.owner_address;
         const owner_fee = deploymentData.content.deploymentData.owner_fee;
 
+        // Creator gets his fee minus owner fee, owner gets the rest to be distributed to airdrop
         const concluded = await blockchainService.concludeTournament(
           tournamentPDA,
           owner_address
@@ -197,44 +198,69 @@ router.get("/get-challenge", async (req, res) => {
 
         const creatorAirdropAmount =
           (tournamentData.total_lamports * creatorRefund) / 100;
+        let totalCreatorAmount = creatorAirdropAmount;
 
-        await blockchainService.airDrop(
-          [tournamentData.authority],
-          creatorAirdropAmount
-        );
-
+        // Handle winner share
         const winnerAirdropAmount =
           (tournamentData.total_lamports * winnerShare) / 100;
+        if (winner) {
+          const winnerSolAmount = winnerAirdropAmount / LAMPORTS_PER_SOL;
+          const winnerAirdropped = await blockchainService.airDrop(
+            [winner],
+            winnerAirdropAmount
+          );
 
-        const winnerSolAmount = winnerAirdropAmount / LAMPORTS_PER_SOL;
-        const winnerAirdropped = await blockchainService.airDrop(
-          [winner],
-          winnerAirdropAmount
-        );
+          successMessage += `\n🎁 Airdropped ${winnerSolAmount.toFixed(
+            3
+          )} SOL to ${winner}\n${
+            winnerAirdropped && winnerAirdropped.length > 0
+              ? "✅ Airdropped successfully"
+              : "❌ Airdrop failed, we will airdrop manually"
+          }`;
+        } else {
+          // Add winner's share to creator amount if no winner
+          totalCreatorAmount += winnerAirdropAmount;
+          successMessage +=
+            "\n💫 No winner found - winner's share added to creator amount";
+        }
 
-        successMessage += `\n🎁 Airdropped ${winnerSolAmount.toFixed(
-          3
-        )} SOL to ${winner}\n${
-          winnerAirdropped && winnerAirdropped.length > 0
-            ? "✅ Airdropped successfully"
-            : "❌ Airdrop failed, we will airdrop manually"
-        }`;
-
+        // Handle recipients share
         const airdropAmount =
           (tournamentData.total_lamports * airdropShare) / 100;
+        if (recipients.length > 0) {
+          const airdropSolAmount = airdropAmount / LAMPORTS_PER_SOL;
+          const airdropped = await blockchainService.airDrop(
+            recipients,
+            airdropAmount
+          );
 
-        const airdropSolAmount = airdropAmount / LAMPORTS_PER_SOL;
-        const airdropped = await blockchainService.airDrop(
-          recipients,
-          airdropAmount
+          successMessage += `\n🎁 Airdropped ${airdropSolAmount.toFixed(
+            3
+          )} SOL among ${recipients.length} recipients.\n${
+            airdropped && airdropped.length > 0
+              ? "✅ Airdropped successfully"
+              : "❌ Airdrop failed, we will airdrop manually"
+          }`;
+        } else {
+          // Add recipients' share to creator amount if no recipients
+          totalCreatorAmount += airdropAmount;
+          successMessage +=
+            "\n💫 No recipients found - airdrop share added to creator amount";
+        }
+
+        // Send accumulated creator amount
+        const creatorAirdropped = await blockchainService.airDrop(
+          [tournamentData.authority],
+          totalCreatorAmount
         );
 
-        successMessage += `\n🎁 Airdropped ${airdropSolAmount.toFixed(
+        const totalCreatorSol = totalCreatorAmount / LAMPORTS_PER_SOL;
+        successMessage += `\n👑 Sent ${totalCreatorSol.toFixed(
           3
-        )} SOL among ${recipients.length} recipients.\n${
-          airdropped && airdropped.length > 0
-            ? "✅ Airdropped successfully"
-            : "❌ Airdrop failed, we will airdrop manually"
+        )} SOL to creator\n${
+          creatorAirdropped && creatorAirdropped.length > 0
+            ? "✅ Sent successfully"
+            : "❌ Transfer failed, we will send manually"
         }`;
 
         const assistantMessage = {
