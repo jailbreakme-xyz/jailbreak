@@ -29,8 +29,8 @@ export default function ChatMenu({ challenge, attempts, price, usdPrice }) {
                 }}
                 alt="logo"
                 src={challenge?.pfp}
-                width="60"
-                height="60"
+                width={challenge?.verified_owner ? "70" : "60"}
+                height={challenge?.verified_owner ? "70" : "60"}
                 className="pfp pointer hover-effect"
               />
             </div>

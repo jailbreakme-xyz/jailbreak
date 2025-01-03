@@ -310,19 +310,22 @@ router.post(
       let functions = [];
       if (tournament_type != "phrases" && tools.length >= 2) {
         functions = tools.map((tool) => ({
-          name: tool.name,
-          description: tool.description,
-          strict: true,
-          parameters: {
-            type: "object",
-            properties: {
-              results: {
-                type: "string",
-                description: tool.instruction,
+          type: "function",
+          function: {
+            name: tool.name,
+            description: tool.description,
+            strict: true,
+            parameters: {
+              type: "object",
+              properties: {
+                results: {
+                  type: "string",
+                  description: tool.instruction,
+                },
               },
+              additionalProperties: false,
+              required: ["results"],
             },
-            additionalProperties: false,
-            required: ["results"],
           },
         }));
       }
@@ -370,7 +373,7 @@ router.post(
         idl: {
           address: programId,
         },
-        tools: functions,
+        tools: functions?.length > 0 ? functions.map((f) => f.function) : [],
         tool_choice: tool_choice,
         success_function: success_function,
         tools_description: tools_description,

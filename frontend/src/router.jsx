@@ -9,7 +9,7 @@ import Whitepaper from "./pages/Whitepaper";
 import Agent from "./pages/Agent";
 import JailTokens from "./pages/JailTokens";
 import Agents from "./pages/Agents";
-
+import Breakers from "./pages/Breakers";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -50,5 +50,9 @@ export const router = createBrowserRouter([
   {
     path: "/agents",
     element: <Agents />,
+  },
+  {
+    path: "/breakers",
+    element: <Breakers />,
   },
 ]);
