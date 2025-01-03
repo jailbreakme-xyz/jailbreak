@@ -39,10 +39,10 @@ export const router = createBrowserRouter([
     path: "/terms",
     element: <Terms />,
   },
-  {
-    path: "/whitepaper",
-    element: <Whitepaper />,
-  },
+  // {
+  //   path: "/whitepaper",
+  //   element: <Whitepaper />,
+  // },
   {
     path: "/jail-tokens",
     element: <JailTokens />,
