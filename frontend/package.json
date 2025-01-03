@@ -1,20 +1,23 @@
 {
   "name": "jailbreakme",
-  "version": "0.1.0",
   "private": true,
+  "version": "0.1.0",
+  "type": "module",
   "scripts": {
-    "dev": "WATCHPACK_POLLING=true next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@mui/base": "^5.0.0-beta.67",
     "@mui/lab": "^6.0.0-beta.21",
     "@mui/material": "^6.2.1",
     "@mui/system": "^6.2.1",
+    "@rollup/plugin-inject": "^5.0.5",
     "@solana/wallet-adapter-base": "^0.9.23",
     "@solana/wallet-adapter-phantom": "^0.9.24",
     "@solana/wallet-adapter-react": "^0.15.35",
@@ -22,17 +25,17 @@
     "@solana/web3.js": "^1.95.8",
     "axios": "^1.6.7",
     "bs58": "^6.0.0",
-    "crypto": "^1.0.1",
+    "buffer": "^6.0.3",
     "formik": "^2.4.6",
-    "next": "^15.0.3",
-    "react": "^18",
+    "mermaid": "^11.4.1",
+    "react": "^18.2.0",
     "react-countup": "^6.5.3",
-    "react-dom": "^18",
+    "react-dom": "^18.2.0",
     "react-drag-drop-files": "^2.4.0",
     "react-icons": "^5.0.1",
-    "react-image-uploader": "^1.0.0",
     "react-jdenticon": "^1.4.0",
     "react-loading-skeleton": "^3.5.0",
+    "react-router-dom": "^6.22.3",
     "react-spinners": "^0.13.8",
     "react-timeago": "^7.2.0",
     "react-timer-hook": "^3.0.8",
@@ -40,7 +43,11 @@
     "yup": "^1.6.1"
   },
   "devDependencies": {
-    "eslint": "^8",
-    "eslint-config-next": "14.1.1"
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "@babel/preset-react": "^7.26.3",
+    "@vitejs/plugin-react-swc": "^3.7.2",
+    "vite": "^5.4.11",
+    "vite-plugin-node-polyfills": "^0.22.0"
   }
 }

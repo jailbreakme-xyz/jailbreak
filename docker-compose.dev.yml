@@ -13,3 +13,9 @@ services:
       - NODE_ENV=development
     volumes:
       - ./frontend:/usr/src/app/frontend
+      - /usr/src/app/frontend/node_modules
+
+  # eliza:
+  #   command: pnpm start
+  #   environment:
+  #     - NODE_ENV=development

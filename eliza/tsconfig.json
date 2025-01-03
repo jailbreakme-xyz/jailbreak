@@ -20,7 +20,5 @@
     "noEmitOnError": false,
     "moduleDetection": "force",
     "allowArbitraryExtensions": true
-  },
-  "include": ["src/**/*", "api.ts"],
-  "exclude": ["dist", "node_modules"]
+  }
 }

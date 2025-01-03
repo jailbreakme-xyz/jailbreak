@@ -689,7 +689,7 @@ class DataBaseService {
         instructions: agent.instructions,
         tools_description:
           agent.tools_description ||
-          `${agent.name} has no available tools, this is a freestyle jailbreak.`,
+          `${agent.name} has no available tools, this is a secret phrase jailbreak.`,
         success_function: agent.success_function || null,
         fail_function: agent.fail_function || null,
         tool_choice: agent.tool_choice || "none",

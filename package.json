@@ -8,8 +8,5 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@ai16z/eliza": "^0.1.6-alpha.4"
-  }
+  "license": "ISC"
 }

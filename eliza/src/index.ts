@@ -1,17 +1,14 @@
 import { PostgresDatabaseAdapter } from "@ai16z/adapter-postgres";
-import { SqliteDatabaseAdapter } from "@ai16z/adapter-sqlite";
 import { DirectClientInterface } from "@ai16z/client-direct";
 import {
   DbCacheAdapter,
   defaultCharacter,
-  FsCacheAdapter,
   ICacheManager,
   IDatabaseCacheAdapter,
   stringToUuid,
   AgentRuntime,
   CacheManager,
   Character,
-  IAgentRuntime,
   ModelProviderName,
   elizaLogger,
   settings,
@@ -21,7 +18,6 @@ import {
 import { bootstrapPlugin } from "@ai16z/plugin-bootstrap";
 import { solanaPlugin } from "@ai16z/plugin-solana";
 import { nodePlugin } from "@ai16z/plugin-node";
-import Database from "better-sqlite3";
 import fs from "fs";
 import readline from "readline";
 import yargs from "yargs";
@@ -62,33 +58,53 @@ export function parseArguments(): {
 }
 
 export async function loadCharacters(
-  charactersArg: string
+  charactersArg?: string
 ): Promise<Character[]> {
-  let characterPaths = charactersArg?.split(",").map((filePath) => {
-    if (path.basename(filePath) === filePath) {
-      filePath = "../characters/" + filePath;
-    }
-    return path.resolve(process.cwd(), filePath.trim());
-  });
-
   const loadedCharacters = [];
 
-  if (characterPaths?.length > 0) {
+  // If specific characters are provided via args, load them
+  if (charactersArg) {
+    let characterPaths = charactersArg.split(",").map((filePath) => {
+      if (path.basename(filePath) === filePath) {
+        filePath = "../characters/" + filePath;
+      }
+      return path.resolve(process.cwd(), filePath.trim());
+    });
+
     for (const path of characterPaths) {
       try {
         const character = JSON.parse(fs.readFileSync(path, "utf8"));
-
         validateCharacterConfig(character);
-
         loadedCharacters.push(character);
       } catch (e) {
         console.error(`Error loading character from ${path}: ${e}`);
-        // don't continue to load if a specified file is not found
         process.exit(1);
       }
     }
+  } else {
+    // Load all characters from the characters directory
+    const charactersDir = path.join(__dirname, "../characters");
+    try {
+      const files = fs.readdirSync(charactersDir);
+      for (const file of files) {
+        if (file.endsWith('.json')) {
+          const characterPath = path.join(charactersDir, file);
+          try {
+            const character = JSON.parse(fs.readFileSync(characterPath, "utf8"));
+            validateCharacterConfig(character);
+            loadedCharacters.push(character);
+          } catch (e) {
+            console.error(`Error loading character from ${characterPath}: ${e}`);
+            // Continue loading other characters even if one fails
+          }
+        }
+      }
+    } catch (e) {
+      console.error(`Error reading characters directory: ${e}`);
+    }
   }
 
+  // Fall back to default character if no characters were loaded
   if (loadedCharacters.length === 0) {
     console.log("No characters found, using default character");
     loadedCharacters.push(defaultCharacter);
@@ -144,58 +160,12 @@ export function getTokenForProvider(
 }
 
 function initializeDatabase(dataDir: string) {
-  if (process.env.POSTGRES_URL) {
-    const db = new PostgresDatabaseAdapter({
-      connectionString: process.env.POSTGRES_URL,
-    });
-    return db;
-  } else {
-    const filePath =
-      process.env.SQLITE_FILE ?? path.resolve(dataDir, "db.sqlite");
-    // ":memory:";
-    const db = new SqliteDatabaseAdapter(new Database(filePath));
-    return db;
-  }
+  const db = new PostgresDatabaseAdapter({
+    connectionString: process.env.POSTGRES_URL,
+  });
+  return db;
 }
 
-// export async function initializeClients(
-//   character: Character,
-//   runtime: IAgentRuntime
-// ) {
-//   const clients = ["direct"];
-//   const clientTypes = character.clients?.map((str) => str.toLowerCase()) || [];
-
-//   if (clientTypes.includes("auto")) {
-//     const autoClient = await AutoClientInterface.start(runtime);
-//     if (autoClient) clients.push(autoClient);
-//   }
-
-//   if (clientTypes.includes("discord")) {
-//     clients.push(await DiscordClientInterface.start(runtime));
-//   }
-
-//   if (clientTypes.includes("telegram")) {
-//     const telegramClient = await TelegramClientInterface.start(runtime);
-//     if (telegramClient) clients.push(telegramClient);
-//   }
-
-//   if (clientTypes.includes("twitter")) {
-//     const twitterClients = await TwitterClientInterface.start(runtime);
-//     clients.push(twitterClients);
-//   }
-
-//   if (character.plugins?.length > 0) {
-//     for (const plugin of character.plugins) {
-//       if (plugin.clients) {
-//         for (const client of plugin.clients) {
-//           clients.push(await client.start(runtime));
-//         }
-//       }
-//     }
-//   }
-
-//   return clients;
-// }
 
 export function createAgent(
   character: Character,
@@ -227,12 +197,6 @@ export function createAgent(
   });
 }
 
-function intializeFsCache(baseDir: string, character: Character) {
-  const cacheDir = path.resolve(baseDir, character.id, "cache");
-
-  const cache = new CacheManager(new FsCacheAdapter(cacheDir));
-  return cache;
-}
 
 function intializeDbCache(character: Character, db: IDatabaseCacheAdapter) {
   const cache = new CacheManager(new DbCacheAdapter(db, character.id));
@@ -283,11 +247,11 @@ const startAgents = async () => {
   let charactersArg = args.characters || args.character;
 
   let characters = [character];
-  console.log("charactersArg", charactersArg);
   if (charactersArg) {
     characters = await loadCharacters(charactersArg);
+  } else {
+    characters = await loadCharacters();
   }
-  console.log("characters", characters);
   try {
     const agents = new Map<string, AgentRuntime>();
     for (const character of characters) {
@@ -324,35 +288,6 @@ rl.on("SIGINT", () => {
   process.exit(0);
 });
 
-async function handleUserInput(input, agentId) {
-  if (input.toLowerCase() === "exit") {
-    rl.close();
-    process.exit(0);
-    return;
-  }
-
-  try {
-    const serverPort = parseInt(settings.SERVER_PORT || "3030");
-
-    const response = await fetch(
-      `http://localhost:${serverPort}/${agentId}/message`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text: input,
-          userId: "user",
-          userName: "User",
-        }),
-      }
-    );
-
-    const data = await response.json();
-    data.forEach((message: string) => console.log(`${"Agent"}: ${message}`));
-  } catch (error) {
-    console.error("Error fetching response:", error);
-  }
-}
 
 
 

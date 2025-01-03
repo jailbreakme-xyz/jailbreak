@@ -1,5 +1,5 @@
-FROM node:20-alpine
- 
+FROM node:23.3.0
+
 WORKDIR /usr/src/app/frontend/
 
 COPY package*.json ./
@@ -10,7 +10,6 @@ COPY . .
 
 RUN npm run build
 
-ENV CHOKIDAR_USEPOLLING=true
-ENV WATCHPACK_POLLING=true
-
 EXPOSE 3000
+
+CMD ["npm", "run", "dev"]
