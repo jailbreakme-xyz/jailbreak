@@ -765,7 +765,8 @@ font-size: 12px;
    }
 
    .all-breakers-title, .all-agents-title {
-    display: block;
+    display: block !important;
+    padding-top: 20px !important;
     width: 95%;
     margin: 0px auto;
    }

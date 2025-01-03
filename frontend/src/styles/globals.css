@@ -1378,7 +1378,7 @@ height: 40px;
   }
 
   .challengeTitle > h2 {
-    font-size: 18px;
+    font-size: 18px !important;
   } 
   .assistant > div, .system > div, .user > div  {
     width: 90%;
@@ -1750,7 +1750,7 @@ font-size: 18px;
   }
 
   .challengeTitle {
-    border-radius: 0px;
+    border-radius: 0px !important;
   }
 
   .activeChallenges > .challengeCard {

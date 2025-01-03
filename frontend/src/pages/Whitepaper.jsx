@@ -8,6 +8,7 @@ mermaid.initialize({ startOnLoad: false });
 const Whitepaper = () => {
   // Refs for Mermaid diagrams
   const workflowRef = useRef(null);
+  const simpleWorkflowRef = useRef(null);
 
   // Enhanced Mermaid diagram as a string with added tool calls and backend processes
   const workflowDiagram = `
@@ -36,13 +37,37 @@ graph TD
     F --> L[End Process]
     K --> L`;
 
+  // Add new simplified horizontal diagram
+  const simpleWorkflowDiagram = `
+flowchart LR
+classDef sensitive fill:#ffebee,stroke:#ef5350,color:#d32f2f
+    A[User Input] -->|Buy Token $XYZ| B(Function Handler)
+    B --> C{Action Decision}
+    C --> D[Execute BuyToken]:::sensitive
+    C --> E[Execute DoNothing]
+    D --> D1[Validate Token]:::sensitive
+    D1 --> D2{Valid Token}:::sensitive
+    D1 --> D3{Invalid Token}
+    E --> E1[Log No Action]
+    D3 --> E1
+    D2 --> D4[Check User Balance]:::sensitive
+    D4 --> D5[Sufficient Funds]:::sensitive
+    D4 --> D6[Insufficient Funds]
+    D6 --> E1
+    D5 --> D7[Execute Transaction]:::sensitive
+    D7 --> D8[Update User Balance]:::sensitive
+    D8 --> D9[Backend Processing]
+    E1 --> D9[Backend Processing]
+    D9 --> D10[End Process]`;
+
   useEffect(() => {
-    // Render Mermaid diagrams after component mounts
-    if (workflowRef.current) {
+    // Render both Mermaid diagrams after component mounts
+    if (workflowRef.current && simpleWorkflowRef.current) {
       mermaid.contentLoaded();
       mermaid.init(undefined, workflowRef.current);
+      mermaid.init(undefined, simpleWorkflowRef.current);
     }
-  }, [workflowDiagram]);
+  }, [workflowDiagram, simpleWorkflowDiagram]);
 
   return (
     <div className="fullWidthPage whitepaperPage" style={styles.pageContainer}>
@@ -475,6 +500,20 @@ graph TD
             </p>
           </div>
         </section>
+
+        <div style={styles.box}>
+          <h3>Function Call Workflow</h3>
+          <div
+            className="mermaid"
+            ref={simpleWorkflowRef}
+            style={styles.diagram}
+          >
+            {simpleWorkflowDiagram}
+          </div>
+          <p>
+            <em>Figure 1: Function Call Workflow</em>
+          </p>
+        </div>
       </div>
     </div>
   );
