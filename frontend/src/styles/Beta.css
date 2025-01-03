@@ -1275,20 +1275,20 @@ justify-content: flex-start;
 .swiper:hover .swiper-button-prev, .swiper:hover .swiper-button-next {
   visibility: visible !important;
   color: black !important;
-  height: 445px !important;
-  top: 30px !important;
+  height: 10% !important;
+  top: 50% !important;
   background: rgba(255, 255, 255, 0.556) !important;
   width: 50px !important;
   border-radius: 6px !important;
 }
 
 .swiper:hover .swiper-button-prev {
-  left: 0px !important;
+  left: -10px !important;
   /* border-radius: 16px 0px 0px 16px !important; */
 }
 
 .swiper:hover .swiper-button-next {
-  right: 0px !important;
+  right: -10px !important;
   /* border-radius: 0px 16px 16px 0px !important; */
 }
 
