@@ -380,10 +380,15 @@ class BlockchainService {
   ) {
     try {
       // Step 1: Fetch transaction details from the network
-      const transactionDetails = await this.connection.getParsedTransaction(
-        signature,
-        "confirmed"
-      );
+      const transactionDetails = await this.connection
+        .getParsedTransaction(signature, {
+          commitment: "confirmed",
+          maxSupportedTransactionVersion: 0,
+        })
+        .catch((err) => {
+          console.error(`RPC error fetching transaction: ${err.message}`);
+          return null;
+        });
 
       if (!transactionDetails) {
         console.log("Transaction not found on the network.");
