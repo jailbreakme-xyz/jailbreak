@@ -143,21 +143,21 @@ height: 30px;
   }
   
   .chat-footer button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 0px 20px 20px 0px;
-    background-color: black;
-    color: #09bf99;
+    padding: 10px 20px !important;
+    border: none !important;
+    border-radius: 0px 20px 20px 0px !important;
+    background-color: black !important;
+    color: #09bf99 !important;
     cursor: pointer;
     transition: background-color 0.3s;
-    height: 48px;
-    min-width: 80px;
+    height: 48px !important;
+    min-width: 80px !important;
   }
 
 
-  /* .chat-footer button:hover {
-    background-color: #1e0052;
-  } */
+  .chat-footer button:hover {
+   border: none !important;
+  }
   
   .chatPageMain .mainMenu {
     display: grid;
@@ -272,7 +272,7 @@ border: 0px;
       display: none !important;
     }
     .chatPageMain {
-      padding: 0px;
+      padding: 0px !important;
     }
     .conversation {
       /* overflow-y: scroll;
@@ -285,7 +285,7 @@ border: 0px;
       padding-bottom: 80px;  
     }
     .conversationSection {
-      width: 100%;
+      width: 100% !important;
     }
     .chat-container {
       /* height: 75vh; */
@@ -301,7 +301,7 @@ border: 0px;
     }
     .chat-bubble.assistant, .chat-bubble.system {
       align-self: flex-start;
-      padding-right: 15px;
+      padding-left: 0px !important;
       /* float: right; */
       /* justify-content: flex-end; */
     }
@@ -341,9 +341,13 @@ padding-bottom: 0px;
 }
 
 .challengeTitle {
-  border-bottom: 2px solid #ccc;
+  border-bottom: 2px solid #ccc !important;
 }
 
+.challengeTitle > div {
+  align-items: center !important;
+  justify-content: flex-start !important;
+}
 
 /* Menu Items */
 .mainMenu {

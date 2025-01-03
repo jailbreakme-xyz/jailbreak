@@ -53,15 +53,17 @@ const LabelWithTooltip = ({ label, tooltip }) => (
     <Tooltip
       title={tooltip}
       placement="top"
-      componentsProps={{
+      slotProps={{
         popper: {
           sx: {
-            zIndex: 100000000001,
+            zIndex: 999999999999,
           },
         },
       }}
     >
-      <InfoIconStyled />
+      <span>
+        <InfoIconStyled />
+      </span>
     </Tooltip>
   </span>
 );
