@@ -5,3 +5,4 @@
 transactionDetails
 refund.sh
 node_modules
+.env
