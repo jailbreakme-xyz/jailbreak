@@ -14,6 +14,9 @@ import {
   settings,
   IDatabaseAdapter,
   validateCharacterConfig,
+  composeContext,
+  ModelClass,
+  generateMessageResponse
 } from "@ai16z/eliza";
 import { bootstrapPlugin } from "@ai16z/plugin-bootstrap";
 import { solanaPlugin } from "@ai16z/plugin-solana";
@@ -26,9 +29,13 @@ import { fileURLToPath } from "url";
 import { character } from "./character.ts";
 import type { DirectClient } from "@ai16z/client-direct";
 import express from "express";
+import multer from "multer";
+import { messageHandlerTemplate } from "@ai16z/client-direct";
 
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename); // get the name of the directory
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 export const wait = (minTime: number = 1000, maxTime: number = 3000) => {
   const waitTime =
@@ -240,37 +247,194 @@ async function startAgent(character: Character, directClient: DirectClient) {
   }
 }
 
-const startAgents = async () => {
-  const directClient = await DirectClientInterface.start();
-  const args = parseArguments();
-
-  let charactersArg = args.characters || args.character;
-
-  let characters = [character];
-  if (charactersArg) {
-    characters = await loadCharacters(charactersArg);
-  } else {
-    characters = await loadCharacters();
+function verifyApiKey(req: express.Request, res: express.Response, next: express.NextFunction) {
+  const apiKey = req.headers['jailbreak-api-key'];
+  
+  if (!settings.JAILBREAK_API_KEY) {
+    elizaLogger.error("JAILBREAK_API_KEY not set in environment variables");
+    return res.status(500).json({ error: "Server configuration error" });
   }
-  try {
-    const agents = new Map<string, AgentRuntime>();
-    for (const character of characters) {
-     const runtime = await startAgent(character, directClient as DirectClient);
-     agents.set(runtime.agentId, runtime);
+
+  if (!apiKey || apiKey !== settings.JAILBREAK_API_KEY) {
+    return res.status(401).json({ error: "Unauthorized", details: "Invalid API key" });
+  }
+
+  next();
+}
+
+function setupApiEndpoints(app: express.Application, directClient: DirectClient, agents: Map<string, AgentRuntime>) {
+  elizaLogger.info("Setting up API endpoints...");
+  
+  // Apply API key verification to all routes
+  app.use(verifyApiKey);
+  
+  // Override the existing message endpoint
+  app._router.stack = app._router.stack.filter(layer => {
+    return !(layer.route && layer.route.path === '/:agentId/message');
+  });
+
+  app.post("/:agentId/message", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      const agentId = req.params.agentId;
+      elizaLogger.debug(`Processing message request for agent: ${agentId}`);
+      
+      const roomId = stringToUuid(req.body.roomId ?? "default-room-" + agentId);
+      const userId = stringToUuid(req.body.userId ?? "user");
+      
+      let runtime = agents.get(agentId);
+      if (!runtime) {
+        runtime = Array.from(agents.values()).find(
+          (a) => a.character.name.toLowerCase() === agentId.toLowerCase()
+        );
+      }
+
+      if (!runtime) {
+        return res.status(404).json({ error: "Agent not found", details: `No agent found with ID ${agentId}` });
+      }
+
+      await runtime.ensureConnection(
+        userId,
+        roomId,
+        req.body.userName,
+        req.body.name,
+        "direct"
+      );
+
+      const text = req.body.text;
+      if (!text) {
+        return res.status(400).json({ error: "Bad Request", details: "Message text is required" });
+      }
+
+      const messageId = stringToUuid(Date.now().toString());
+      const content = {
+        text,
+        attachments: [],
+        source: "direct",
+        inReplyTo: undefined
+      };
+
+      const userMessage = {
+        content,
+        userId,
+        roomId,
+        agentId: runtime.agentId
+      };
+
+      const memory = {
+        id: messageId,
+        agentId: runtime.agentId,
+        userId,
+        roomId,
+        content,
+        createdAt: Date.now()
+      };
+
+      await runtime.messageManager.createMemory(memory);
+
+      const state = await runtime.composeState(userMessage, {
+        agentName: runtime.character.name
+      });
+
+      const context = composeContext({
+        state,
+        template: messageHandlerTemplate
+      });
+
+      const response = await generateMessageResponse({
+        runtime,
+        context,
+        modelClass: ModelClass.SMALL
+      });
+
+      if (!response) {
+        return res.status(500).json({ 
+          error: "Internal Server Error", 
+          details: "No response generated" 
+        });
+      }
+
+      const responseMessage = {
+        ...userMessage,
+        userId: runtime.agentId,
+        content: response
+      };
+
+      await runtime.messageManager.createMemory(responseMessage);
+
+      let message = null;
+      await runtime.evaluate(memory, state);
+      
+      await runtime.processActions(
+        memory,
+        [responseMessage],
+        state,
+        async (newMessages) => {
+          message = newMessages;
+          return [memory];
+        }
+      );
+
+      if (message) {
+        res.json([message, response]);
+      } else {
+        res.json([response]);
+      }
+
+    } catch (error) {
+      next(error); // Pass to error handler
     }
+  });
+}
+
+// Add error handling middleware
+function setupErrorHandling(app: express.Application) {
+  // Handle 404s
+  app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+    res.status(404).json({ error: "Not Found", details: "The requested resource does not exist" });
+  });
+
+  // Global error handler
+  app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    console.error('Unhandled error:', err);
+    
+    // Don't expose internal error details in production
+    const response = {
+      error: "Internal Server Error",
+      details: process.env.NODE_ENV === 'development' ? err.message : 'An unexpected error occurred'
+    };
+    
+    res.status(500).json(response);
+  });
+}
+
+const startAgents = async () => {
+  try {
+    const directClient = await DirectClientInterface.start();
+    const args = parseArguments();
     const app = (directClient as any).app;
-    app.get("/agents", (req: express.Request, res: express.Response) => {
-      const agentsList = Array.from(agents.values()).map((agent) => ({
-        id: agent.agentId,
-        name: agent.character.name,
-      }));
-      res.json({ agents: agentsList });
-    });
+    
+    // Setup endpoints BEFORE any other middleware
+    const agents = new Map<string, AgentRuntime>();
+    setupApiEndpoints(app, directClient as DirectClient, agents);
+    setupErrorHandling(app);
+
+    // Then load and start agents
+    let charactersArg = args.characters || args.character;
+    let characters = [character];
+    if (charactersArg) {
+      characters = await loadCharacters(charactersArg);
+    } else {
+      characters = await loadCharacters();
+    }
+
+    for (const character of characters) {
+      const runtime = await startAgent(character, directClient as DirectClient);
+      agents.set(runtime.agentId, runtime);
+    }
+
   } catch (error) {
     elizaLogger.error("Error starting agents:", error);
   }
-
-
 };
 
 startAgents().catch((error) => {

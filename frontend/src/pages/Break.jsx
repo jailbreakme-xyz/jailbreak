@@ -23,6 +23,7 @@ import TypingBubble from "../components/partials/TypingBubble";
 import ErrorModal from "../components/templates/ErrorModal";
 import bs58 from "bs58";
 import { useParams, useNavigate } from "react-router-dom";
+import { RiVerifiedBadgeFill } from "react-icons/ri";
 
 const SOLANA_RPC =
   process.env.NODE_ENV === "development"
@@ -702,7 +703,10 @@ export default function Break() {
                             </>
                           ) : (
                             <>
-                              <div className="avatar">
+                              <div
+                                className="avatar"
+                                style={{ position: "relative" }}
+                              >
                                 <img
                                   alt="pfp"
                                   src={challenge?.pfp}
