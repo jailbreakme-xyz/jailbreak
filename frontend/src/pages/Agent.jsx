@@ -140,7 +140,7 @@ const Agent = () => {
               </p>
             </div>
           </div>
-          {verified_owner && (
+          {verified_owner?.name && (
             <div
               style={{
                 display: "flex",
@@ -150,7 +150,18 @@ const Agent = () => {
               }}
             >
               <RiVerifiedBadgeFill />
-              <span>{verified_owner}</span>
+              {verified_owner?.link ? (
+                <a
+                  className="pointer"
+                  href={verified_owner?.link}
+                  target="_blank"
+                  style={{ color: "#0BBF99", textDecoration: "none" }}
+                >
+                  {verified_owner?.name}
+                </a>
+              ) : (
+                <span>{verified_owner?.name}</span>
+              )}
             </div>
           )}
           {/* Description */}

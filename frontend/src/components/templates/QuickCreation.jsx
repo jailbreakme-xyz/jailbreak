@@ -124,6 +124,10 @@ export default function QuickCreation(props) {
     validationSchema: Yup.object({
       // pfp: Yup.mixed(),
       name: Yup.string()
+        .matches(
+          /^[a-zA-Z0-9_\- ]+$/,
+          "Name can only contain letters, numbers, underscores, hyphens and spaces"
+        )
         .min(3, "Name must be at least 3 characters")
         .max(16, "Name must be at most 16 characters")
         .required("Name is required"),
@@ -551,6 +555,7 @@ export default function QuickCreation(props) {
                           name="name"
                           value={formik.values.name}
                           onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
                           error={
                             formik.touched.name ? formik.errors.name : undefined
                           }
@@ -559,6 +564,13 @@ export default function QuickCreation(props) {
                           variant="standard"
                           placeholder={sample?.name}
                           autoComplete="off"
+                          sx={{
+                            "& .MuiFormHelperText-root": {
+                              position: "absolute",
+                              bottom: "-20px",
+                            },
+                            marginBottom: "0px",
+                          }}
                         />
                       </div>
                     </Grid>
@@ -580,6 +592,7 @@ export default function QuickCreation(props) {
                         name="opening_message"
                         value={formik.values.opening_message}
                         onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
                         error={
                           formik.touched.opening_message
                             ? formik.errors.opening_message
@@ -621,6 +634,7 @@ export default function QuickCreation(props) {
                         fullWidth
                         multiline
                         rows={3}
+                        onBlur={formik.handleBlur}
                         label={
                           <LabelWithTooltip
                             label="🤖 Instructions (System Prompt)"
@@ -658,6 +672,7 @@ export default function QuickCreation(props) {
                       <TextField
                         autoComplete="off"
                         fullWidth
+                        onBlur={formik.handleBlur}
                         placeholder={sample?.phrase}
                         label={
                           <LabelWithTooltip

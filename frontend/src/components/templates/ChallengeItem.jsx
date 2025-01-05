@@ -28,7 +28,7 @@ export default function ChallengeItem({ challenge }) {
             alt={challenge.name}
             className="challenge-pfp pointer"
           />
-          {challenge.verified_owner && (
+          {challenge.verified_owner?.name && (
             <RiVerifiedBadgeFill
               style={{
                 position: "absolute",
@@ -36,15 +36,15 @@ export default function ChallengeItem({ challenge }) {
                 right: 0,
                 color: "#0BBF99",
                 fontSize: "16px",
+                backgroundColor: "black",
+                borderRadius: "50%",
               }}
             />
           )}
         </div>
         <div className="challenge-details pointer">
           <h3 className="pointer" style={{ color: "white", fontSize: "16px" }}>
-            {challenge.name.length > 12
-              ? `${challenge.name.slice(0, 12)}...`
-              : challenge.name}
+            {challenge.name}
           </h3>
           <span
             className="mobile-break-attempts pointer"

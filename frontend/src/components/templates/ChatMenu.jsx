@@ -8,34 +8,109 @@ export default function ChatMenu({ challenge, attempts, price, usdPrice }) {
       {challenge?.title && (
         <div className="challengeTitle glass-card">
           <div className="challenge-header">
-            <div className="challenge-info">
-              <span className="level-badge">{challenge?.name}</span>
-              <h4 style={{ margin: "8px 0px 4px", fontSize: "14px" }}>
-                {challenge?.title.length > 20 && challenge?.verified_owner
-                  ? challenge?.title.substring(0, 20) + "..."
-                  : challenge?.title}
-              </h4>
-              {challenge?.verified_owner && (
-                <div className="verified-badge">
-                  <RiVerifiedBadgeFill />
-                  <span>{challenge?.verified_owner}</span>
-                </div>
-              )}
-            </div>
-            <div className="challenge-avatar">
+            <div
+              className="challenge-avatar"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "5px",
+              }}
+            >
               <img
                 onClick={() => {
                   window.open(`/agent/${challenge?.name}`, "_blank");
                 }}
                 alt="logo"
                 src={challenge?.pfp}
-                width={challenge?.verified_owner ? "70" : "60"}
-                height={challenge?.verified_owner ? "70" : "60"}
+                width={"70"}
+                height={"70"}
                 className="pfp pointer hover-effect"
               />
             </div>
+            <div className="challenge-info">
+              <h4
+                style={{
+                  color: "#0BBF99",
+                  fontWeight: "bold",
+                  margin: "0px",
+                }}
+              >
+                {challenge?.name}
+              </h4>
+              {challenge?.verified_owner?.name && (
+                <div className="verified-badge" style={{ gap: "2px" }}>
+                  <RiVerifiedBadgeFill />
+                  {challenge?.verified_owner?.link ? (
+                    <a
+                      className="pointer"
+                      href={challenge?.verified_owner?.link}
+                      target="_blank"
+                      style={{ color: "#0BBF99", textDecoration: "none" }}
+                    >
+                      {challenge?.verified_owner?.name}
+                    </a>
+                  ) : (
+                    <span>
+                      {challenge?.verified_owner?.name
+                        ? challenge?.verified_owner?.name
+                        : challenge?.verified_owner}
+                    </span>
+                  )}
+                </div>
+              )}
+              <div
+                style={{
+                  marginTop: "5px",
+                  display: "flex",
+                  gap: "10px",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <a
+                  className="pointer"
+                  href={`/breaker/${challenge?.owner}`}
+                  target="_blank"
+                  style={{
+                    textDecoration: "none",
+                    color: "#0BBF99",
+                    fontSize: "12px",
+                    backgroundColor: "rgba(11, 191, 153, 0.1)",
+                    padding: "5px 10px",
+                    borderRadius: "12px",
+                    width: "80px",
+                  }}
+                >
+                  Creator {challenge?.owner?.slice(0, 3)}...
+                  {challenge?.owner?.slice(-3)}
+                </a>
+                <a
+                  className="pointer"
+                  href={`https://solscan.io/account/${challenge?.tournamentPDA}`}
+                  target="_blank"
+                  style={{
+                    textDecoration: "none",
+                    color: "#0BBF99",
+                    fontSize: "12px",
+                    backgroundColor: "rgba(11, 191, 153, 0.1)",
+                    padding: "5px 10px",
+                    borderRadius: "12px",
+                    width: "80px",
+                  }}
+                >
+                  Agent Pool {challenge?.tournamentPDA?.slice(0, 3)}...
+                  {challenge?.tournamentPDA?.slice(-3)}
+                </a>
+              </div>
+            </div>
           </div>
-          <div className="divider" />
+
+          <div className="divider" style={{ margin: "8px 0px" }} />
+          <h4 style={{ margin: "8px 0px 4px", fontSize: "14px" }}>
+            {challenge?.title}
+          </h4>
           <span className="challenge-label">{challenge?.label}</span>
         </div>
       )}
@@ -50,7 +125,7 @@ export default function ChatMenu({ challenge, attempts, price, usdPrice }) {
 
         <div className="stats-grid">
           <div className="stat-item">
-            <h4>Break Attempts</h4>
+            <h4 style={{ margin: "0px" }}>Break Attempts</h4>
             <CountUp
               start={0}
               end={attempts}
@@ -61,7 +136,7 @@ export default function ChatMenu({ challenge, attempts, price, usdPrice }) {
             />
           </div>
           <div className="stat-item">
-            <h4>Message Price</h4>
+            <h4 style={{ margin: "0px" }}>Message Price</h4>
             <div className="price-display">
               <CountUp
                 start={0}

@@ -16,7 +16,7 @@ export default function AgentInfo({ challenge }) {
 
         {(challenge?.custom_rules || challenge?.tldr) && (
           <div className="info-block">
-            <p className="info-text">
+            <p className="info-text" style={{ whiteSpace: "pre-line" }}>
               {challenge?.tldr ? challenge?.tldr : challenge?.custom_rules}
             </p>
           </div>
@@ -80,7 +80,7 @@ export default function AgentInfo({ challenge }) {
         challenge?.tools_description) && (
         <div className="glass-card">
           <div className="section-header">
-            {challenge?.phrases?.length > 0 ? (
+            {challenge?.type === "phrases" ? (
               <h3>🔒 Secret Phrases</h3>
             ) : (
               <h3>🛠️ Available Tools</h3>

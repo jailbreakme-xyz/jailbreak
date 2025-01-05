@@ -3,7 +3,11 @@ import Joi from "joi";
 export const tournamentValidator = Joi.object({
   // Required fields
   sender: Joi.string().required(),
-  name: Joi.string().min(3).max(16).required(),
+  name: Joi.string()
+    .pattern(/^[a-zA-Z0-9_\- ]+$/)
+    .min(3)
+    .max(16)
+    .required(),
   instructions: Joi.string().min(100).max(10000).required(),
   initial_pool_size: Joi.number().min(0.5).max(10000).required().positive(),
   fee_multiplier: Joi.number().min(1).max(5).required().positive(),
@@ -43,6 +47,6 @@ export const tournamentValidator = Joi.object({
   start_date: Joi.date().required(),
 
   // Metadata
-  title: Joi.string().required(),
+  title: Joi.string().required().min(3).max(30),
   tldr: Joi.string().required().allow(null),
 });

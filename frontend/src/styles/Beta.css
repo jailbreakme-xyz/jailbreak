@@ -1027,6 +1027,9 @@ justify-content: flex-start;
   object-fit: cover;
 }
 
+.challenge-item .challenge-details {
+  max-width: 150px;
+}
 .challenge-details h3 {
   margin: 0;
 }
@@ -1062,7 +1065,7 @@ justify-content: flex-start;
 }
 
 .challenges-header > div span:nth-child(2) {
-  width: 120px;
+  width: 115px;
   text-align: right;
 }
 
@@ -1547,23 +1550,27 @@ justify-content: flex-start;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 20px;
+  gap: 10px;
+  flex-direction: row-reverse;
 }
 
 .challenge-header .challenge-info {
   display: block;
 }
 
+.challenge-pfp-container {
+  width: 40px;
+  height: 40px;
+}
 .level-badge {
   font-weight: bold;
   text-transform: uppercase;
   border-radius: 150px;
-  padding: 5px 15px;
+  padding: 4px 20px;
   background-color: rgba(11, 191, 153, 0.1);
   color: #0BBF99;
   border: 1px solid #0BBF99;
   font-size: 14px;
-  display: inline-block;
 }
 
 .verified-badge {
@@ -1576,7 +1583,7 @@ justify-content: flex-start;
 
 .challenge-avatar img.pfp {
   border: 3px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  border-radius: 120px;
   transition: transform 0.3s ease;
 }
 
@@ -1587,7 +1594,7 @@ justify-content: flex-start;
 .divider {
   height: 1px;
   background: rgba(255, 255, 255, 0.1);
-  margin: 15px 0;
+  margin: 10px 0;
 }
 
 .section-header {

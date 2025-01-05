@@ -131,11 +131,9 @@ export default function TrendingAgentsCarousel({ agents }) {
                         className="pointer"
                         style={{ color: "white", marginBottom: "4px" }}
                       >
-                        {agent.name.length > 16
-                          ? `${agent.name.slice(0, 16)}...`
-                          : agent.name}
+                        {agent.name}
                       </h3>
-                      {agent.verified_owner && (
+                      {agent.verified_owner?.name && (
                         <div
                           style={{
                             display: "flex",
@@ -151,7 +149,21 @@ export default function TrendingAgentsCarousel({ agents }) {
                               verticalAlign: "middle",
                             }}
                           />
-                          <span>{agent.verified_owner}</span>
+                          {agent.verified_owner?.link ? (
+                            <a
+                              className="pointer"
+                              href={agent.verified_owner?.link}
+                              target="_blank"
+                              style={{
+                                color: "#0BBF99",
+                                textDecoration: "none",
+                              }}
+                            >
+                              {agent.verified_owner?.name}
+                            </a>
+                          ) : (
+                            <span>{agent.verified_owner?.name}</span>
+                          )}
                         </div>
                       )}
                     </div>

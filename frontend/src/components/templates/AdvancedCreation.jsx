@@ -191,9 +191,17 @@ const AdvancedCreation = (props) => {
     validationSchema: Yup.object({
       // pfp: Yup.mixed(),
       name: Yup.string()
+        .matches(
+          /^[a-zA-Z0-9_\- ]+$/,
+          "Name can only contain letters, numbers, underscores, hyphens and spaces"
+        )
         .min(3, "Name must be at least 3 characters")
         .max(16, "Name must be at most 16 characters")
         .required("Name is required"),
+      title: Yup.string()
+        .min(3, "Title must be at least 3 characters")
+        .max(30, "Title must be at most 30 characters")
+        .required("Title is required"),
       opening_message: Yup.string()
         .min(10, "Intro must be at least 10 characters")
         .max(130, "Intro must be at most 130 characters")
@@ -210,7 +218,6 @@ const AdvancedCreation = (props) => {
         .min(100, "Fee Multiplier must be at least 1%")
         .max(500, "Fee Multiplier must be at most 5%")
         .required("Fee Multiplier is required"),
-      tldr: Yup.string().required("TLDR is required"),
       start_date: Yup.date().required("Start date is required"),
       expiry: Yup.date().required("Expiry date is required"),
     }),
@@ -753,6 +760,14 @@ const AdvancedCreation = (props) => {
                 variant="standard"
                 placeholder={sample?.name}
                 autoComplete="off"
+                onBlur={formik.handleBlur}
+                sx={{
+                  "& .MuiFormHelperText-root": {
+                    position: "absolute",
+                    bottom: "-20px",
+                  },
+                  marginBottom: "0px",
+                }}
               />
             </Grid>
             <Grid size={{ xs: 12, md: 5, lg: 5 }}>
@@ -773,6 +788,14 @@ const AdvancedCreation = (props) => {
                 variant="standard"
                 placeholder={sample?.title || "Enter a title"}
                 autoComplete="off"
+                onBlur={formik.handleBlur}
+                sx={{
+                  "& .MuiFormHelperText-root": {
+                    position: "absolute",
+                    bottom: "-20px",
+                  },
+                  marginBottom: "0px",
+                }}
               />
             </Grid>
 
@@ -801,6 +824,14 @@ const AdvancedCreation = (props) => {
                 variant="standard"
                 placeholder={sample?.label || "Enter an opening message"}
                 autoComplete="off"
+                onBlur={formik.handleBlur}
+                sx={{
+                  "& .MuiFormHelperText-root": {
+                    position: "absolute",
+                    bottom: "-20px",
+                  },
+                  marginBottom: "10px",
+                }}
               />
             </Grid>
             <Grid size={{ xs: 12, md: 12, lg: 12 }} sx={{ marginTop: 2 }}>
@@ -826,6 +857,7 @@ const AdvancedCreation = (props) => {
                   backgroundColor: "#000",
                 }}
                 autoComplete="off"
+                onBlur={formik.handleBlur}
               />
             </Grid>
             <Grid size={{ xs: 12, md: 12, lg: 12 }} sx={{ marginTop: 2 }}>
@@ -857,10 +889,11 @@ const AdvancedCreation = (props) => {
                   backgroundColor: "#000",
                 }}
                 autoComplete="off"
+                onBlur={formik.handleBlur}
               />
             </Grid>
             {props.mode != "edit" && (
-              <button
+              <Button
                 onClick={(e) => {
                   generateAgent(e);
                 }}
@@ -896,7 +929,7 @@ const AdvancedCreation = (props) => {
                     {generating ? generating : "Auto Generate (BETA)"}
                   </span>
                 )}
-              </button>
+              </Button>
             )}
             {settings?.content?.show_help && (
               <p

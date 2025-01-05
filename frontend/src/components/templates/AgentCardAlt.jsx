@@ -66,14 +66,14 @@ const AgentCardAlt = ({
               className="pointer"
               style={{
                 color: "white",
-                marginBottom: agent.verified_owner ? "4px" : "10px",
+                marginBottom: agent.verified_owner?.name ? "4px" : "10px",
               }}
             >
               {agent.name.length > 16
                 ? `${agent.name.slice(0, 16)}...`
                 : agent.name}
             </h3>
-            {agent.verified_owner && (
+            {agent.verified_owner?.name && (
               <div
                 style={{
                   display: "flex",
@@ -89,7 +89,18 @@ const AgentCardAlt = ({
                     verticalAlign: "middle",
                   }}
                 />
-                <span>{agent.verified_owner}</span>
+                {agent.verified_owner?.link ? (
+                  <a
+                    className="pointer"
+                    href={agent.verified_owner?.link}
+                    target="_blank"
+                    style={{ color: "#0BBF99", textDecoration: "none" }}
+                  >
+                    {agent.verified_owner?.name}
+                  </a>
+                ) : (
+                  <span>{agent.verified_owner?.name}</span>
+                )}
               </div>
             )}
           </div>
