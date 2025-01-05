@@ -80,7 +80,11 @@ export default function AgentInfo({ challenge }) {
         challenge?.tools_description) && (
         <div className="glass-card">
           <div className="section-header">
-            <h3>🛠️ Available Tools</h3>
+            {challenge?.phrases?.length > 0 ? (
+              <h3>🔒 Secret Phrases</h3>
+            ) : (
+              <h3>🛠️ Available Tools</h3>
+            )}
           </div>
           <div className="divider" />
 

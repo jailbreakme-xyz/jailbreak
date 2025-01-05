@@ -71,8 +71,14 @@
     -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
+.whitepaperPage {
+  background-color: #ffffff;
+}
 .whitepaperPage .beta-header.sticky {
   background: rgba(22, 22, 22, 0.743) !important;
+}
+.whitepaperPage h2, .whitepaperPage h3 {
+ margin: 0px !important;
 }
 .popover-item {
   padding: 15px 20px;

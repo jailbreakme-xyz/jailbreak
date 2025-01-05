@@ -12,53 +12,57 @@ const Whitepaper = () => {
 
   // Enhanced Mermaid diagram as a string with added tool calls and backend processes
   const workflowDiagram = `
-graph TD
-    classDef sensitive fill:#ffebee,stroke:#ef5350,color:#d32f2f
-    classDef secure fill:#e8f5e9,stroke:#66bb6a,color:#2e7d32
-    A[User Input] --> B[Function Handler]
-    B --> C{Action Decision}
-    C -- BuyToken --> D[Execute BuyToken]:::sensitive
-    C -- DoNothing --> E[Log No Action]
-    D --> D1[Validate Token]:::sensitive
-    D1 --> D2{Token Valid?}:::sensitive
-    D2 -- Yes --> D3[Check User Balance]:::sensitive
-    D2 -- No --> E
-    D3 --> D4{Sufficient Funds?}:::sensitive
-    D4 -- No --> E
-    D4 -- Yes --> G{Agent Type}
-    G -- Single Agent --> D5[Execute Transaction]:::sensitive
-    G -- Double Agent --> H{Compliance Check}:::secure
-    H -- No --> J[Replace with Secure Response]:::secure
-    H -- Yes --> D5[Execute Transaction]:::sensitive
-    D5 --> D6[Update User Balance]:::sensitive
-    D6 --> F[Backend Processing]
-    E --> F
-    J --> K[Trigger Security Alert]:::secure
-    F --> L[End Process]
-    K --> L`;
+flowchart TD
+classDef sensitive fill:#ffebee,stroke:#ef5350,color:#d32f2f
+classDef secure fill:#e8f5e9,stroke:#66bb6a,color:#2e7d32
+   A[User Input] -->|Buy Token $XYZ| B(Function Handler)
+   B --> C{Action Decision}
+   C --> D[Execute BuyToken]:::sensitive
+   C --> E[Execute DoNothing]
+   D --> D1{Validate Token}:::sensitive
+   D1 --> D2[Valid Token]:::sensitive
+   D1 --> D3[Invalid Token]
+   E --> E1[Log No Action]
+   D3 --> E1
+   D2 --> D4{Check User Balance}:::sensitive
+   D4 --> D5{Sufficient Funds}:::sensitive
+   D4 --> D6[Insufficient Funds]
+   D6 --> E1
+   D5 --> D7[Single Agent]:::sensitive
+   D5 --> D8[Double Agent]:::secure
+   D8 --> D9{Compliance Check}:::secure
+   D9 -- YES --> D10[Execute Transaction]:::sensitive
+   D9 -- NO --> D11[Replace with Secure Response]:::secure
+   D11 --> D12[Trigger Secutiry Alert]:::secure
+   D7 --> D10
+   D10 --> D13[Update User Balance]:::sensitive
+   D13 --> D14[Backend Processing]
+   D12 --> D14
+   E1 --> D14
+   D14 --> D15[End Process]`;
 
   // Add new simplified horizontal diagram
   const simpleWorkflowDiagram = `
-flowchart LR
+flowchart TD
 classDef sensitive fill:#ffebee,stroke:#ef5350,color:#d32f2f
-    A[User Input] -->|Buy Token $XYZ| B(Function Handler)
-    B --> C{Action Decision}
-    C --> D[Execute BuyToken]:::sensitive
-    C --> E[Execute DoNothing]
-    D --> D1[Validate Token]:::sensitive
-    D1 --> D2{Valid Token}:::sensitive
-    D1 --> D3{Invalid Token}
-    E --> E1[Log No Action]
-    D3 --> E1
-    D2 --> D4[Check User Balance]:::sensitive
-    D4 --> D5[Sufficient Funds]:::sensitive
-    D4 --> D6[Insufficient Funds]
-    D6 --> E1
-    D5 --> D7[Execute Transaction]:::sensitive
-    D7 --> D8[Update User Balance]:::sensitive
-    D8 --> D9[Backend Processing]
-    E1 --> D9[Backend Processing]
-    D9 --> D10[End Process]`;
+   A[User Input] -->|Buy Token $XYZ| B(Function Handler)
+   B --> C{Action Decision}
+   C --> D[Execute BuyToken]:::sensitive
+   C --> E[Execute DoNothing]
+   D --> D1{Validate Token}:::sensitive
+   D1 --> D2[Valid Token]:::sensitive
+   D1 --> D3[Invalid Token]
+   E --> E1[Log No Action]
+   D3 --> E1
+   D2 --> D4{Check User Balance}:::sensitive
+   D4 --> D5[Sufficient Funds]:::sensitive
+   D4 --> D6[Insufficient Funds]
+   D6 --> E1
+   D5 --> D7[Execute Transaction]:::sensitive
+   D7 --> D8[Update User Balance]:::sensitive
+   D8 --> D9[Backend Processing]
+   E1 --> D9[Backend Processing]
+   D9 --> D10[End Process]`;
 
   useEffect(() => {
     // Render both Mermaid diagrams after component mounts
@@ -70,7 +74,7 @@ classDef sensitive fill:#ffebee,stroke:#ef5350,color:#d32f2f
   }, [workflowDiagram, simpleWorkflowDiagram]);
 
   return (
-    <div className="fullWidthPage whitepaperPage" style={styles.pageContainer}>
+    <div className="fullWidthPage whitepaperPage">
       <Header />
       <div style={styles.container}>
         <img
@@ -81,9 +85,7 @@ classDef sensitive fill:#ffebee,stroke:#ef5350,color:#d32f2f
         <h1 style={styles.title}>
           Enhancing AI Security: Function Calls and the Double Agent Technique
         </h1>
-        <p style={{ fontSize: "12px", color: "#666" }}>
-          Published at 2025-01-02
-        </p>
+        <p style={styles.date}>Published at 2025-01-02</p>
         <hr style={{ margin: "5px 0px" }} />
         <p>
           This whitepaper explores two innovative approaches to enhance AI
@@ -118,17 +120,24 @@ classDef sensitive fill:#ffebee,stroke:#ef5350,color:#d32f2f
         </section>
 
         <section style={styles.section}>
-          <h2 id="function-calls">Function Calls as a Security Measure</h2>
-          <div style={styles.box}>
-            <h3>Overview</h3>
-            <p>
-              Function calls serve as gatekeepers, dictating how AI agents
-              interact with the system and the data they access. By channeling
-              AI operations through well-defined function interfaces,
-              organizations can impose strict controls over AI behavior,
-              ensuring that the agent operates within safe and intended
-              boundaries.
-            </p>
+          <h2>Function Calls as a Security Measure</h2>
+          <p>
+            Function calls serve as gatekeepers, dictating how AI agents
+            interact with the system and the data they access. By channeling AI
+            operations through well-defined function interfaces, organizations
+            can impose strict controls over AI behavior, ensuring that the agent
+            operates within safe and intended boundaries.
+          </p>
+
+          <div style={styles.diagramContainer}>
+            <div
+              className="mermaid"
+              ref={simpleWorkflowRef}
+              style={styles.diagram}
+            >
+              {simpleWorkflowDiagram}
+            </div>
+            <p style={styles.caption}>Figure 1: Basic Function Call Workflow</p>
           </div>
 
           <div style={styles.box}>
@@ -269,7 +278,21 @@ classDef sensitive fill:#ffebee,stroke:#ef5350,color:#d32f2f
         </section>
 
         <section style={styles.section}>
-          <h2 id="double-agent">Double Agent Technique</h2>
+          <h2>The Double Agent Technique</h2>
+          <p>
+            Building upon the basic function call security, the Double Agent
+            Technique adds an additional layer of protection.
+          </p>
+
+          <div style={styles.diagramContainer}>
+            <div className="mermaid" ref={workflowRef} style={styles.diagram}>
+              {workflowDiagram}
+            </div>
+            <p style={styles.caption}>
+              Figure 2: Enhanced Security with Double Agent
+            </p>
+          </div>
+
           <div style={styles.box}>
             <h3>Conceptual Framework</h3>
             <p>
@@ -430,16 +453,6 @@ classDef sensitive fill:#ffebee,stroke:#ef5350,color:#d32f2f
               guidelines.
             </p>
           </div>
-
-          <div style={styles.box}>
-            <h3>Workflow Diagram</h3>
-            <div className="mermaid" ref={workflowRef} style={styles.diagram}>
-              {workflowDiagram}
-            </div>
-            <p>
-              <em>Figure 1: Integrated Security Workflow</em>
-            </p>
-          </div>
         </section>
 
         <section style={styles.section}>
@@ -500,20 +513,6 @@ classDef sensitive fill:#ffebee,stroke:#ef5350,color:#d32f2f
             </p>
           </div>
         </section>
-
-        <div style={styles.box}>
-          <h3>Function Call Workflow</h3>
-          <div
-            className="mermaid"
-            ref={simpleWorkflowRef}
-            style={styles.diagram}
-          >
-            {simpleWorkflowDiagram}
-          </div>
-          <p>
-            <em>Figure 1: Function Call Workflow</em>
-          </p>
-        </div>
       </div>
     </div>
   );
@@ -528,67 +527,61 @@ const styles = {
     borderRadius: "12px",
     display: "block",
   },
-  pageContainer: {
-    backgroundColor: "#ffffff",
-    minHeight: "100vh",
-    color: "#2D3748",
-    fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
-    padding: "0",
-    boxSizing: "border-box",
-  },
   container: {
     maxWidth: "1000px",
     margin: "0 auto",
     padding: "40px 20px",
     lineHeight: "1.8",
+    backgroundColor: "#ffffff",
   },
   title: {
-    textAlign: "left",
-    margin: "0 0 20px",
-    color: "#1a202c",
     fontSize: "2.5rem",
     fontWeight: "700",
     lineHeight: "1.2",
+    marginBottom: "10px",
+    color: "#1a202c",
+  },
+  date: {
+    fontSize: "14px",
+    color: "#666",
+    marginBottom: "40px",
   },
   section: {
-    marginBottom: "60px",
-    backgroundColor: "transparent",
-    padding: "0",
-    borderRadius: "0",
+    marginBottom: "30px",
   },
   box: {
-    backgroundColor: "#F7FAFC",
-    padding: "30px",
+    backgroundColor: "#ffffff",
+    padding: "20px",
     borderRadius: "12px",
-    marginBottom: "30px",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-    border: "1px solid #E2E8F0",
+    border: "1px solid #ffffff",
   },
   insideBox: {
     padding: "30px",
     borderRadius: "12px",
     marginBottom: "30px",
     boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-    border: "1px solid #E2E8F0",
+    border: "1px solid #ffffff",
+  },
+  diagramContainer: {
+    margin: "40px 0",
+    padding: "20px",
+    backgroundColor: "#ffffff",
+    borderRadius: "8px",
   },
   diagram: {
-    textAlign: "center",
-    margin: "30px 0",
-    backgroundColor: "#F7FAFC",
+    backgroundColor: "#f8f9fa",
     padding: "20px",
-    borderRadius: "12px",
+    borderRadius: "4px",
     overflowX: "auto",
-    border: "1px solid #E2E8F0",
   },
-  pre: {
-    backgroundColor: "#F7FAFC",
-    padding: "20px",
-    borderRadius: "12px",
-    overflowX: "auto",
-    border: "1px solid #E2E8F0",
+  caption: {
+    textAlign: "center",
+    color: "#666",
+    fontSize: "14px",
+    marginTop: "10px",
   },
   orderedListItem: {
-    backgroundColor: "#e7e7e7",
+    backgroundColor: "#ffffff",
     padding: "15px",
     marginBottom: "10px",
     borderRadius: "8px",

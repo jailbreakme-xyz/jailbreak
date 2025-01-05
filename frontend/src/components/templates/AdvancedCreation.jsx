@@ -333,7 +333,7 @@ const AdvancedCreation = (props) => {
         setActiveTypeTab("phrases");
       } else {
         formik.setFieldValue("phrases", [""]);
-        setActiveTypeTab("decision");
+        setActiveTypeTab("tool_calls");
       }
 
       // Set tools if available
@@ -349,7 +349,7 @@ const AdvancedCreation = (props) => {
   };
 
   const handleTabChange = (event, newValue) => {
-    // if (newValue === "decision") {
+    // if (newValue === "tool_calls") {
     //   if (formik.values.tools.length < 2) {
     //     formik.setFieldValue("tools", [
     //       ...formik.values.tools,
@@ -1290,7 +1290,7 @@ const AdvancedCreation = (props) => {
                 //   variant="fullWidth"
               >
                 <Tab label="Secret Phrases" value="phrases" />
-                <Tab label="Decision (Tool Call)" value="decision" />
+                <Tab label="Decision (Tool Call)" value="tool_calls" />
                 {/* <Tab label="Mixed" value="mixed" /> */}
               </Tabs>
             </Grid>
@@ -1370,7 +1370,7 @@ const AdvancedCreation = (props) => {
                 </div>
               )}
 
-              {activeTypeTab === "decision" && (
+              {activeTypeTab === "tool_calls" && (
                 <div>
                   {formik.values.tools.length < 2 ||
                   formik.values.tools.some(
@@ -1450,7 +1450,7 @@ const AdvancedCreation = (props) => {
                   >
                     It could be a secret phrase/ingredient/location/etc..
                   </span>
-                  {/* Combine logic for phrases and decision */}
+                  {/* Combine logic for phrases and tool_calls */}
                   {formik.values.phrases.map((phrase, index) => (
                     <Grid container spacing={2} key={index}>
                       <Grid
@@ -1506,7 +1506,7 @@ const AdvancedCreation = (props) => {
               )}
             </Grid>
 
-            {activeTypeTab === "decision" && (
+            {activeTypeTab === "tool_calls" && (
               <Grid
                 size={{ xs: 12, md: 6, lg: 6 }}
                 // sx={{ marginTop: 2 }}

@@ -39,7 +39,7 @@ const ChallengeSchema = new mongoose.Schema(
     usd_prize: Number,
     break_attempts: Number,
     winner: String,
-    expirt_decision: String,
+    expiry_decision: String,
     assistant_id: String,
     suffix: String,
     language: String,

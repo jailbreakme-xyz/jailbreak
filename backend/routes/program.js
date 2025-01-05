@@ -378,7 +378,7 @@ router.post(
         success_function: success_function,
         tools_description: tools_description,
         disable: disable,
-        type: tournament_type,
+        type: tournament_type === "phrases" ? "phrases" : "tool_calls",
         title: title,
         tldr: tldr,
         start_date: startDate,

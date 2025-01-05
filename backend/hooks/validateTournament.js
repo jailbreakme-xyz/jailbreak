@@ -45,6 +45,11 @@ export const validateTournament = ({
       return "Tool names must be unique";
     }
 
+    const successFunction = tournament.success_function;
+    if (!toolNames.includes(successFunction)) {
+      return "Success function must be a tool name";
+    }
+
     const toolInstructions = tournament.tools.map((tool) => tool.instruction);
     if (new Set(toolInstructions).size !== toolInstructions.length) {
       return "Tool instructions must be unique";
