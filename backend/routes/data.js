@@ -195,7 +195,7 @@ router.post("/social-bounties/:id/submissions", async (req, res) => {
       return res.status(404).json({ error: "Bounty not found" });
     }
 
-    res.json({ message: "Submission added successfully", submission });
+    res.json({ message: "Submission added successfully", url });
   } catch (error) {
     console.error("Error adding submission:", error);
     res.status(500).json({ error: "Failed to add submission" });
