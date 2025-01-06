@@ -2,7 +2,7 @@
 
 [jailbreakme.xyz](https://www.jailbreakme.xyz) is an **open-source decentralized app (dApp)** where organizations test their **AI models and agents** while users **earn rewards** for finding weaknesses and jailbreaking them 🏆
 
-![banner](https://jailbreak.gitbook.io/~gitbook/image?url=https%3A%2F%2F2436591088-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FImDYjEFAKhFH3xx152ap%252Fuploads%252Fq4ucPP4blrrfjXQLeFPx%252FScreenshot%25202024-12-05%2520at%252018.06.18.png%3Falt%3Dmedia%26token%3D1e7024c6-5abe-4297-b49d-c10b364a0167&width=768&dpr=1&quality=100&sign=e35601a8&sv=2)
+![banner](https://files.gitbook.com/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FImDYjEFAKhFH3xx152ap%2Fuploads%2Fxzb1xajiztXmd72QVDhM%2FScreenshot%202025-01-01%20at%2019.32.44.png?alt=media&token=165e1c22-8c88-4a9c-9431-0f00b813682d)
 
 ---
 
@@ -28,7 +28,7 @@ We aim to create a decentralized platform where companies can:
 
 ### 1. **Choose a Tournament**
 
-![Choose Tournament](https://jailbreak.gitbook.io/~gitbook/image?url=https%3A%2F%2F2436591088-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FImDYjEFAKhFH3xx152ap%252Fuploads%252FQUp5npSYSVk1XSk3kj10%252FScreenshot%25202024-12-04%2520at%252023.27.38.png%3Falt%3Dmedia%26token%3D26130639-7222-440f-96ed-f831809b0b13&width=768&dpr=1&quality=100&sign=10dc87fe&sv=2)
+![Choose Tournament](https://files.gitbook.com/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FImDYjEFAKhFH3xx152ap%2Fuploads%2FJdAYWsOI7khKN8zGDKxS%2FScreenshot%202025-01-02%20at%200.40.19.png?alt=media&token=843607ed-9cbe-4ee6-8bf1-c2136f719f27)
 
 - Currently, we offer one exciting tournament featuring our AI Agent, **"Zynx"**, who is designed to guard a secret key phrase. 🤫
 - **Your challenge**: Trick Zynx into revealing the secret key phrase to win a reward. 🥳
@@ -38,7 +38,7 @@ We aim to create a decentralized platform where companies can:
 
 ### 2. **Break the LLM Restrictions 🤖**
 
-![Break Restrictions](https://jailbreak.gitbook.io/~gitbook/image?url=https%3A%2F%2F2436591088-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FImDYjEFAKhFH3xx152ap%252Fuploads%252FQW5akSt4q05CZLM4v1FH%252Fbreak.png%3Falt%3Dmedia%26token%3Dc4273e5c-1293-4f66-922b-79ad1e39f1e5&width=768&dpr=1&quality=100&sign=3c0f5895&sv=2)
+![Break Restrictions](https://files.gitbook.com/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FImDYjEFAKhFH3xx152ap%2Fuploads%2FgpPmeRFf4PobUYYeqtKT%2FScreenshot%202025-01-02%20at%200.42.53.png?alt=media&token=b57e683b-34e3-4a34-a86c-ac41c8c24a43)
 
 - Send your prompts to the AI model and attempt to solve the challenge.
 - For this tournament, the goal is to uncover the **secret key phrase** protected by the AI agent.
@@ -47,7 +47,7 @@ We aim to create a decentralized platform where companies can:
 
 ### 3. **Win the Prize Pool 🏆**
 
-![Win Prize Pool](https://jailbreak.gitbook.io/~gitbook/image?url=https%3A%2F%2F2436591088-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FImDYjEFAKhFH3xx152ap%252Fuploads%252FwhuEKD7SjMHrcj8QN4Nx%252Fconcluded_censored.jpeg%3Falt%3Dmedia%26token%3Dca57a380-75f3-40cb-a139-aeee453a9562&width=768&dpr=1&quality=100&sign=c993ff61&sv=2)
+![Win Prize Pool](https://files.gitbook.com/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FImDYjEFAKhFH3xx152ap%2Fuploads%2FelDUxC82Krz0jLPNw5RG%2FScreenshot%202025-01-02%20at%200.41.10.png?alt=media&token=e41b0b7b-1106-4994-b5dc-ec7496a365c9)
 
 - Once the challenge is solved (e.g., when the key phrase is revealed), the **prize pool** is automatically transferred to the sender of the winning message. 🎉
 
