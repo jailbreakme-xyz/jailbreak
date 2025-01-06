@@ -69,7 +69,7 @@ const Header = (props) => {
         <img
           alt="logo"
           src="/images/logo.png"
-          width="35"
+          width="30"
           className="pointer mainLogo"
           style={{ backgroundColor: "#ebebeb" }}
           onClick={() => {
@@ -138,9 +138,9 @@ const Header = (props) => {
             </div>
           </div>
         </Popover>
-        {/* <a href="/faq" className="beta-header-link pointer">
-          FAQ
-        </a> */}
+        <a href="/jailx" className="beta-header-link pointer">
+          JAILX
+        </a>
         <a
           href="https://dexscreener.com/solana/card131dsufcqfky9ciczd4qj5hbazsqlklsekjjmadp"
           className="beta-header-link pointer"

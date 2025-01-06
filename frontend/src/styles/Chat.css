@@ -267,7 +267,7 @@ border: 0px;
 
   } */
 
-  @media screen and (max-width:768px) {
+  @media screen and (max-width:1024px) {
     .desktopMenu, .desktopChatMenu, .chatPageMain .desktopMenu {
       display: none !important;
     }

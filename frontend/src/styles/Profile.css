@@ -207,7 +207,7 @@ border: 3px double #ebebeb;
     right: 10px; /* Align to the right */
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     .chat-message.user .chat-text {
         border-radius: 0px 20px 20px 20px;
       }

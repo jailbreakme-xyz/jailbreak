@@ -158,3 +158,30 @@ const transactionSchema = new mongoose.Schema(
 );
 
 export const Transaction = mongoose.model("Transaction", transactionSchema);
+
+const socialBountySchema = new mongoose.Schema(
+  {
+    name: String,
+    image: String,
+    targetUrl: String,
+    prize: Number,
+    sol_prize: Number,
+    task: String,
+    submissions: Array,
+    txn: String,
+    jailbreak: {
+      url: String,
+    },
+    date: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+    creator: String,
+  },
+  {
+    collection:
+      process.env.NODE_ENV === "development"
+        ? "social_bounties"
+        : "social_bounties",
+  }
+);
+
+export const SocialBounty = mongoose.model("SocialBounty", socialBountySchema);

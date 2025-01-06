@@ -32,8 +32,8 @@ export default function ChallengeItem({ challenge }) {
             <RiVerifiedBadgeFill
               style={{
                 position: "absolute",
-                bottom: 0,
-                right: 0,
+                bottom: "-5px",
+                right: "-5px",
                 color: "#0BBF99",
                 fontSize: "16px",
                 backgroundColor: "black",
@@ -43,9 +43,22 @@ export default function ChallengeItem({ challenge }) {
           )}
         </div>
         <div className="challenge-details pointer">
-          <h3 className="pointer" style={{ color: "white", fontSize: "16px" }}>
+          <h3
+            className="pointer"
+            style={{
+              color: "white",
+              fontSize: "14px",
+              margin: "0px",
+            }}
+          >
             {challenge.name}
           </h3>
+          <span
+            className="pointer desktop"
+            style={{ fontSize: "12px", color: "#9e9e9e", margin: "0px" }}
+          >
+            {challenge.break_attempts} Attempts
+          </span>
           <span
             className="mobile-break-attempts pointer"
             style={{ color: "white" }}

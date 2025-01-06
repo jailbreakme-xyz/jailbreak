@@ -1341,7 +1341,7 @@ height: 40px;
   margin: 0 50px; /* Provide space for arrow buttons */
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .carousel-arrow {
     display: none; /* Hide arrows on smaller screens */
   }
@@ -1353,7 +1353,7 @@ height: 40px;
 }
 
 
-@media screen and (max-width:768px) {
+@media screen and (max-width:1024px) {
   .docsPage.beta-container {
     width: 90% !important;
   }
@@ -1805,11 +1805,13 @@ font-size: 18px;
   }
 }
 
-@media screen and (min-width:768px) {
+@media screen and (min-width:1025px) {
   .mobileMenu, .mobileOnly {
     display: none;
   }
-
+.mobileMenu {
+  width: fit-content;
+}
 }
 
 
@@ -1887,7 +1889,7 @@ font-size: 18px;
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .filters-panel {
     grid-template-columns: 1fr;
     gap: 1rem;
@@ -1943,7 +1945,7 @@ font-size: 18px;
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .filters-panel {
     grid-template-columns: 1fr;
     gap: 1rem;
@@ -2225,21 +2227,6 @@ font-size: 18px;
   /* animation: pulse 2s infinite; */
 }
 
-/* Pulse animation for legendary prizes */
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.4);
-  }
-  70% {
-    transform: scale(1.05);
-    box-shadow: 0 0 0 10px rgba(255, 0, 0, 0);
-  }
-  100% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
-  }
-}
 
 .beta-agents-list.desktop {
   display: grid;
@@ -2257,7 +2244,7 @@ font-size: 18px;
 }
 
 /* Keep mobile view as is */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .beta-agents-list.desktop {
     display: none;
   }

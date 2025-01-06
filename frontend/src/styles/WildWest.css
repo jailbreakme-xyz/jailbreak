@@ -1,0 +1,207 @@
+@font-face {
+  font-family: "Rye";
+  src: url("../fonts/rye-regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  }
+
+:root {
+  --font-western: "Rye", serif;
+}
+
+.wanted-poster {
+  position: relative;
+}
+
+.wanted-poster::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(
+      circle at 0% 0%,
+      rgba(139, 69, 19, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      rgba(139, 69, 19, 0.15) 0%,
+      transparent 50%
+    );
+  pointer-events: none;
+}
+
+.wanted-poster::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.1;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.wrinkles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: 
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 2px,
+      rgba(139, 69, 19, 0.03) 2px,
+      rgba(139, 69, 19, 0.03) 4px
+    );
+  filter: url(#paper-wrinkle);
+}
+
+.sheriff-star {
+  width: 50px;
+  height: 50px;
+  position: relative;
+}
+
+.sheriff-star::before {
+  content: '★';
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  font-size: 1rem;
+  color: #B8860B;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.sheriff-star.left {
+  transform: rotate(-15deg);
+}
+
+.sheriff-star.right {
+  transform: rotate(15deg);
+}
+
+.wildWestTheme .beta-header .socialIcons .userIcon svg {
+  border: 3px double #f4e4bc;
+}
+.wildWestTheme .wallet-adapter-button {
+  background-color: #f4e4bc !important;
+  background-image: linear-gradient(to right, rgba(255,210,0,0.4), rgba(200, 160, 0, 0.1) 11%, rgba(0,0,0,0) 35%, rgba(200, 160, 0, 0.1) 65%);
+  box-shadow: inset 0 0 75px rgba(255,210,0,0.3), inset 0 0 20px rgba(255,210,0,0.4), inset 0 0 30px rgba(220,120,0,0.8);
+  color: black !important;
+  border: none !important;
+}
+.wildWestTheme .wallet-adapter-button:hover {
+  background-color: #f4e4bc !important;
+  color: black !important;
+  border: none !important;
+}
+
+.wildWestTheme * {
+  font-family: var(--font-western) !important;
+}
+
+.wanted-link {
+  text-decoration: none !important;
+  color: #2b1810;
+  text-transform: uppercase;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  font-family: var(--font-western), serif;
+}
+
+.wildWestTheme .beta-header-link:hover {
+  color: #B8860B;
+}
+
+.wildWestTheme .footer-link:hover {
+    color: #B8860B;
+  }
+
+.wildWestTheme .pfp-container {
+  border: 2px solid #2b1810 !important;
+}
+
+.wildWestTheme select,
+.wildWestTheme select:focus {
+    outline: none !important;
+    -webkit-focus-ring-color: none !important;
+    box-shadow: none !important;
+}
+
+@media (max-width: 768px) {
+    .headerSection {
+      flex-direction: column !important;
+      gap: 15px;
+      text-align: center;
+    }
+  
+    .headerLeft {
+      justify-content: center;
+      flex-direction: column !important;
+      gap: 10px !important;
+    }
+  
+    .headerLeft div {
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+    .headerRight {
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+    }
+    .headerLeft img {
+        width: 40px !important;
+        margin-bottom: 10px !important;
+    }
+
+    .headerRight button {
+        align-self: center !important;
+    }
+    .pageTitle {
+      font-size: 22px !important;
+    }
+  
+    .grid {
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) !important;
+      padding: 0px 10px !important;
+      gap: 15px !important;
+    }
+  
+    .wanted-poster {
+      max-width: 250px !important;
+      padding: 20px 20px !important;
+    }
+  .singlePoster {
+    margin: 20px auto !important;
+  }
+    .wanted {
+      font-size: 2rem;
+      letter-spacing: 0.4rem;
+    }
+  
+    .amount {
+      font-size: 2.5rem;
+    }
+  
+    .jailbroken-stamp {
+      font-size: 2rem;
+      padding: 8px 16px;
+    }
+  
+    .container {
+      padding: 10px;
+    }
+  
+    .totalPrize {
+      font-size: 16px !important;
+    }
+    .listBountyModalBox {
+        width: 300px !important;
+        height: 75vh !important;
+        padding: 60px 20px !important;
+    }
+
+  }

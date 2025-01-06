@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import mermaid from "mermaid";
 import Header from "../components/templates/Header";
-
+import Footer from "../components/templates/Footer";
 // Initialize Mermaid
 mermaid.initialize({ startOnLoad: false });
 
@@ -78,7 +78,7 @@ classDef sensitive fill:#ffebee,stroke:#ef5350,color:#d32f2f
       <Header />
       <div style={styles.container}>
         <img
-          src="https://storage.googleapis.com/jailbreakme-images/DALL%C2%B7E%202024-12-25%2018.16.41%20-%20A%20flat%20and%20minimalistic%20logo%20for%20JailX%20with%20the%20letters%20'X'%20or%20'JX'.%20The%20design%20should%20be%20black%20and%20white%20only%2C%20using%20clean%20geometric%20shapes%20and%20sharp%20copy.webp"
+          src="https://storage.googleapis.com/jailbreakme-images/alcatraz.webp"
           alt="logo"
           style={styles.logo}
         />
@@ -514,6 +514,9 @@ classDef sensitive fill:#ffebee,stroke:#ef5350,color:#d32f2f
           </div>
         </section>
       </div>
+      <div style={{ backgroundColor: "black" }}>
+        <Footer />
+      </div>
     </div>
   );
 };
@@ -524,8 +527,9 @@ const styles = {
     width: "80px",
     height: "80px",
     margin: "0px 0px 30px",
-    borderRadius: "12px",
+    borderRadius: "120px",
     display: "block",
+    border: "6px double black",
   },
   container: {
     maxWidth: "1000px",

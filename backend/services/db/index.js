@@ -4,10 +4,10 @@ import {
   Pages,
   Transaction,
   Breaker,
+  SocialBounty,
 } from "../../models/Models.js";
 import dotenv from "dotenv";
 import { agentValidator } from "../../validators/agentValidator.js";
-
 dotenv.config();
 
 class DataBaseService {
@@ -824,6 +824,85 @@ class DataBaseService {
 
   async getFullAgent(agentId, walletAddress) {
     return await Challenge.findOne({ _id: agentId, owner: walletAddress });
+  }
+
+  async getSocialBounties({
+    limit = 100,
+    lastId = null,
+    sort = "date_desc",
+    sortDirection = -1,
+  }) {
+    try {
+      // Build base query
+      const query = lastId
+        ? {
+            _id: sortDirection === 1 ? { $gt: lastId } : { $lt: lastId },
+          }
+        : {};
+
+      // Define sort configuration
+      const sortConfigs = {
+        date_asc: { createdAt: 1 },
+        date_desc: { createdAt: -1 },
+        prize_asc: { prize: 1 },
+        prize_desc: { prize: -1 },
+      };
+
+      const sortBy = sortConfigs[sort] || { createdAt: -1 };
+
+      const bounties = await SocialBounty.find(query)
+        .sort({ ...sortBy, _id: sortDirection })
+        .limit(limit);
+
+      // Get the next cursor
+      const hasMore = bounties.length === limit;
+      const nextCursor = hasMore ? bounties[bounties.length - 1]._id : null;
+
+      return {
+        bounties,
+        nextCursor,
+        hasMore,
+      };
+    } catch (error) {
+      console.error("Error fetching social bounties:", error);
+      return null;
+    }
+  }
+
+  async addBountySubmission(bountyId, url) {
+    try {
+      const result = await SocialBounty.updateOne(
+        { _id: bountyId },
+        {
+          $addToSet: { submissions: url },
+          $set: { updatedAt: new Date() },
+        }
+      );
+
+      return result.modifiedCount > 0;
+    } catch (error) {
+      console.error("Database error adding submission:", error);
+      throw error;
+    }
+  }
+
+  async getBountyById(id) {
+    try {
+      return await SocialBounty.findOne({ _id: id });
+    } catch (error) {
+      console.error("Database error fetching bounty:", error);
+      throw error;
+    }
+  }
+
+  async getBountyBySignature(signature) {
+    return await SocialBounty.findOne({
+      txn: signature,
+    });
+  }
+
+  async createBounty(bounty) {
+    return await SocialBounty.create(bounty);
   }
 }
 

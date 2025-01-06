@@ -5,39 +5,45 @@ import { BiSolidImageAdd } from "react-icons/bi";
 
 const fileTypes = ["JPG", "JPEG", "PNG", "GIF"];
 
-const CircleContainer = styled("div")({
-  width: "90px",
-  height: "90px",
-  borderRadius: "50%",
-  border: "2px dashed #0BBF99",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  overflow: "hidden",
-  position: "relative",
-  cursor: "pointer",
-});
-
-const Image = styled("img")({
-  width: "100%",
-  height: "100%",
-  objectFit: "cover",
-  position: "absolute",
-  top: 0,
-  left: 0,
-});
-
-const IconContainer = styled("div")({
-  position: "absolute",
-  zIndex: 1,
-  color: "#0BBF99",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-});
-
-const ProfilePictureUploader = ({ onFileChange, preview, sample }) => {
+const ProfilePictureUploader = ({
+  onFileChange,
+  preview,
+  sample,
+  customColor,
+  customFilter,
+}) => {
   const [imagePreview, setImagePreview] = useState(sample);
+
+  const CircleContainer = styled("div")({
+    width: "90px",
+    height: "90px",
+    borderRadius: "50%",
+    border: `2px dashed ${customColor ? customColor : "#0BBF99"}`,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+    position: "relative",
+    cursor: "pointer",
+  });
+
+  const Image = styled("img")({
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    position: "absolute",
+    top: 0,
+    left: 0,
+  });
+
+  const IconContainer = styled("div")({
+    position: "absolute",
+    zIndex: 1,
+    color: customColor ? customColor : "#0BBF99",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  });
 
   const handleFileChange = (file) => {
     if (!file) return;
@@ -90,7 +96,12 @@ const ProfilePictureUploader = ({ onFileChange, preview, sample }) => {
             src={imagePreview}
             alt="Profile Preview"
             className="pointer"
-            style={{ width: "90px", height: "90px", objectFit: "cover" }}
+            style={{
+              width: "90px",
+              height: "90px",
+              objectFit: "cover",
+              filter: customFilter ? customFilter : "none",
+            }}
           />
 
           <Overlay className="pointer">Upload</Overlay>

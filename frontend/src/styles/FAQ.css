@@ -54,7 +54,7 @@
     color: #ebebeb;
   }
   
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     .faq-title {
       font-size: 1.5rem;
     }

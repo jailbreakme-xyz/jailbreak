@@ -155,7 +155,7 @@ export default function ChatMenu({ challenge, attempts, price, usdPrice }) {
         <div className="expiry-section">
           <div
             className="section-header"
-            style={{ alignItems: "center", marginBottom: "10px" }}
+            style={{ alignItems: "center", marginBottom: "20px" }}
           >
             <h3>
               <FaClock className="header-icon" /> EXPIRY

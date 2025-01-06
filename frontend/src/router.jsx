@@ -11,6 +11,7 @@ import JailTokens from "./pages/JailTokens";
 import Agents from "./pages/Agents";
 import Breakers from "./pages/Breakers";
 import SocialBounties from "./pages/SocialBounties";
+import SocialBounty from "./pages/SocialBounty";
 
 export const router = createBrowserRouter([
   {
@@ -57,8 +58,12 @@ export const router = createBrowserRouter([
     path: "/breakers",
     element: <Breakers />,
   },
-  // {
-  //   path: "/social-bounties",
-  //   element: <SocialBounties />,
-  // },
+  {
+    path: "/jailx",
+    element: <SocialBounties />,
+  },
+  {
+    path: "/jailx/:id",
+    element: <SocialBounty />,
+  },
 ]);

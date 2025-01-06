@@ -9,7 +9,7 @@ import { PublicKey } from "@solana/web3.js";
 import { solanaAuth } from "../middleware/solanaAuth.js";
 import multer from "multer";
 import { validateTournament } from "../hooks/validateTournament.js";
-
+import { validateBounty } from "../validators/bountyValidator.js";
 dotenv.config();
 
 const router = express.Router();
@@ -347,5 +347,37 @@ router.post(
     }
   }
 );
+
+router.post("/get-bounty-transaction", solanaAuth, async (req, res) => {
+  const { prize, targetUrl, task } = req.body;
+
+  const name = targetUrl.split("/").pop();
+  const { error } = validateBounty({ name, prize, targetUrl, task });
+  if (error) {
+    return res.status(400).json({
+      error: error.details.map((detail) => detail.message).join(", "),
+    });
+  }
+
+  const userWalletAddress = req.user.walletAddress;
+  const blockchainService = new BlockchainService(solanaRpc, null);
+
+  const deploymentData = await DataBaseService.getOnePage({
+    name: "deployment-data",
+  });
+
+  const ownerAddress = deploymentData.content.deploymentData.owner_address;
+
+  const result = await blockchainService.createBountyTransaction(
+    prize,
+    userWalletAddress,
+    ownerAddress
+  );
+
+  res.json({
+    serializedTransaction: result.serializedTransaction,
+    token: req.user.token,
+  });
+});
 
 export { router as transactionsRoute };

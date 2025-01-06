@@ -757,6 +757,99 @@ class BlockchainService {
       return false;
     }
   }
+
+  async createBountyTransaction(amount, userWalletAddress, ownerAddress) {
+    const transaction = new Transaction();
+    transaction.add(
+      SystemProgram.transfer({
+        fromPubkey: new PublicKey(userWalletAddress),
+        toPubkey: new PublicKey(ownerAddress),
+        lamports: BigInt(amount * LAMPORTS_PER_SOL),
+      })
+    );
+
+    const { blockhash } = await this.connection.getLatestBlockhash();
+    transaction.recentBlockhash = blockhash;
+    transaction.feePayer = new PublicKey(userWalletAddress);
+
+    const serializedTransaction = transaction.serialize({
+      requireAllSignatures: false,
+    });
+
+    const base64Transaction = serializedTransaction.toString("base64");
+
+    return {
+      serializedTransaction: base64Transaction,
+    };
+  }
+
+  async verifyBountyTransaction(
+    transactionSignature,
+    ownerAddress,
+    fromAddress
+  ) {
+    try {
+      const transaction = await this.connection.getParsedTransaction(
+        transactionSignature,
+        {
+          commitment: "confirmed",
+        }
+      );
+
+      if (!transaction) {
+        console.log("Transaction not found");
+        return {
+          isValid: false,
+        };
+      }
+
+      // Verify sender
+      const senderKey =
+        transaction.transaction.message.accountKeys[0].pubkey.toString();
+      if (senderKey !== fromAddress) {
+        console.log("Invalid sender address");
+        return {
+          isValid: false,
+        };
+      }
+
+      // Find the transfer to owner address
+      const transferAmount = transaction.meta.preBalances.reduce(
+        (amount, preBalance, index) => {
+          const postBalance = transaction.meta.postBalances[index];
+          const accountKey =
+            transaction.transaction.message.accountKeys[
+              index
+            ].pubkey.toString();
+
+          if (accountKey === ownerAddress) {
+            return (postBalance - preBalance) / LAMPORTS_PER_SOL;
+          }
+          return amount;
+        },
+        0
+      );
+
+      if (transferAmount < 2) {
+        console.log(
+          "Transaction must transfer at least 2 SOL to owner address"
+        );
+        return {
+          isValid: false,
+        };
+      }
+
+      return {
+        isValid: true,
+        transferAmount,
+      };
+    } catch (error) {
+      console.log("Transaction verification failed:", error);
+      return {
+        isValid: false,
+      };
+    }
+  }
 }
 
 export default BlockchainService;
