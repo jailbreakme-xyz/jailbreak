@@ -77,6 +77,19 @@ const MobileMenu = (props) => {
           <MdRocketLaunch size={25} /> CREATE AGENT
         </Link>
         <Link
+          to="/jailx"
+          className="chatMainMenuItem pointer"
+          onClick={() => setMenuOpen(false)}
+        >
+          <img
+            src="https://storage.googleapis.com/jailbreakme-images/jailxLogo.png"
+            alt="jailx"
+            width="25"
+            style={{ borderRadius: "100px", border: "5px double white" }}
+          />{" "}
+          JAILX
+        </Link>
+        <Link
           to="/faq"
           className="chatMainMenuItem pointer"
           onClick={() => setMenuOpen(false)}
