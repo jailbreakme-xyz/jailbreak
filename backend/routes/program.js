@@ -12,6 +12,7 @@ import getSolPriceInUSDT from "../hooks/solPrice.js";
 import { parseInstructions } from "../hooks/parseInstructions.js";
 import { solanaAuth } from "../middleware/solanaAuth.js";
 import { validateTournament } from "../hooks/validateTournament.js";
+import { generateUsername } from "unique-username-generator";
 
 dotenv.config();
 
@@ -448,9 +449,9 @@ router.post("/generate-agent", async (req, res) => {
     await DataBaseService.saveBreakerIfNotExists(newBreaker);
   }
 
+  const randomName = generateUsername();
   const newAgent = await OpenAIService.generateAgent(
-    false,
-    name,
+    name || randomName,
     instructions,
     opening_message
   );

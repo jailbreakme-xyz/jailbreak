@@ -193,7 +193,7 @@ margin: auto;
 } */
 
 .assistant, .system {
-padding: 1.5rem;
+padding: 1rem 0rem;
 }
 
 .assistant > div, .system > div, .user > div {

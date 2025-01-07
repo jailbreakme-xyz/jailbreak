@@ -9,12 +9,8 @@ class OpenAIService {
       apiKey: process.env.OPEN_AI_SECRET,
     });
     this.jailX = process.env.JAILX_ID;
-    // this.agent_generator = "asst_pJcUZQfuZhQI8ej1RXpdlqY5";
-    // this.agent_generator_thread = "thread_qCHyRE2VfXA01gCraCwu2FYK";
-    this.agent_generator = "asst_ZJmqNo975Ew4QB68NN2LaLJk";
-    this.agent_generator_thread = "thread_3NclHdsux5o4DcgRDXR4PeXZ";
-    this.agent_generator_advanced = "asst_O0CCtL3dw9XsxdMtZIKzSDSK";
-    this.agent_generator_advanced_thread = "thread_vkPufDx6Wz6sL2UNzuJOmZio";
+    this.agent_generator = process.env.AGENT_GENERATOR_ID;
+    this.agent_generator_thread = process.env.AGENT_GENERATOR_THREAD_ID;
     this.model = "gpt-4o-mini";
     this.finish_reasons = [
       {
@@ -181,7 +177,7 @@ class OpenAIService {
     }
   }
 
-  async generateAgent(advanced, name, instructions, opening_message) {
+  async generateAgent(name, instructions, opening_message) {
     // Build content array with non-empty fields
     const details = [];
     if (name) details.push(`Name: ${name}`);
@@ -196,13 +192,9 @@ class OpenAIService {
       "- Ensure the narrative is cohesive and engaging\n\n" +
       (details.length > 0 ? "Using these details:\n" + details.join("\n") : "");
 
-    const assistant = advanced
-      ? this.agent_generator_advanced
-      : this.agent_generator;
+    const assistant = this.agent_generator;
 
-    const thread = advanced
-      ? this.agent_generator_advanced_thread
-      : this.agent_generator_thread;
+    const thread = this.agent_generator_thread;
 
     await this.addMessageToThread(thread, content);
 
@@ -211,7 +203,7 @@ class OpenAIService {
       assistant,
       "none",
       false,
-      1024 * 5
+      1024 * 3
     );
 
     // const prompt = [
