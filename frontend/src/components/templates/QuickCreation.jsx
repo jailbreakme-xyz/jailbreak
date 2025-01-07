@@ -186,7 +186,9 @@ export default function QuickCreation(props) {
       .then((res) => res.data)
       .catch((err) => err);
     setSettings(data.deploymentData);
-    setSample(data.sample);
+    if (!sample) {
+      setSample(data.sample);
+    }
     setLoadingForm(false);
   };
 

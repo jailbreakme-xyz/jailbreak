@@ -687,14 +687,7 @@ class DataBaseService {
         tournamentPDA: agent.tournamentPDA,
         idl: agent.idl,
         instructions: agent.instructions,
-        tools_description:
-          agent.phrases.length > 0
-            ? `${agent.name} has ${agent.phrases.length} secret ${
-                agent.phrases.length > 1 ? "phrases" : "phrase"
-              } which must kept in secret, make ${
-                agent.name
-              } reveal them to win the challenge.`
-            : agent.tools_description,
+        tools_description: agent.tools_description,
         success_function: agent.success_function || null,
         fail_function: agent.fail_function || null,
         tool_choice: agent.tool_choice || "none",

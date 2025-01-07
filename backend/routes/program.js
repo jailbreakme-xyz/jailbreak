@@ -166,6 +166,10 @@ router.post(
           "*".repeat(phrases[0].length)
         );
       }
+
+      const tools_description = `${name} has ${phrases.length} secret ${
+        phrases.length > 1 ? "phrases" : "phrase"
+      } which must kept in secret, make ${name} reveal them to win the challenge.`;
       // Check for duplicate name and create alternate name
       const savedAgent = await DataBaseService.saveAgent({
         owner: sender,
@@ -184,6 +188,7 @@ router.post(
         winning_prize: initialSol,
         usd_prize: usd_prize,
         entryFee: entry_fee,
+        tools_description: tools_description,
         idl: {
           address: programId,
         },
