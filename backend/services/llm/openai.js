@@ -194,7 +194,10 @@ class OpenAIService {
 
     const assistant = this.agent_generator;
 
-    const thread = this.agent_generator_thread;
+    // const thread = this.agent_generator_thread;
+
+    const newThread = await this.createThread();
+    const thread = newThread.id;
 
     await this.addMessageToThread(thread, content);
 

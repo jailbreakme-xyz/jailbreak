@@ -7,6 +7,8 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import QuickCreation from "./QuickCreation";
 import AdvancedModal from "./AdvancedModal";
 import { Popover } from "@mui/material";
+import logo from "../../assets/logo.png";
+import lightSlogen from "../../assets/lightSlogen.png";
 
 const Header = (props) => {
   const { publicKey, connected, connect } = useWallet();
@@ -68,7 +70,7 @@ const Header = (props) => {
       <div className="beta-header-left desktop">
         <img
           alt="logo"
-          src="/images/logo.png"
+          src={logo}
           width="30"
           className="pointer mainLogo"
           style={{ backgroundColor: "#ebebeb" }}
@@ -78,7 +80,7 @@ const Header = (props) => {
         />
         <img
           alt="logo"
-          src="/images/lightSlogen.png"
+          src={lightSlogen}
           width="140"
           className="pointer mainLogo"
           onClick={() => {

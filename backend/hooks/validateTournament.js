@@ -33,7 +33,17 @@ export const validateTournament = ({
         (phrase) => !tournament.instructions.includes(phrase)
       )
     ) {
-      return "Phrases must be in the instructions";
+      const missingPhrases = tournament.phrases.filter(
+        (phrase) => !tournament.instructions.includes(phrase)
+      );
+
+      if (missingPhrases.length > 0) {
+        tournament.instructions =
+          tournament.instructions +
+          "\n\n" +
+          "Here are the secret phrases you should keep:\n" +
+          missingPhrases.join("\n");
+      }
     }
   } else {
     if (tournament.tools.length < 2) {

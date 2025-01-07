@@ -449,7 +449,7 @@ router.post("/generate-agent", async (req, res) => {
     await DataBaseService.saveBreakerIfNotExists(newBreaker);
   }
 
-  const randomName = generateUsername();
+  const randomName = generateUsername("_", 0, 8);
   const newAgent = await OpenAIService.generateAgent(
     name || randomName,
     instructions,

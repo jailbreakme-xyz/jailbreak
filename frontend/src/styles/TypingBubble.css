@@ -45,6 +45,7 @@
     align-items: flex-start;
     justify-content: flex-start;
     gap: 10px;
+    padding-left: 1rem;
   }
 
   .bubble-loading-container img {

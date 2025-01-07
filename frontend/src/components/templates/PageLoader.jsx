@@ -1,6 +1,8 @@
 import React from "react";
 import { BarLoader } from "react-spinners";
 import "../../styles/Beta.css";
+import logo from "../../assets/logo.png";
+import lightSlogen from "../../assets/lightSlogen.png";
 
 const override = {
   display: "block",
@@ -24,7 +26,7 @@ const PageLoader = () => {
           <div className="page-loader" style={{ textAlign: "center" }}>
             <div>
               <img
-                src="/images/logo.png"
+                src={logo}
                 width="60"
                 alt="logo"
                 style={{
@@ -35,7 +37,7 @@ const PageLoader = () => {
                   padding: "5px",
                 }}
               />
-              <img src="/images/lightSlogen.png" width="100" alt="logo" />
+              <img src={lightSlogen} width="100" alt="logo" />
             </div>
             <BarLoader color="#ccc" size={150} cssOverride={override} />
             <br />
