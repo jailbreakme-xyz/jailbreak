@@ -17,10 +17,12 @@ const Footer = (props) => {
 
   const handleQuickCreationClose = () => {
     setQuickCreationOpen(false);
+    props.isUploading.current = false;
   };
 
   const handleAdvancedModalClose = () => {
     setAdvancedModalOpen(false);
+    props.isUploading.current = false;
   };
 
   const handleAdvancedModalOpen = () => {
@@ -143,6 +145,7 @@ const Footer = (props) => {
         </div>
       </div>
       <QuickCreation
+        isUploading={props.isUploading}
         open={quickCreationOpen}
         onClose={handleQuickCreationClose}
         setAdvancedModalOpen={setAdvancedModalOpen}
@@ -150,6 +153,7 @@ const Footer = (props) => {
         publicKey={publicKey}
       />
       <AdvancedModal
+        isUploading={props.isUploading}
         formOpen={advancedModalOpen}
         setFormOpen={setAdvancedModalOpen}
         connected={connected}

@@ -135,6 +135,7 @@ export default function Break() {
   const [errorModalOpen, setErrorModalOpen] = useState(null);
   // const shouldScrollRef = useRef(false);
   const previousWalletRef = useRef(null);
+  const isUploading = useRef(false);
 
   const { publicKey, sendTransaction, connected, wallet, connect } =
     useWallet();
@@ -261,9 +262,14 @@ export default function Break() {
   };
 
   const getChallenge = async (noLoading) => {
+    if (isUploading.current) {
+      return;
+    }
+
     if (!noLoading) {
       setPageLoading(true);
     }
+
     try {
       const data = await axios
         .get(
@@ -510,6 +516,7 @@ export default function Break() {
       <div className="chatPageWrapper fullWidthPage">
         <div className="chatHeader">
           <Header
+            isUploading={isUploading}
             solPrice={solPrice}
             challenge={challenge}
             attempts={attempts}

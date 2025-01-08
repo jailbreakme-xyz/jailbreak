@@ -23,10 +23,12 @@ const Header = (props) => {
 
   const handleQuickCreationClose = () => {
     setQuickCreationOpen(false);
+    props.isUploading.current = false;
   };
 
   const handleAdvancedModalClose = () => {
     setAdvancedModalOpen(false);
+    props.isUploading.current = false;
   };
 
   const handleAdvancedModalOpen = () => {
@@ -196,6 +198,7 @@ const Header = (props) => {
           />
         </div>
         <QuickCreation
+          isUploading={props.isUploading}
           open={quickCreationOpen}
           onClose={handleQuickCreationClose}
           setAdvancedModalOpen={setAdvancedModalOpen}
@@ -203,6 +206,7 @@ const Header = (props) => {
           publicKey={publicKey}
         />
         <AdvancedModal
+          isUploading={props.isUploading}
           formOpen={advancedModalOpen}
           setFormOpen={setAdvancedModalOpen}
           connected={connected}

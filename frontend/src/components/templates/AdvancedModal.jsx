@@ -16,6 +16,7 @@ export default function AdvancedModal({
   editError,
   setEditError,
   mode,
+  isUploading,
 }) {
   return (
     <Dialog
@@ -27,6 +28,7 @@ export default function AdvancedModal({
       {/* <Header /> */}
       <DialogContent sx={{ p: { xs: 0, md: 2 } }}>
         <AdvancedCreation
+          isUploading={isUploading}
           sample={sample}
           handleAdvancedModalClose={handleAdvancedModalClose}
           close={true}

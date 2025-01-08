@@ -13,6 +13,7 @@ const Hero = ({
   handleQuickCreationOpen,
   handleQuickCreationClose,
   quickCreationOpen,
+  isUploading,
 }) => {
   const { publicKey, connected } = useWallet();
   const [advancedModalOpen, setAdvancedModalOpen] = useState(false);
@@ -23,6 +24,7 @@ const Hero = ({
 
   const handleAdvancedModalClose = () => {
     setAdvancedModalOpen(false);
+    isUploading.current = false;
   };
 
   return (
@@ -118,6 +120,7 @@ const Hero = ({
           </Link>
         </div>
         <QuickCreation
+          isUploading={isUploading}
           open={quickCreationOpen}
           onClose={handleQuickCreationClose}
           sample={data?.challenges?.find((agent) => agent.sample === "quick")}
@@ -126,6 +129,7 @@ const Hero = ({
           publicKey={publicKey}
         />
         <AdvancedModal
+          isUploading={isUploading}
           formOpen={advancedModalOpen}
           setFormOpen={setAdvancedModalOpen}
           connected={connected}

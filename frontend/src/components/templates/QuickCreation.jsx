@@ -177,6 +177,7 @@ export default function QuickCreation(props) {
     setImagePreview(null);
     props.onClose();
     formik.resetForm();
+    props.isUploading.current = false;
   };
 
   const loadSettings = async () => {
@@ -265,6 +266,32 @@ export default function QuickCreation(props) {
     }
   };
 
+  const handleFileChange = (file) => {
+    if (!file) return;
+
+    // Set uploading state to true
+    props.isUploading.current = true;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (reader.error) {
+        console.error("Error reading file:", reader.error);
+        props.isUploading.current = false; // Reset on error
+        return;
+      }
+      setImagePreview(reader.result);
+      formik.setFieldValue("pfp", file);
+      // Don't reset isUploading here as we'll need it for the form submission
+    };
+
+    reader.onerror = (error) => {
+      console.error("FileReader error:", error);
+      props.isUploading.current = false; // Reset on error
+    };
+
+    reader.readAsDataURL(file);
+  };
+
   const createTransaction = async (values) => {
     setLaunchLoading("Creating Transaction...");
     try {
@@ -320,10 +347,13 @@ export default function QuickCreation(props) {
           setLaunchLoading(null);
           return false;
         });
+
+      // Reset uploading state after successful submission
+      props.isUploading.current = false;
     } catch (error) {
       console.error("Error creating transaction:", error);
-      setErrorModalOpen(error.response.data.error);
-      setLaunchLoading(null);
+      props.isUploading.current = false; // Reset on error
+      setErrorModalOpen(error.response?.data?.error || error.message);
     }
   };
 
@@ -522,11 +552,10 @@ export default function QuickCreation(props) {
                     >
                       {!loadingForm ? (
                         <ProfilePictureUploader
+                          isUploading={props.isUploading}
                           sample={sample?.pfp}
                           preview={imagePreview}
-                          onFileChange={(file) =>
-                            formik.setFieldValue("pfp", file)
-                          }
+                          onFileChange={(file) => handleFileChange(file)}
                           error={
                             formik.touched.pfp ? formik.errors.pfp : undefined
                           }

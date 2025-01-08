@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./styles/Beta.css";
 import axios from "axios";
 import Header from "./components/templates/Header";
@@ -25,6 +25,7 @@ export default function App() {
   const [trendingAgents, setTrendingAgents] = useState(null);
   const [latestChallenges, setLatestChallenges] = useState(null);
   const [challenges, setChallenges] = useState(null);
+  const isUploading = useRef(false);
 
   const handleQuickCreationOpen = () => {
     setQuickCreationOpen(true);
@@ -32,38 +33,22 @@ export default function App() {
 
   const handleQuickCreationClose = () => {
     setQuickCreationOpen(false);
+    isUploading.current = false;
   };
 
   const getContent = async (initial) => {
+    if (isUploading.current && !initial) {
+      return;
+    }
+
     if (initial) {
       setLoading(true);
     }
+
     const newData = await axios
       .get(`/api/settings`)
       .then((res) => res.data)
       .catch((err) => err);
-
-    // const newTrendingAgentsStr = JSON.stringify(newData?.trendingAgents);
-    // const currentTrendingAgentsStr = JSON.stringify(trendingAgents);
-    // const newLatestChallengesStr = JSON.stringify(newData?.latestChallenges);
-    // const currentLatestChallengesStr = JSON.stringify(latestChallenges);
-    // const newChallengesStr = JSON.stringify(newData?.challenges);
-    // const currentChallengesStr = JSON.stringify(challenges);
-    // const newDataStr = JSON.stringify(newData);
-    // const currentDataStr = JSON.stringify(data);
-
-    // if (newTrendingAgentsStr !== currentTrendingAgentsStr || initial) {
-    //   setTrendingAgents(newData?.trendingAgents);
-    // }
-    // if (newLatestChallengesStr !== currentLatestChallengesStr || initial) {
-    //   setLatestChallenges(newData?.latestChallenges);
-    // }
-    // if (newChallengesStr !== currentChallengesStr || initial) {
-    //   setChallenges(newData?.challenges);
-    // }
-    // if (newDataStr !== currentDataStr || initial) {
-    //   setData(newData);
-    // }
 
     setTrendingAgents(newData?.trendingAgents);
     setLatestChallenges(newData?.latestChallenges);
@@ -88,12 +73,14 @@ export default function App() {
           handleQuickCreationOpen={handleQuickCreationOpen}
           handleQuickCreationClose={handleQuickCreationClose}
           quickCreationOpen={quickCreationOpen}
+          isUploading={isUploading}
         />
         {loading ? (
           <PageLoader />
         ) : (
           <div className="beta-container">
             <Hero
+              isUploading={isUploading}
               data={data}
               handleQuickCreationOpen={handleQuickCreationOpen}
               handleQuickCreationClose={handleQuickCreationClose}
@@ -213,7 +200,7 @@ export default function App() {
                 ))}
               </div>
             </div>
-            <Footer />
+            <Footer isUploading={isUploading} />
           </div>
         )}
       </div>

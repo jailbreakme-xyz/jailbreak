@@ -714,6 +714,7 @@ const AdvancedCreation = (props) => {
             >
               {!loadingForm ? (
                 <ProfilePictureUploader
+                  isUploading={props.isUploading}
                   sample={sample?.pfp}
                   preview={imagePreview}
                   onFileChange={(file) => formik.setFieldValue("pfp", file)}

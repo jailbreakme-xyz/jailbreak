@@ -1,5 +1,5 @@
-import React, { useState, useEffect, memo, useRef } from "react";
-import { FileUploader } from "react-drag-drop-files";
+import React, { useState, useEffect, memo, useRef, useCallback } from "react";
+// import { FileUploader } from "react-drag-drop-files";
 import { styled } from "@mui/system";
 import { BiSolidImageAdd } from "react-icons/bi";
 
@@ -25,9 +25,20 @@ const ProfilePictureUploader = ({
   sample,
   customColor,
   customFilter,
+  isUploading,
 }) => {
   const [imagePreview, setImagePreview] = useState(sample);
   const fileUploaderRef = useRef(null);
+
+  // const FileUploader = memo(({ onFileChange }) => (
+  //   <input
+  //     ref={fileUploaderRef}
+  //     type="file"
+  //     accept="image/jpeg,image/jpg,image/png,image/gif"
+  //     onChange={(e) => onFileChange(e.target.files[0])}
+  //     style={{ display: "none" }}
+  //   />
+  // ));
 
   const CircleContainer = styled("div")({
     width: "90px",
@@ -62,11 +73,14 @@ const ProfilePictureUploader = ({
 
   const handleFileChange = (file) => {
     if (!file) return;
-    const reader = new FileReader();
 
+    isUploading.current = true;
+
+    const reader = new FileReader();
     reader.onloadend = () => {
       if (reader.error) {
         console.error("Error reading file:", reader.error);
+        isUploading.current = false;
         return;
       }
       setImagePreview(reader.result);
@@ -75,6 +89,7 @@ const ProfilePictureUploader = ({
 
     reader.onerror = (error) => {
       console.error("FileReader error:", error);
+      isUploading.current = false;
     };
 
     reader.readAsDataURL(file);
@@ -103,10 +118,19 @@ const ProfilePictureUploader = ({
         ref={fileUploaderRef}
         type="file"
         accept="image/jpeg,image/jpg,image/png,image/gif"
-        onChange={(e) => handleFileChange(e.target.files[0])}
+        onChange={(e) => {
+          handleFileChange(e.target.files[0]);
+        }}
         style={{ display: "none" }}
       />
-      <div onClick={() => fileUploaderRef.current?.click()}>
+      {/* <FileUploader onFileChange={handleFileChange} /> */}
+
+      <div
+        onClick={() => {
+          isUploading.current = true;
+          fileUploaderRef.current?.click();
+        }}
+      >
         {imagePreview ? (
           <>
             <MemoizedImage src={imagePreview} customFilter={customFilter} />
@@ -118,13 +142,13 @@ const ProfilePictureUploader = ({
           </IconContainer>
         )}
       </div>
-      <FileUploader
+      {/* <FileUploader
         classes="file-uploader"
         handleChange={handleFileChange}
         name="file"
         types={fileTypes}
         style={{ display: "none" }}
-      />
+      /> */}
     </CircleContainer>
   );
 };
