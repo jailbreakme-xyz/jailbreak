@@ -1,9 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo, useRef } from "react";
 import { FileUploader } from "react-drag-drop-files";
 import { styled } from "@mui/system";
 import { BiSolidImageAdd } from "react-icons/bi";
 
 const fileTypes = ["JPG", "JPEG", "PNG", "GIF"];
+
+const MemoizedImage = memo(({ src, customFilter }) => (
+  <img
+    src={src}
+    alt="Profile Preview"
+    className="pointer"
+    style={{
+      width: "90px",
+      height: "90px",
+      objectFit: "cover",
+      filter: customFilter ? customFilter : "none",
+    }}
+  />
+));
 
 const ProfilePictureUploader = ({
   onFileChange,
@@ -13,6 +27,7 @@ const ProfilePictureUploader = ({
   customFilter,
 }) => {
   const [imagePreview, setImagePreview] = useState(sample);
+  const fileUploaderRef = useRef(null);
 
   const CircleContainer = styled("div")({
     width: "90px",
@@ -77,39 +92,32 @@ const ProfilePictureUploader = ({
   });
 
   useEffect(() => {
-    if (preview && preview !== imagePreview) {
+    if (preview) {
       setImagePreview(preview);
     }
-  }, [preview, imagePreview]);
+  }, [preview]);
 
   return (
-    <CircleContainer
-      className="pointer pfp-container"
-      onClick={() =>
-        document.getElementsByClassName("file-uploader")[0].click()
-      }
-    >
-      {imagePreview ? (
-        <>
-          <img
-            src={imagePreview}
-            alt="Profile Preview"
-            className="pointer"
-            style={{
-              width: "90px",
-              height: "90px",
-              objectFit: "cover",
-              filter: customFilter ? customFilter : "none",
-            }}
-          />
-
-          <Overlay className="pointer">Upload</Overlay>
-        </>
-      ) : (
-        <IconContainer className="pointer">
-          <BiSolidImageAdd size={30} className="pointer" />
-        </IconContainer>
-      )}
+    <CircleContainer className="pointer pfp-container">
+      <input
+        ref={fileUploaderRef}
+        type="file"
+        accept="image/jpeg,image/jpg,image/png,image/gif"
+        onChange={(e) => handleFileChange(e.target.files[0])}
+        style={{ display: "none" }}
+      />
+      <div onClick={() => fileUploaderRef.current?.click()}>
+        {imagePreview ? (
+          <>
+            <MemoizedImage src={imagePreview} customFilter={customFilter} />
+            <Overlay className="pointer">Upload</Overlay>
+          </>
+        ) : (
+          <IconContainer className="pointer">
+            <BiSolidImageAdd size={30} className="pointer" />
+          </IconContainer>
+        )}
+      </div>
       <FileUploader
         classes="file-uploader"
         handleChange={handleFileChange}

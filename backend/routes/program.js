@@ -389,6 +389,7 @@ router.post(
         tldr: tldr,
         start_date: startDate,
         expiry: expiryDate,
+        status: startDate > Date.now() ? "upcoming" : "active",
         characterLimit: characterLimit,
         contextLimit: contextLimit,
         charactersPerWord: charactersPerWord,
