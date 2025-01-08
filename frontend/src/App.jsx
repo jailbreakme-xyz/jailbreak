@@ -65,6 +65,11 @@ export default function App() {
       setData(newData);
     }
 
+    // setTrendingAgents(newData?.trendingAgents);
+    // setLatestChallenges(newData?.latestChallenges);
+    // setChallenges(newData?.challenges);
+    // setData(newData);
+
     if (initial) {
       setLoading(false);
     }
@@ -80,7 +85,6 @@ export default function App() {
     <div className="fullWidthPage">
       <div>
         <Header
-          activeChallenge={data?.activeChallenge}
           handleQuickCreationOpen={handleQuickCreationOpen}
           handleQuickCreationClose={handleQuickCreationClose}
           quickCreationOpen={quickCreationOpen}

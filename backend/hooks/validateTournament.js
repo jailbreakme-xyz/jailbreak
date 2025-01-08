@@ -76,22 +76,6 @@ export const validateTournament = ({
 
     if (
       tournament.tools.some(
-        (tool) => !tool.description.match(/^[a-zA-Z0-9_-]+$/)
-      )
-    ) {
-      return "Tool descriptions can only contain letters, numbers, underscores, and hyphens";
-    }
-
-    if (
-      tournament.tools.some(
-        (tool) => !tool.instruction.match(/^[a-zA-Z0-9_-]+$/)
-      )
-    ) {
-      return "Tool instructions can only contain letters, numbers, underscores, and hyphens";
-    }
-
-    if (
-      tournament.tools.some(
         (tool) => tool.name.length < 2 || tool.name.length > 255
       )
     ) {

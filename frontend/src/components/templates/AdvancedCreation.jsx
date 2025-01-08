@@ -1013,12 +1013,28 @@ const AdvancedCreation = (props) => {
                           label={
                             <LabelWithTooltip
                               label="Name"
-                              tooltip="The name of this tool - this is what the agent will use to reference it"
+                              tooltip="The name of this tool - this is what the agent will use to reference it (only letters, numbers, underscores, and hyphens allowed)"
                             />
                           }
                           name={`tools.${index}.name`}
                           value={tool.name}
-                          onChange={formik.handleChange}
+                          onChange={(e) => {
+                            const newValue = e.target.value;
+                            if (
+                              newValue === "" ||
+                              /^[a-zA-Z0-9_-]+$/.test(newValue)
+                            ) {
+                              formik.handleChange(e);
+                            }
+                          }}
+                          error={
+                            tool.name && !/^[a-zA-Z0-9_-]+$/.test(tool.name)
+                          }
+                          helperText={
+                            tool.name && !/^[a-zA-Z0-9_-]+$/.test(tool.name)
+                              ? "Only letters, numbers, underscores, and hyphens allowed"
+                              : ""
+                          }
                           variant="outlined"
                           placeholder={
                             sample?.tools[index]?.name || "Enter a name"

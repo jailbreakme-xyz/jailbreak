@@ -77,10 +77,10 @@ const ProfilePictureUploader = ({
   });
 
   useEffect(() => {
-    if (preview) {
+    if (preview && preview !== imagePreview) {
       setImagePreview(preview);
     }
-  }, [preview]);
+  }, [preview, imagePreview]);
 
   return (
     <CircleContainer

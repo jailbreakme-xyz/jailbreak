@@ -189,7 +189,6 @@ const Header = (props) => {
             challenge={props.challenge}
             usdPrice={props.usdPrice}
             usdPrize={props.usdPrize}
-            activeChallenge={props.activeChallenge}
             component={props.component}
             solPrice={props.solPrice}
             address={props.address}
