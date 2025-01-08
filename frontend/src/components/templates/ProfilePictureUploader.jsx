@@ -47,7 +47,6 @@ const ProfilePictureUploader = ({
 
   const handleFileChange = (file) => {
     if (!file) return;
-
     const reader = new FileReader();
 
     reader.onloadend = () => {

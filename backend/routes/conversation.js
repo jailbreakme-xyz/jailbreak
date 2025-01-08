@@ -282,19 +282,20 @@ router.post("/submit/:id", solanaAuth, async (req, res) => {
           (tool) => tool.name === functionName
         )?.parameters?.properties;
         const functionParamsKeys = Object.keys(functionParams);
-        const results = functionParamsKeys
+        let results = functionParamsKeys
           .map((key) => {
             if (key === "results") {
               return jsonArgs[key];
             } else {
-              const resultString = `${
-                key.replace(/_/g, " ").charAt(0).toUpperCase() +
-                key.replace(/_/g, " ").slice(1)
-              }: ${jsonArgs[key]}`;
+              const resultString = `**${key
+                .split("_")
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(" ")}**: ${jsonArgs[key]}`;
               return resultString.replace("Response: ", "");
             }
           })
           .join("\n");
+        results = `### 🚨 Function Called:\n${results}`;
 
         if (required_action.type === "submit_tool_outputs") {
           const tool_outputs = [

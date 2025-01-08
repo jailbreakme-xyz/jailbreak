@@ -38,20 +38,41 @@ export default function App() {
     if (initial) {
       setLoading(true);
     }
-    const data = await axios
+    const newData = await axios
       .get(`/api/settings`)
       .then((res) => res.data)
       .catch((err) => err);
-    setData(data);
-    setTrendingAgents(data?.trendingAgents);
-    setLatestChallenges(data?.latestChallenges);
-    setChallenges(data?.challenges);
-    setLoading(false);
+
+    const newTrendingAgentsStr = JSON.stringify(newData?.trendingAgents);
+    const currentTrendingAgentsStr = JSON.stringify(trendingAgents);
+    const newLatestChallengesStr = JSON.stringify(newData?.latestChallenges);
+    const currentLatestChallengesStr = JSON.stringify(latestChallenges);
+    const newChallengesStr = JSON.stringify(newData?.challenges);
+    const currentChallengesStr = JSON.stringify(challenges);
+    const newDataStr = JSON.stringify(newData);
+    const currentDataStr = JSON.stringify(data);
+
+    if (newTrendingAgentsStr !== currentTrendingAgentsStr || initial) {
+      setTrendingAgents(newData?.trendingAgents);
+    }
+    if (newLatestChallengesStr !== currentLatestChallengesStr || initial) {
+      setLatestChallenges(newData?.latestChallenges);
+    }
+    if (newChallengesStr !== currentChallengesStr || initial) {
+      setChallenges(newData?.challenges);
+    }
+    if (newDataStr !== currentDataStr || initial) {
+      setData(newData);
+    }
+
+    if (initial) {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     getContent(true);
-    const interval = setInterval(() => getContent(false), 3000);
+    const interval = setInterval(() => getContent(false), 5000);
     return () => clearInterval(interval);
   }, []);
 

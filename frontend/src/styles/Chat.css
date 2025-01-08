@@ -21,7 +21,7 @@
     flex-direction: column;
     align-items: stretch;  
   }
-  
+
   /* Chat Bubbles */
   .chat-bubble {
     position: relative;
@@ -49,6 +49,34 @@
     /* justify-content: flex-end; */
     /* flex-direction: row-reverse; */
   }
+
+  .chat-bubble.assistant h3 {
+    margin: 5px 0px;
+  }
+
+  .chat-bubble.assistant pre {
+    background-color: #000;
+    border-radius: 6px;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border: 1px solid #000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+  }
+
+  .chat-bubble.assistant pre > div {
+    background-color: #000 !important;
+  }
+  .chat-bubble.assistant code * {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace !important;
+    background-color: #000 !important;
+    color: #0BBF99 !important;
+  }
+
+  .chat-bubble.assistant code, .chat-bubble.assistant code > span {
+    white-space: pre-wrap !important;
+  }
+
   .chat-bubble .avatar {
     flex-shrink: 0;
     margin: 0 10px;

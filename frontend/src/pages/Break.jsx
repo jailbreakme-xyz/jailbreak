@@ -24,6 +24,10 @@ import ErrorModal from "../components/templates/ErrorModal";
 import bs58 from "bs58";
 import { useParams, useNavigate } from "react-router-dom";
 import { RiVerifiedBadgeFill } from "react-icons/ri";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { duotoneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 const SOLANA_RPC =
   process.env.NODE_ENV === "development"
@@ -72,12 +76,33 @@ export function ParsedText({ message }) {
             </pre>
           );
         } else {
-          return block.content.split("\n").map((line, lineIndex) => (
-            <React.Fragment key={`${index}-${lineIndex}`}>
-              <span className="typewriter">{line}</span>
-              <br />
-            </React.Fragment>
-          ));
+          return (
+            <Markdown
+              key={`${index}`}
+              components={{
+                h1: ({ node, ...props }) => (
+                  <h1
+                    style={{ fontSize: "1.5em", fontWeight: "bold" }}
+                    {...props}
+                  />
+                ),
+                h2: ({ node, ...props }) => (
+                  <h2
+                    style={{ fontSize: "1.3em", fontWeight: "bold" }}
+                    {...props}
+                  />
+                ),
+                h3: ({ node, ...props }) => (
+                  <h3
+                    style={{ fontSize: "1.1em", fontWeight: "bold" }}
+                    {...props}
+                  />
+                ),
+              }}
+            >
+              {block.content}
+            </Markdown>
+          );
         }
       })}
     </div>
@@ -472,6 +497,14 @@ export default function Break() {
     setPrompt(sanitizedValue);
   };
 
+  const formatCodeBlocks = (content) => {
+    // Add language identifier to code blocks that don't have one
+    return content.replace(/```(\s*?)([^:\n]*)\n/, (match, space, lang) => {
+      if (!lang) return "```uri\n";
+      return match;
+    });
+  };
+
   return (
     <main className="main">
       <div className="chatPageWrapper fullWidthPage">
@@ -719,7 +752,54 @@ export default function Break() {
                                 />
                               </div>
                               <div className="message">
-                                <ParsedText message={item.content} />
+                                <div>
+                                  <Markdown
+                                    children={formatCodeBlocks(item.content)}
+                                    remarkPlugins={[remarkGfm]}
+                                    components={{
+                                      p: ({ node, ...props }) => (
+                                        <span
+                                          style={{ whiteSpace: "pre-line" }}
+                                          {...props}
+                                        />
+                                      ),
+                                      code(props) {
+                                        const {
+                                          children,
+                                          className,
+                                          node,
+                                          ...rest
+                                        } = props;
+                                        const match = /language-(\w+)/.exec(
+                                          className || ""
+                                        );
+                                        return match ? (
+                                          <SyntaxHighlighter
+                                            {...rest}
+                                            PreTag="div"
+                                            children={String(children).replace(
+                                              /\n$/,
+                                              ""
+                                            )}
+                                            language={match[1]}
+                                            style={duotoneDark}
+                                            wrapLongLines={true}
+                                            wrapLines={true}
+                                          />
+                                        ) : (
+                                          <code
+                                            {...rest}
+                                            className={className}
+                                            style={{ whiteSpace: "pre-wrap" }}
+                                          >
+                                            {children}
+                                          </code>
+                                        );
+                                      },
+                                    }}
+                                  />
+                                </div>
+
                                 <TimeAgo date={new Date(item.date)} />
                                 {item.address && (
                                   <p

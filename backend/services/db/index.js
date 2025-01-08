@@ -664,7 +664,7 @@ class DataBaseService {
         expiry: agent.expiry || new Date(Date.now() + 24 * 60 * 60 * 1000),
         model: agent.model || "gpt-4o-mini",
         contextLimit: agent.contextLimit || 1,
-        chatLimit: agent.chatLimit || 100,
+        chatLimit: agent.chatLimit || 500,
         characterLimit: agent.characterLimit || 500,
         charactersPerWord: agent.charactersPerWord || null,
         suffix: agent.suffix || null,

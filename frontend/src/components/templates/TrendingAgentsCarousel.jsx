@@ -150,17 +150,15 @@ export default function TrendingAgentsCarousel({ agents }) {
                             }}
                           />
                           {agent.verified_owner?.link ? (
-                            <a
+                            <span
                               className="pointer"
-                              href={agent.verified_owner?.link}
-                              target="_blank"
                               style={{
                                 color: "#0BBF99",
                                 textDecoration: "none",
                               }}
                             >
                               {agent.verified_owner?.name}
-                            </a>
+                            </span>
                           ) : (
                             <span>{agent.verified_owner?.name}</span>
                           )}

@@ -190,6 +190,9 @@ router.get("/get-challenge", async (req, res) => {
         const airdropShare = 100 - owner_fee - winnerShare - creatorShare;
 
         let successMessage = `⏱️ Tournament Expired - ${winnerShare}% to winner, ${creatorShare}% to creator, ${airdropShare}% to airdrop`;
+        successMessage += `\n💰 Total prize: ${
+          tournamentData.total_lamports / LAMPORTS_PER_SOL
+        } SOL`;
 
         const senders = await DatabaseService.getSendersByChallenge({
           challenge: challengeName,
@@ -256,8 +259,12 @@ router.get("/get-challenge", async (req, res) => {
           totalCreatorAmount
         );
 
-        const totalCreatorSol = totalCreatorAmount / LAMPORTS_PER_SOL;
-        successMessage += `\n👑 Sent ${totalCreatorSol.toFixed(
+        // const totalCreatorSol = totalCreatorAmount / LAMPORTS_PER_SOL;
+        const creatorShareSol =
+          (tournamentData.total_lamports * creatorShare) /
+          100 /
+          LAMPORTS_PER_SOL;
+        successMessage += `\n👑 Sent ${creatorShareSol.toFixed(
           3
         )} SOL to creator\n${
           creatorAirdropped && creatorAirdropped.length > 0

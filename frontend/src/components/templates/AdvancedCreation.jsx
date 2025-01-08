@@ -1163,7 +1163,7 @@ const AdvancedCreation = (props) => {
               <NumberInputAdornments
                 min={300}
                 max={1000}
-                step={100}
+                step={50}
                 value={formik.values.characterLimit}
                 onChange={(val) => formik.setFieldValue("characterLimit", val)}
                 label="Character Limit"
