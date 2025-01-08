@@ -215,8 +215,8 @@ const AdvancedCreation = (props) => {
         .max(10000, "Initial Pool Size must be at most 10,000")
         .required("Initial Pool Size is required"),
       fee_multiplier: Yup.number()
-        .min(100, "Fee Multiplier must be at least 1%")
-        .max(500, "Fee Multiplier must be at most 5%")
+        .min(20, "Fee Multiplier must be at most 5%")
+        .max(100, "Fee Multiplier must be at least 1%")
         .required("Fee Multiplier is required"),
       start_date: Yup.date().required("Start date is required"),
       expiry: Yup.date().required("Expiry date is required"),
@@ -1267,14 +1267,14 @@ const AdvancedCreation = (props) => {
                 />
               </p>
               <NumberInputAdornments
-                min={100}
-                max={500}
-                step={100}
+                min={20}
+                max={100}
+                step={10}
                 value={formik.values.fee_multiplier}
                 onChange={(val) => {
                   Number(val)
                     ? formik.setFieldValue("fee_multiplier", val)
-                    : formik.setFieldValue("fee_multiplier", 100);
+                    : formik.setFieldValue("fee_multiplier", 10);
                 }}
                 label="Fee Multiplier"
                 name="fee_multiplier"

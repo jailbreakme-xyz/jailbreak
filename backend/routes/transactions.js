@@ -278,7 +278,7 @@ router.post(
       const body = JSON.parse(req.body.data);
       const sender = user.walletAddress;
       const initialSol = body.initial_pool_size;
-      const feeMulPct = body.fee_multiplier / 10;
+      const feeMulPct = 100 / body.fee_multiplier;
       const systemPrompt = body.instructions;
       const developer_fee = body.developer_fee;
       const constant_message_price = body.constant_message_price;
@@ -293,7 +293,7 @@ router.post(
       const error = validateTournament({
         tournament: {
           ...body,
-          fee_multiplier: feeMulPct / 10,
+          fee_multiplier: feeMulPct,
           phrases:
             body.tournament_type === "phrases"
               ? body.phrases
@@ -315,7 +315,7 @@ router.post(
         sender,
         new PublicKey(programId),
         initialSol,
-        feeMulPct,
+        feeMulPct * 10,
         winnerPayoutPct,
         systemPrompt,
         feeType,

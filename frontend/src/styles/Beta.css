@@ -608,8 +608,8 @@ font-size: 12px;
   }
 
   .beta-footer {
-    padding: 2rem 0;
-    background: rgba(255, 255, 255, 0.02);
+    padding: 20px 30px;
+    background: #000000;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     margin-top: 40px;
   }
