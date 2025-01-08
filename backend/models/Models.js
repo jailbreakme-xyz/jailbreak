@@ -56,6 +56,7 @@ const ChallengeSchema = new mongoose.Schema(
     sample_keyword: String,
     jailx_thread: String,
     tournament_id: String,
+    hero: Boolean,
     verified_owner: {
       type: Object,
       default: null,

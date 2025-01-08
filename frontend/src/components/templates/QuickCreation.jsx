@@ -111,7 +111,7 @@ export default function QuickCreation(props) {
 
   const formik = useFormik({
     initialValues: {
-      pfp: sample?.pfp,
+      pfp: null,
       name: "",
       title: "",
       opening_message: "",

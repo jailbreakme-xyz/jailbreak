@@ -43,32 +43,32 @@ export default function App() {
       .then((res) => res.data)
       .catch((err) => err);
 
-    const newTrendingAgentsStr = JSON.stringify(newData?.trendingAgents);
-    const currentTrendingAgentsStr = JSON.stringify(trendingAgents);
-    const newLatestChallengesStr = JSON.stringify(newData?.latestChallenges);
-    const currentLatestChallengesStr = JSON.stringify(latestChallenges);
-    const newChallengesStr = JSON.stringify(newData?.challenges);
-    const currentChallengesStr = JSON.stringify(challenges);
-    const newDataStr = JSON.stringify(newData);
-    const currentDataStr = JSON.stringify(data);
+    // const newTrendingAgentsStr = JSON.stringify(newData?.trendingAgents);
+    // const currentTrendingAgentsStr = JSON.stringify(trendingAgents);
+    // const newLatestChallengesStr = JSON.stringify(newData?.latestChallenges);
+    // const currentLatestChallengesStr = JSON.stringify(latestChallenges);
+    // const newChallengesStr = JSON.stringify(newData?.challenges);
+    // const currentChallengesStr = JSON.stringify(challenges);
+    // const newDataStr = JSON.stringify(newData);
+    // const currentDataStr = JSON.stringify(data);
 
-    if (newTrendingAgentsStr !== currentTrendingAgentsStr || initial) {
-      setTrendingAgents(newData?.trendingAgents);
-    }
-    if (newLatestChallengesStr !== currentLatestChallengesStr || initial) {
-      setLatestChallenges(newData?.latestChallenges);
-    }
-    if (newChallengesStr !== currentChallengesStr || initial) {
-      setChallenges(newData?.challenges);
-    }
-    if (newDataStr !== currentDataStr || initial) {
-      setData(newData);
-    }
+    // if (newTrendingAgentsStr !== currentTrendingAgentsStr || initial) {
+    //   setTrendingAgents(newData?.trendingAgents);
+    // }
+    // if (newLatestChallengesStr !== currentLatestChallengesStr || initial) {
+    //   setLatestChallenges(newData?.latestChallenges);
+    // }
+    // if (newChallengesStr !== currentChallengesStr || initial) {
+    //   setChallenges(newData?.challenges);
+    // }
+    // if (newDataStr !== currentDataStr || initial) {
+    //   setData(newData);
+    // }
 
-    // setTrendingAgents(newData?.trendingAgents);
-    // setLatestChallenges(newData?.latestChallenges);
-    // setChallenges(newData?.challenges);
-    // setData(newData);
+    setTrendingAgents(newData?.trendingAgents);
+    setLatestChallenges(newData?.latestChallenges);
+    setChallenges(newData?.challenges);
+    setData(newData);
 
     if (initial) {
       setLoading(false);

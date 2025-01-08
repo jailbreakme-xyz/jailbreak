@@ -29,7 +29,15 @@ router.get("/", async (req, res) => {
         { limit: 10 }
       );
 
-    activeChallenge = topChallengesByPrize[0];
+    const heroChallenges = await DatabaseService.getChallengesByQuery({
+      hero: true,
+    });
+
+    activeChallenge =
+      heroChallenges.length > 0
+        ? heroChallenges[Math.floor(Math.random() * heroChallenges.length)]
+        : topChallengesByPrize[0];
+
     // Fallback
     if (topChallengesByPrize.length < 10) {
       topChallengesByPrize = await DatabaseService.getSortedChallengesByStatus(

@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { RiVerifiedBadgeFill } from "react-icons/ri";
-
+import Timer from "../partials/Timer";
 const numbersWithCommas = (x) => {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
@@ -112,11 +112,20 @@ const AgentCardAlt = ({
               </span>
             </div>
             <div className="stat-item">
-              <span className="stat-label">Break Attempts</span>
-              <span className="stat-value" style={{ color: "white" }}>
-                {numbersWithCommas(agent.break_attempts)}{" "}
-                {agent.break_attempts === 1 ? "Attempt" : "Attempts"}
-              </span>
+              {agent.status !== "upcoming" ? (
+                <>
+                  <span className="stat-label">Break Attempts</span>
+                  <span className="stat-value" style={{ color: "white" }}>
+                    {numbersWithCommas(agent.break_attempts)}{" "}
+                    {agent.break_attempts === 1 ? "Attempt" : "Attempts"}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="stat-label">Starts in</span>
+                  <Timer expiryDate={agent.start_date} />
+                </>
+              )}
             </div>
           </div>
         </div>

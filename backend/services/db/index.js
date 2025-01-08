@@ -164,6 +164,38 @@ class DataBaseService {
     }
   }
 
+  async getChallengesByQuery(query) {
+    try {
+      const challenges = await Challenge.find(query, {
+        id: "$_id",
+        _id: 1,
+        owner: 1,
+        name: 1,
+        title: 1,
+        image: 1,
+        label: 1,
+        level: 1,
+        status: 1,
+        pfp: 1,
+        entryFee: 1,
+        expiry: 1,
+        winning_prize: 1,
+        developer_fee: 1,
+        start_date: 1,
+        usd_prize: 1,
+        break_attempts: 1,
+        fee_multiplier: 1,
+        tag: 1,
+        sample: 1,
+        sample_keyword: 1,
+        verified_owner: 1,
+      });
+      return challenges;
+    } catch (error) {
+      console.error("Database Service Error:", error);
+      return false;
+    }
+  }
   async getSortedChallengesByStatus(
     status = "active",
     sort = { usd_prize: -1 },

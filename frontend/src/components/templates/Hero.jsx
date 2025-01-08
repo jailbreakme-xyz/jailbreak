@@ -178,7 +178,12 @@ const Hero = ({
       </div>
       <div className="beta-content-right">
         {data?.activeChallenge && (
-          <AgentCardAlt agent={data?.activeChallenge} />
+          <div
+            className="fade-in-section"
+            key={data.activeChallenge.id || Math.random()}
+          >
+            <AgentCardAlt agent={data?.activeChallenge} />
+          </div>
         )}
       </div>
     </div>
