@@ -1,0 +1,393 @@
+.character-form {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: #161B22;
+  border-radius: 12px;
+  border: 1px solid #21262D;
+}
+
+.form-section {
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #30363D;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  color: #8B949E;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  background: #0D1117;
+  border: 1px solid #30363D;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: #0BBF99;
+  box-shadow: 0 0 0 2px rgba(11, 191, 153, 0.2);
+  outline: none;
+}
+
+.form-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Listbox Styles */
+.listbox-container {
+  position: relative;
+}
+
+.listbox-button {
+  width: 100%;
+  padding: 0.75rem;
+  background: #0D1117;
+  border: 1px solid #30363D;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.listbox-button:focus {
+  border-color: #0BBF99;
+  box-shadow: 0 0 0 2px rgba(11, 191, 153, 0.2);
+  outline: none;
+}
+
+.listbox-icon {
+  color: #8B949E;
+}
+
+.listbox-options {
+  position: absolute;
+  width: 100%;
+  margin-top: 0.5rem;
+  background: #1C2128;
+  border: 1px solid #30363D;
+  border-radius: 6px;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.listbox-option {
+  padding: 0.75rem;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.listbox-option.active {
+  background: rgba(11, 191, 153, 0.1);
+}
+
+.listbox-option .selected {
+  color: #0BBF99;
+}
+
+/* Switch Styles */
+.switch-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.switch {
+  width: 3rem;
+  height: 1.5rem;
+  background: #21262D;
+  border-radius: 999px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.switch.active {
+  background: #0BBF99;
+}
+
+.switch-handle {
+  display: block;
+  width: 1.25rem;
+  height: 1.25rem;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 0.125rem;
+  left: 0.125rem;
+  transition: all 0.2s;
+}
+
+.switch.active .switch-handle {
+  transform: translateX(1.5rem);
+}
+
+/* Button Styles */
+.btn-icon {
+  padding: 0.5rem;
+  background: #21262D;
+  border: none;
+  border-radius: 6px;
+  color: #F85149;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-icon:hover {
+  background: #2D333B;
+}
+
+.btn-add {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #21262D;
+  border: none;
+  border-radius: 6px;
+  color: #0BBF99;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-add:hover {
+  background: #2D333B;
+}
+
+.btn-submit {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: #0BBF99;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-submit:hover {
+  background: #0AA588;
+  transform: translateY(-1px);
+}
+
+.array-item {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Add this to fix the black labels */
+.subsection-title {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+/* Add these new styles */
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-col {
+  flex: 1;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.character-metadata {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.form-section.half-width {
+  margin-bottom: 1rem;
+}
+
+.section-group {
+  background: #1C2128;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid #30363D;
+}
+
+.section-group-title {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #30363D;
+}
+
+.array-item {
+  margin-bottom: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  .character-form {
+    padding: 1rem;
+    margin: 1rem;
+    max-width: 100%;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .character-metadata {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .section-group {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .form-section {
+    margin-bottom: 1rem;
+  }
+
+  .array-item {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .array-item .btn-icon {
+    align-self: flex-end;
+  }
+
+  .btn-add {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .form-label {
+    font-size: 0.85rem;
+  }
+
+  .section-group-title {
+    font-size: 1.1rem;
+  }
+
+  .section-title {
+    font-size: 1rem;
+  }
+
+  .subsection-title {
+    font-size: 1rem;
+  }
+
+  .listbox-button {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .listbox-option {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .form-input,
+  .form-textarea {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .switch-container {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .btn-submit {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Additional tablet breakpoint for better scaling */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .character-form {
+    padding: 1.5rem;
+    margin: 1.5rem auto;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-group {
+    padding: 1.25rem;
+  }
+}
+
+/* Hover states only for devices that support hover */
+@media (hover: hover) {
+  .btn-add:hover {
+    background: #2D333B;
+  }
+
+  .btn-icon:hover {
+    background: #2D333B;
+  }
+
+  .btn-submit:hover {
+    background: #0AA588;
+    transform: translateY(-1px);
+  }
+
+  .listbox-option:hover {
+    background: rgba(11, 191, 153, 0.1);
+  }
+} 

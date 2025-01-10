@@ -1,0 +1,122 @@
+.create-character-page {
+  min-height: 100vh;
+  background: #0D1117;
+  padding: 2rem;
+}
+
+.page-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.eliza-logo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 6px double #0BBF99;
+  margin: 0 auto 2rem;
+  display: block;
+  box-shadow: 0 0 20px rgba(11, 191, 153, 0.2);
+}
+
+.page-title {
+  color: #fff;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-align: center;
+  position: relative;
+}
+
+.page-title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 3px;
+  background: #0BBF99;
+  border-radius: 2px;
+}
+
+.tabs-container {
+  background: #161B22;
+  border-radius: 12px;
+  padding: 0.5rem;
+  margin-bottom: 2rem;
+  width: fit-content;
+  margin: 0 auto 2rem;
+  border: 1px solid #21262D;
+}
+
+.tabs-list {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tab {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  color: #8B949E;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: transparent;
+  position: relative;
+  min-width: 120px;
+}
+
+.tab:hover {
+  color: #fff;
+  background: rgba(11, 191, 153, 0.1);
+}
+
+.tab.active {
+  background: #0BBF99;
+  color: #fff;
+}
+
+.tab-panels {
+  margin-top: 2rem;
+}
+
+.tab-panel {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+} 
+
+@media screen and (max-width: 768px) {
+  .create-character-page {
+    padding: 2rem 0.5rem;
+  }
+  .section-group {
+    padding: 0rem;
+    background: transparent;
+    border: none;
+    width: 95%;
+  }
+}
+
+.profile-picture-uploader-container {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.create-character-page button {
+    outline: none;
+}

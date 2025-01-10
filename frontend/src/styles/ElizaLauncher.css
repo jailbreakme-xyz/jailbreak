@@ -1,0 +1,147 @@
+.uploader-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: #161B22;
+  border-radius: 12px;
+  border: 1px solid #21262D;
+}
+
+.uploader-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.drop-zone {
+  position: relative;
+  padding: 3rem 2rem;
+  border: 2px dashed #30363D;
+  border-radius: 12px;
+  background: #0D1117;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.drop-zone:hover {
+  border-color: #0BBF99;
+  background: rgba(11, 191, 153, 0.05);
+}
+
+.drop-zone.active {
+  border-color: #0BBF99;
+  background: rgba(11, 191, 153, 0.1);
+}
+
+.drop-zone.has-file {
+  border-style: solid;
+  border-color: #0BBF99;
+  background: rgba(11, 191, 153, 0.15);
+}
+
+.file-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+}
+
+.upload-icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  color: #0BBF99;
+}
+
+.upload-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+}
+
+.upload-subtitle {
+  color: #8B949E;
+  margin: 0;
+}
+
+.file-info {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #0BBF99;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.check-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.status-message {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.status-message.error {
+  background: rgba(248, 81, 73, 0.15);
+  color: #F85149;
+  border: 1px solid rgba(248, 81, 73, 0.4);
+}
+
+.status-message.success {
+  background: rgba(11, 191, 153, 0.15);
+  color: #0BBF99;
+  border: 1px solid rgba(11, 191, 153, 0.4);
+}
+
+.status-message.loading {
+  background: rgba(88, 166, 255, 0.15);
+  color: #58A6FF;
+  border: 1px solid rgba(88, 166, 255, 0.4);
+}
+
+.status-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.submit-button {
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  background: #0BBF99;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.submit-button:hover:not(.disabled) {
+  background: #0AA588;
+  transform: translateY(-1px);
+}
+
+.submit-button.disabled {
+  background: #21262D;
+  cursor: not-allowed;
+  opacity: 0.7;
+} 
