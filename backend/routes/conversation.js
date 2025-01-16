@@ -107,6 +107,10 @@ router.post("/submit/:id", solanaAuth, async (req, res) => {
 
     console.log("isValidTransaction:", isValidTransaction);
 
+    if (!isValidTransaction) {
+      return res.write("INVALID TRANSACTION");
+    }
+
     const solPrice = await getSolPriceInUSDT();
     const usd_prize = sol_prize * solPrice;
 
