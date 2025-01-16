@@ -29,7 +29,7 @@ BEGIN
     ELSIF current_setting('app.use_gaianet_embedding', TRUE) = 'true' THEN
         RETURN 768;  -- Gaianet nomic-embed dimension
     ELSE
-        RETURN 384;   -- BGE/Other embedding dimension
+        RETURN 1536;
     END IF;
 END;
 $$ LANGUAGE plpgsql;
