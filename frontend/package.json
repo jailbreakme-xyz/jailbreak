@@ -13,6 +13,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
+    "@headlessui/react": "^2.2.0",
     "@mui/base": "^5.0.0-beta.67",
     "@mui/lab": "^6.0.0-beta.21",
     "@mui/material": "^6.2.1",

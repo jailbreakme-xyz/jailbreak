@@ -4,7 +4,7 @@ export const tournamentValidator = Joi.object({
   // Required fields
   sender: Joi.string().required(),
   name: Joi.string()
-    .pattern(/^[a-zA-Z0-9_\- ]+$/)
+    .pattern(/^[a-zA-Z0-9_\-. ]+$/)
     .min(3)
     .max(16)
     .required(),

@@ -25,6 +25,48 @@ services:
       - "3000:3000"
     command: npm run preview
 
+  eliza:
+    build:
+      context: eliza
+    container_name: eliza
+    working_dir: /usr/src/app/eliza
+    networks:
+      - node-network
+    tty: true
+    ports:
+      - "3030:3030"
+    environment:
+      - POSTGRES_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    build:
+      context: ./postgres
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - node-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    command: >
+      bash -c "
+        docker-entrypoint.sh postgres &
+        sleep 10 &&
+        psql -U $$POSTGRES_USER -d $$POSTGRES_DB -c 'CREATE EXTENSION IF NOT EXISTS vector;' &
+        wait
+      "
+
   nginx:
     build:
       context: nginx
@@ -38,48 +80,6 @@ services:
     depends_on:
       - back-end
       - front-end
-
-  # eliza:
-  #   build:
-  #     context: eliza
-  #   container_name: eliza
-  #   working_dir: /usr/src/app/eliza
-  #   networks:
-  #     - node-network
-  #   tty: true
-  #   ports:
-  #     - "3030:3030"
-  #   environment:
-  #     - POSTGRES_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-
-  # postgres:
-  #   build:
-  #     context: ./postgres
-  #   environment:
-  #     - POSTGRES_USER=${POSTGRES_USER}
-  #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-  #     - POSTGRES_DB=${POSTGRES_DB}
-  #   ports:
-  #     - "5432:5432"
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   networks:
-  #     - node-network
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-  #     interval: 5s
-  #     timeout: 5s
-  #     retries: 5
-  #   command: >
-  #     bash -c "
-  #       docker-entrypoint.sh postgres &
-  #       sleep 10 &&
-  #       psql -U $$POSTGRES_USER -d $$POSTGRES_DB -c 'CREATE EXTENSION IF NOT EXISTS vector;' &
-  #       wait
-  #     "
 
 networks:
   node-network:

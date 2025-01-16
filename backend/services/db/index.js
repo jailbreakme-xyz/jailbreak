@@ -5,9 +5,11 @@ import {
   Transaction,
   Breaker,
   SocialBounty,
+  Submission,
 } from "../../models/Models.js";
 import dotenv from "dotenv";
 import { agentValidator } from "../../validators/agentValidator.js";
+
 dotenv.config();
 
 class DataBaseService {
@@ -32,7 +34,7 @@ class DataBaseService {
   async getChallengeByName(name, projection = {}) {
     const nameReg = new RegExp(`^${name}$`, "i");
     try {
-      return await Challenge.findOne({ name: nameReg }, projection);
+      return await Challenge.findOne({ name: nameReg }, projection).lean();
     } catch (error) {
       console.error("Database Service Error:", error);
       return false;
@@ -691,7 +693,10 @@ class DataBaseService {
         status: agent.status || "active",
         assistant_id: agent.assistant_id,
         language: "english",
-        disable: agent.disable || ["special_characters"],
+        disable: [...agent.disable, "guessing"] || [
+          "special_characters",
+          "guessing",
+        ],
         start_date: agent.start_date || new Date(),
         expiry: agent.expiry || new Date(Date.now() + 24 * 60 * 60 * 1000),
         model: agent.model || "gpt-4o-mini",
@@ -928,6 +933,10 @@ class DataBaseService {
 
   async createBounty(bounty) {
     return await SocialBounty.create(bounty);
+  }
+
+  async createSubmission(submission) {
+    return await Submission.create(submission);
   }
 }
 

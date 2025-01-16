@@ -1,5 +1,7 @@
 import React from "react";
 import { FaCaretRight } from "react-icons/fa";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 function numberWithCommas(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -16,9 +18,66 @@ export default function AgentInfo({ challenge }) {
 
         {(challenge?.custom_rules || challenge?.tldr) && (
           <div className="info-block">
-            <p className="info-text" style={{ whiteSpace: "pre-line" }}>
+            <Markdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                p: ({ node, ...props }) => (
+                  <span
+                    className="info-text"
+                    style={{
+                      whiteSpace: "pre-line",
+                      display: "block",
+                      fontSize: "14px",
+                    }}
+                    {...props}
+                  />
+                ),
+                a: ({ node, ...props }) => (
+                  <a
+                    target="_blank"
+                    className="info-link pointer"
+                    style={{ color: "#007bff", textDecoration: "underline" }}
+                    {...props}
+                  />
+                ),
+                // Maintain consistent heading sizes
+                h1: ({ node, ...props }) => (
+                  <h1
+                    style={{
+                      fontSize: "1.2em",
+                      fontWeight: "bold",
+                      textAlign: "left",
+                      margin: "2px 0px",
+                    }}
+                    {...props}
+                  />
+                ),
+                h2: ({ node, ...props }) => (
+                  <h2
+                    style={{
+                      fontSize: "1.1em",
+                      fontWeight: "bold",
+                      textAlign: "left",
+                      margin: "2px 0px",
+                    }}
+                    {...props}
+                  />
+                ),
+                h3: ({ node, ...props }) => (
+                  <h3
+                    style={{
+                      fontSize: "1em",
+                      fontWeight: "bold",
+                      textAlign: "left",
+                      margin: "2px 0px",
+                    }}
+                    {...props}
+                  />
+                ),
+              }}
+            >
               {challenge?.tldr ? challenge?.tldr : challenge?.custom_rules}
-            </p>
+            </Markdown>
           </div>
         )}
 
@@ -77,7 +136,8 @@ export default function AgentInfo({ challenge }) {
       </div>
 
       {((challenge?.tools && challenge?.tools.length > 0) ||
-        challenge?.tools_description) && (
+        (challenge?.tools_description &&
+          challenge?.tools_description.length > 0)) && (
         <div className="glass-card">
           <div className="section-header">
             {challenge?.type === "phrases" ? (
@@ -89,7 +149,9 @@ export default function AgentInfo({ challenge }) {
           <div className="divider" />
 
           {challenge?.tools_description ? (
-            <p className="info-text">{challenge?.tools_description}</p>
+            <p className="info-text" style={{ margin: "0px" }}>
+              {challenge?.tools_description}
+            </p>
           ) : (
             <div className="tools-grid">
               {challenge?.tools.map((tool, index) => (

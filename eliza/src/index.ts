@@ -1,41 +1,37 @@
-import { PostgresDatabaseAdapter } from "@ai16z/adapter-postgres";
-import { DirectClientInterface } from "@ai16z/client-direct";
+import { DirectClient } from "@elizaos/client-direct";
 import {
-  DbCacheAdapter,
-  defaultCharacter,
-  ICacheManager,
-  IDatabaseCacheAdapter,
-  stringToUuid,
   AgentRuntime,
-  CacheManager,
-  Character,
-  ModelProviderName,
   elizaLogger,
   settings,
-  IDatabaseAdapter,
-  validateCharacterConfig,
-  composeContext,
-  ModelClass,
-  generateMessageResponse
-} from "@ai16z/eliza";
-import { bootstrapPlugin } from "@ai16z/plugin-bootstrap";
-import { solanaPlugin } from "@ai16z/plugin-solana";
-import { nodePlugin } from "@ai16z/plugin-node";
+  stringToUuid,
+  type Character,
+} from "@elizaos/core";
+import { bootstrapPlugin } from "@elizaos/plugin-bootstrap";
+import { createNodePlugin } from "@elizaos/plugin-node";
+// import { solanaPlugin } from "@elizaos/plugin-solana";
+import walletPlugin from "./plugins/solana/index.ts";
 import fs from "fs";
-import readline from "readline";
-import yargs from "yargs";
+import net from "net";
 import path from "path";
 import { fileURLToPath } from "url";
+import { initializeDbCache } from "./cache/index.ts";
 import { character } from "./character.ts";
-import type { DirectClient } from "@ai16z/client-direct";
+import { initializeClients } from "./clients/index.ts";
+import {
+  getTokenForProvider,
+  loadCharacters,
+  parseArguments,
+} from "./config/index.ts";
+import { initializeDatabase } from "./database/index.ts";
 import express from "express";
 import multer from "multer";
-import { messageHandlerTemplate } from "@ai16z/client-direct";
+import { messageHandlerTemplate } from "@elizaos/client-direct";
+import { composeContext, generateMessageResponse, ModelClass, validateCharacterConfig } from "@elizaos/core";
 
-const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
-const __dirname = path.dirname(__filename); // get the name of the directory
 
-const upload = multer({ storage: multer.memoryStorage() });
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export const wait = (minTime: number = 1000, maxTime: number = 3000) => {
   const waitTime =
@@ -43,148 +39,27 @@ export const wait = (minTime: number = 1000, maxTime: number = 3000) => {
   return new Promise((resolve) => setTimeout(resolve, waitTime));
 };
 
-export function parseArguments(): {
-  character?: string;
-  characters?: string;
-} {
-  try {
-    return yargs(process.argv.slice(2))
-      .option("character", {
-        type: "string",
-        description: "Path to the character JSON file",
-      })
-      .option("characters", {
-        type: "string",
-        description: "Comma separated list of paths to character JSON files",
-      })
-      .parseSync();
-  } catch (error) {
-    console.error("Error parsing arguments:", error);
-    return {};
-  }
-}
-
-export async function loadCharacters(
-  charactersArg?: string
-): Promise<Character[]> {
-  const loadedCharacters = [];
-
-  // If specific characters are provided via args, load them
-  if (charactersArg) {
-    let characterPaths = charactersArg.split(",").map((filePath) => {
-      if (path.basename(filePath) === filePath) {
-        filePath = "../characters/" + filePath;
-      }
-      return path.resolve(process.cwd(), filePath.trim());
-    });
-
-    for (const path of characterPaths) {
-      try {
-        const character = JSON.parse(fs.readFileSync(path, "utf8"));
-        validateCharacterConfig(character);
-        loadedCharacters.push(character);
-      } catch (e) {
-        console.error(`Error loading character from ${path}: ${e}`);
-        process.exit(1);
-      }
-    }
-  } else {
-    // Load all characters from the characters directory
-    const charactersDir = path.join(__dirname, "../characters");
-    try {
-      const files = fs.readdirSync(charactersDir);
-      for (const file of files) {
-        if (file.endsWith('.json')) {
-          const characterPath = path.join(charactersDir, file);
-          try {
-            const character = JSON.parse(fs.readFileSync(characterPath, "utf8"));
-            validateCharacterConfig(character);
-            loadedCharacters.push(character);
-          } catch (e) {
-            console.error(`Error loading character from ${characterPath}: ${e}`);
-            // Continue loading other characters even if one fails
-          }
-        }
-      }
-    } catch (e) {
-      console.error(`Error reading characters directory: ${e}`);
-    }
-  }
-
-  // Fall back to default character if no characters were loaded
-  if (loadedCharacters.length === 0) {
-    console.log("No characters found, using default character");
-    loadedCharacters.push(defaultCharacter);
-  }
-
-  return loadedCharacters;
-}
-
-export function getTokenForProvider(
-  provider: ModelProviderName,
-  character: Character
-) {
-  switch (provider) {
-    case ModelProviderName.OPENAI:
-      return (
-        character.settings?.secrets?.OPENAI_API_KEY || settings.OPENAI_API_KEY
-      );
-    case ModelProviderName.LLAMACLOUD:
-      return (
-        character.settings?.secrets?.LLAMACLOUD_API_KEY ||
-        settings.LLAMACLOUD_API_KEY ||
-        character.settings?.secrets?.TOGETHER_API_KEY ||
-        settings.TOGETHER_API_KEY ||
-        character.settings?.secrets?.XAI_API_KEY ||
-        settings.XAI_API_KEY ||
-        character.settings?.secrets?.OPENAI_API_KEY ||
-        settings.OPENAI_API_KEY
-      );
-    case ModelProviderName.ANTHROPIC:
-      return (
-        character.settings?.secrets?.ANTHROPIC_API_KEY ||
-        character.settings?.secrets?.CLAUDE_API_KEY ||
-        settings.ANTHROPIC_API_KEY ||
-        settings.CLAUDE_API_KEY
-      );
-    case ModelProviderName.REDPILL:
-      return (
-        character.settings?.secrets?.REDPILL_API_KEY || settings.REDPILL_API_KEY
-      );
-    case ModelProviderName.OPENROUTER:
-      return (
-        character.settings?.secrets?.OPENROUTER || settings.OPENROUTER_API_KEY
-      );
-    case ModelProviderName.GROK:
-      return character.settings?.secrets?.GROK_API_KEY || settings.GROK_API_KEY;
-    case ModelProviderName.HEURIST:
-      return (
-        character.settings?.secrets?.HEURIST_API_KEY || settings.HEURIST_API_KEY
-      );
-    case ModelProviderName.GROQ:
-      return character.settings?.secrets?.GROQ_API_KEY || settings.GROQ_API_KEY;
-  }
-}
-
-function initializeDatabase(dataDir: string) {
-  const db = new PostgresDatabaseAdapter({
-    connectionString: process.env.POSTGRES_URL,
-  });
-  return db;
-}
-
+let nodePlugin: any | undefined;
 
 export function createAgent(
   character: Character,
-  db: IDatabaseAdapter,
-  cache: ICacheManager,
+  db: any,
+  cache: any,
   token: string
 ) {
   elizaLogger.success(
     elizaLogger.successesTitle,
     "Creating runtime for character",
-    character.name
+    character.name,
   );
+
+  nodePlugin ??= createNodePlugin();
+
+  // const filteredActions = solanaPlugin.actions.filter(action => action.name === "SEND_TOKEN");
+  // solanaPlugin.actions = filteredActions;
+  // solanaPlugin.evaluators = [];
+  // solanaPlugin.providers = [];
+
   return new AgentRuntime({
     databaseAdapter: db,
     token,
@@ -194,7 +69,7 @@ export function createAgent(
     plugins: [
       bootstrapPlugin,
       nodePlugin,
-      character.settings.secrets?.WALLET_PUBLIC_KEY ? solanaPlugin : null,
+      character.settings?.secrets?.SOLANA_PUBLIC_KEY ? walletPlugin : null,
     ].filter(Boolean),
     providers: [],
     actions: [],
@@ -204,48 +79,62 @@ export function createAgent(
   });
 }
 
-
-function intializeDbCache(character: Character, db: IDatabaseCacheAdapter) {
-  const cache = new CacheManager(new DbCacheAdapter(db, character.id));
-  return cache;
-}
-
 async function startAgent(character: Character, directClient: DirectClient) {
   try {
     character.id ??= stringToUuid(character.name);
     character.username ??= character.name;
 
     const token = getTokenForProvider(character.modelProvider, character);
-    const dataDir = path.join(__dirname, "../data");
 
-    if (!fs.existsSync(dataDir)) {
-      fs.mkdirSync(dataDir, { recursive: true });
-    }
+    const db = await initializeDatabase();
 
-    const db = initializeDatabase(dataDir);
+    // await db.init();
 
-    await db.init();
-
-    const cache = intializeDbCache(character, db);
-    const runtime = createAgent(character, db, cache, token);
+    const cache = initializeDbCache(character, db);
+    const runtime = createAgent(character, db, cache, token as string);
+    // Initialize plugin
+    // runtime.plugins.push(solanaPlugin);
 
     await runtime.initialize();
 
-    // const clients = await initializeClients(character, runtime);
+    runtime.clients = await initializeClients(character, runtime);
 
     directClient.registerAgent(runtime);
 
+    // report to console
+    elizaLogger.debug(`Started ${character.name} as ${runtime.agentId}`);
+
     return runtime;
-    // return clients;
   } catch (error) {
     elizaLogger.error(
       `Error starting agent for character ${character.name}:`,
-      error
+      error,
     );
     console.error(error);
     throw error;
   }
 }
+
+const checkPortAvailable = (port: number): Promise<boolean> => {
+  return new Promise((resolve) => {
+    const server = net.createServer();
+
+    server.once("error", (err: NodeJS.ErrnoException) => {
+      if (err.code === "EADDRINUSE") {
+        resolve(false);
+      }
+    });
+
+    server.once("listening", () => {
+      server.close();
+      resolve(true);
+    });
+
+    server.listen(port);
+  });
+};
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 function verifyApiKey(req: express.Request, res: express.Response, next: express.NextFunction) {
   const apiKey = req.headers['jailbreak-api-key'];
@@ -271,6 +160,15 @@ function setupApiEndpoints(app: express.Application, directClient: DirectClient,
   // Override the existing message endpoint
   app._router.stack = app._router.stack.filter(layer => {
     return !(layer.route && layer.route.path === '/:agentId/message');
+  });
+
+  app.get("/agents", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    res.json(Array.from(agents.values()).map((agent) => ({
+      id: agent.agentId,
+      name: agent.character.name,
+      model: agent.modelProvider,
+      actions: agent.actions,
+    })));
   });
 
   app.post("/:agentId/message", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -384,6 +282,68 @@ function setupApiEndpoints(app: express.Application, directClient: DirectClient,
       next(error); // Pass to error handler
     }
   });
+
+  app.post("/upload-character", upload.single('character'), async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "No file uploaded" });
+      }
+
+      // Parse the uploaded JSON file
+      let characterConfig;
+      try {
+        characterConfig = JSON.parse(req.file.buffer.toString());
+      } catch (e) {
+        return res.status(400).json({ error: "Invalid JSON file" });
+      }
+
+      // Validate the character configuration
+      try {
+        validateCharacterConfig(characterConfig);
+      } catch (e) {
+        return res.status(400).json({ 
+          error: "Invalid character configuration", 
+          details: e.message 
+        });
+      }
+
+      // Generate filename from character name
+      const filename = `${characterConfig.name.toLowerCase().replace(/\s+/g, '-')}.json`;
+      const charactersDir = path.join(__dirname, "../characters");
+      const filePath = path.join(charactersDir, filename);
+
+      // Ensure characters directory exists
+      if (!fs.existsSync(charactersDir)) {
+        fs.mkdirSync(charactersDir, { recursive: true });
+      }
+
+      // Save the character file
+      fs.writeFileSync(filePath, JSON.stringify(characterConfig, null, 2));
+
+      // Start the new character
+      try {
+        const runtime = await startAgent(characterConfig, directClient);
+        agents.set(runtime.agentId, runtime);
+
+        res.json({
+          message: "Character uploaded and started successfully",
+          character: {
+            id: runtime.agentId,
+            name: characterConfig.name,
+            model: characterConfig.modelProvider
+          }
+        });
+      } catch (e) {
+        // If character fails to start, remove the file
+        fs.unlinkSync(filePath);
+        throw e;
+      }
+
+    } catch (error) {
+      next(error);
+    }
+  });
+
 }
 
 // Add error handling middleware
@@ -402,20 +362,23 @@ function setupErrorHandling(app: express.Application) {
       error: "Internal Server Error",
       details: process.env.NODE_ENV === 'development' ? err.message : 'An unexpected error occurred'
     };
-    
+    console.log(err)
     res.status(500).json(response);
   });
 }
 
+
 const startAgents = async () => {
   try {
-    const directClient = await DirectClientInterface.start();
+    const directClient = new DirectClient();
     const args = parseArguments();
-    const app = (directClient as any).app;
+    const app = express();
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
     
     // Setup endpoints BEFORE any other middleware
     const agents = new Map<string, AgentRuntime>();
-    setupApiEndpoints(app, directClient as DirectClient, agents);
+    setupApiEndpoints(app, directClient, agents);
     setupErrorHandling(app);
 
     // Then load and start agents
@@ -428,30 +391,23 @@ const startAgents = async () => {
     }
 
     for (const character of characters) {
-      const runtime = await startAgent(character, directClient as DirectClient);
+      const runtime = await startAgent(character, directClient);
       agents.set(runtime.agentId, runtime);
     }
 
+    // Start the Express server
+    const port = process.env.PORT || 3030;
+    app.listen(port, () => {
+      elizaLogger.info(`Server is running on port ${port}`);
+    });
+
   } catch (error) {
+    console.log(error)
     elizaLogger.error("Error starting agents:", error);
   }
 };
 
 startAgents().catch((error) => {
   elizaLogger.error("Unhandled error in startAgents:", error);
-  process.exit(1); // Exit the process after logging
+  process.exit(1);
 });
-
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-
-rl.on("SIGINT", () => {
-  rl.close();
-  process.exit(0);
-});
-
-
-
-

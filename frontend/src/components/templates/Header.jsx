@@ -9,6 +9,7 @@ import AdvancedModal from "./AdvancedModal";
 import { Popover } from "@mui/material";
 import logo from "../../assets/logo.png";
 import lightSlogen from "../../assets/lightSlogen.png";
+import APICreationModal from "./APICreationModal";
 
 const Header = (props) => {
   const { publicKey, connected, connect } = useWallet();
@@ -16,6 +17,8 @@ const Header = (props) => {
   const [quickCreationOpen, setQuickCreationOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [isSticky, setIsSticky] = useState(false);
+  const [elizaCreationOpen, setElizaCreationOpen] = useState(false);
+  const [apiCreationOpen, setAPICreationOpen] = useState(false);
 
   const handleQuickCreationOpen = () => {
     setQuickCreationOpen(true);
@@ -51,6 +54,16 @@ const Header = (props) => {
   const handleAdvancedCreate = () => {
     handlePopoverClose();
     handleAdvancedModalOpen();
+  };
+
+  const handleElizaCreation = () => {
+    handlePopoverClose();
+    setElizaCreationOpen(true);
+  };
+
+  const handleAPICreate = () => {
+    handlePopoverClose();
+    setAPICreationOpen(true);
   };
 
   useEffect(() => {
@@ -119,10 +132,8 @@ const Header = (props) => {
           slotProps={{
             paper: {
               style: {
-                // backgroundColor: "#181726",
-                // border: "1px solid #9e9e9e",
                 color: "#0bbf99",
-                background: "rgba(255, 255, 255, 0.2)",
+                background: "rgba(0, 0, 0, 0.5)",
                 backdropFilter: "blur(10px)",
                 boxShadow:
                   "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
@@ -139,6 +150,15 @@ const Header = (props) => {
               className="popover-item pointer"
             >
               Advanced Creation
+            </div>
+            <div onClick={handleAPICreate} className="popover-item pointer">
+              Integrate an API
+            </div>
+            <div
+              onClick={handleElizaCreation}
+              className="popover-item disabled"
+            >
+              Create Eliza Character (Coming Soon)
             </div>
           </div>
         </Popover>
@@ -213,6 +233,10 @@ const Header = (props) => {
           publicKey={publicKey}
           handleAdvancedModalClose={handleAdvancedModalClose}
           handleAdvancedModalOpen={handleAdvancedModalOpen}
+        />
+        <APICreationModal
+          open={apiCreationOpen}
+          onClose={() => setAPICreationOpen(false)}
         />
       </div>
     </div>

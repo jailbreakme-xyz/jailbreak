@@ -48,6 +48,9 @@ router.post("/get-transaction", solanaAuth, async (req, res) => {
       return res.status(404).json({ error: "Challenge not found." });
     }
 
+    if (challenge.type === "transfer")
+      return res.redirect(`/api/transactions/get-transfer-transaction/${id}`);
+
     if (userWalletAddress !== req.user.walletAddress) {
       return res.status(401).json({ error: "Unauthorized." });
     }
@@ -75,31 +78,6 @@ router.post("/get-transaction", solanaAuth, async (req, res) => {
       return res.status(500).json({ error: "Failed to create transaction." });
     }
 
-    // const mainnetBlockchainService = new BlockchainService(
-    //   mainSolanaRpc,
-    //   challenge.idl.address
-    // );
-
-    // let holdings, accountCreationTimestamp;
-    // const foundHoldings = await DataBaseService.getTransactionByAddress(
-    //   userWalletAddress
-    // );
-
-    // if (foundHoldings && foundHoldings.transactions_data) {
-    //   holdings = foundHoldings.transactions_data.holdings;
-    //   accountCreationTimestamp =
-    //     foundHoldings.transactions_data.accountCreationDate;
-    // } else {
-    //   holdings = await mainnetBlockchainService.fetchUserTokenHoldings(
-    //     userWalletAddress,
-    //     100,
-    //     true
-    //   );
-    //   accountCreationTimestamp =
-    //     await mainnetBlockchainService.getAccountCreationTimestamp(
-    //       userWalletAddress
-    //     );
-    // }
     const transactionId = crypto.randomUUID();
 
     const transactionData = {
@@ -380,4 +358,47 @@ router.post("/get-bounty-transaction", solanaAuth, async (req, res) => {
   });
 });
 
+router.get("/get-transfer-transaction/:id", solanaAuth, async (req, res) => {
+  const { id } = req.params;
+  const challenge = await DataBaseService.getChallengeById(id, {});
+  const challengeName = challenge.name;
+  const tournamentPDA = challenge.tournamentPDA;
+  const userWalletAddress = req.user.walletAddress;
+  const blockchainService = new BlockchainService(solanaRpc, null);
+
+  const { serializedTransaction } =
+    await blockchainService.createBountyTransaction(
+      challenge.entryFee,
+      userWalletAddress,
+      tournamentPDA
+    );
+
+  const transactionId = crypto.randomUUID();
+
+  const transactionData = {
+    challengeName,
+    transactionId,
+    tournamentPDA,
+    userWalletAddress,
+    unsignedTransaction: serializedTransaction,
+    createdAt: new Date(),
+    status: "pending",
+    entryFee: challenge.entryFee,
+  };
+
+  const savedTransaction = await DataBaseService.saveTransaction(
+    transactionData
+  );
+
+  if (!savedTransaction) {
+    console.log("Failed to save transaction in the database.");
+    return res.status(500).json({ error: "Failed to save transaction." });
+  }
+
+  res.status(200).json({
+    serializedTransaction,
+    transactionId,
+    token: req.user.token,
+  });
+});
 export { router as transactionsRoute };

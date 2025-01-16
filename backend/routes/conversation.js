@@ -13,6 +13,9 @@ import {
 } from "../hooks/concludeTournament.js";
 import JailXService from "../services/llm/jailx.js";
 import { solanaAuth } from "../middleware/solanaAuth.js";
+import { elizaService } from "../services/llm/eliza.js";
+import { mizukiService } from "../services/llm/mizuki.js";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 const router = express.Router();
 const RPC_ENV = process.env.NODE_ENV === "development" ? "devnet" : "mainnet";
@@ -62,22 +65,23 @@ router.post("/submit/:id", solanaAuth, async (req, res) => {
     const currentExpiry = challenge.expiry;
     const now = new Date();
     const oneHourInMillis = 3600000;
+    const model = challenge["model"];
 
-    const tournamentData = await blockchainService.getTournamentData(
-      tournamentPDA
-    );
+    let tournamentData, feeType, feeMulPct, winnerPayoutPct;
+    let entryFee = challenge.entryFee;
+    let sol_prize = challenge.winning_prize;
+    let isValidTransaction;
 
-    const entryFee = tournamentData.entryFee;
-    const feeMulPct = tournamentData.feeMulPct;
-    const winnerPayoutPct = tournamentData.winnerPayoutPct;
-    const feeType = tournamentData.feeType;
-    const sol_prize = tournamentData.programBalance;
-    const solPrice = await getSolPriceInUSDT();
-    const usd_prize = sol_prize * solPrice;
-    const model = challenge.model;
+    if (challenge.type != "transfer") {
+      tournamentData = await blockchainService.getTournamentData(tournamentPDA);
 
-    const isValidTransaction =
-      await blockchainService.verifyTransactionSignature(
+      entryFee = tournamentData.entryFee;
+      feeMulPct = tournamentData.feeMulPct;
+      winnerPayoutPct = tournamentData.winnerPayoutPct;
+      feeType = tournamentData.feeType;
+      sol_prize = tournamentData.programBalance;
+
+      isValidTransaction = await blockchainService.verifyTransactionSignature(
         signature,
         transaction,
         entryFee,
@@ -86,8 +90,25 @@ router.post("/submit/:id", solanaAuth, async (req, res) => {
         feeType,
         walletAddress
       );
+    } else {
+      const { isValid } = await blockchainService.verifyBountyTransaction(
+        signature,
+        challenge.tournamentPDA,
+        walletAddress,
+        challenge.entryFee
+      );
+
+      isValidTransaction = isValid;
+      const accountBalance = await blockchainService.getAccountBalance(
+        challenge.tournamentPDA
+      );
+      sol_prize = accountBalance / LAMPORTS_PER_SOL;
+    }
 
     console.log("isValidTransaction:", isValidTransaction);
+
+    const solPrice = await getSolPriceInUSDT();
+    const usd_prize = sol_prize * solPrice;
 
     const lastTransaction = await DatabaseService.getLastTransaction(
       challengeName
@@ -126,7 +147,9 @@ router.post("/submit/:id", solanaAuth, async (req, res) => {
 
     let thread;
     let isInitialThread = true;
-    if (contextLimit > 1) {
+    if (challenge.framework) {
+      thread = challenge.framework;
+    } else if (contextLimit > 1) {
       const chatHistory = await DatabaseService.getChatHistory(
         {
           challenge: challengeName,
@@ -203,16 +226,90 @@ router.post("/submit/:id", solanaAuth, async (req, res) => {
 
     await DatabaseService.createChat(userMessage);
     await DatabaseService.updateTransactionStatus(transactionId, "confirmed");
-    await OpenAIService.addMessageToThread(thread.id, prompt);
+
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Access-Control-Allow-Origin", "*");
+
+    if (challenge.framework?.name) {
+      let response, responseString;
+      if (challenge.framework.name === "eliza") {
+        response = await elizaService.sendMessage(
+          challenge.framework.id,
+          prompt,
+          walletAddress
+        );
+        const mergedResponse = response.map((message) => message.text);
+        responseString = mergedResponse.join("\n");
+      } else if (challenge.framework.name === "mizuki") {
+        response = await mizukiService.sendMessage(prompt);
+        responseString = response.message;
+      }
+
+      // Helper function to get random chunk size
+      const getRandomChunkSize = (min, max) => {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      };
+
+      // Function to stream text in chunks
+      const streamResponse = async (text, index = 0) => {
+        if (index < text.length) {
+          const nextSize = getRandomChunkSize(5, 10);
+          const chunk = text.substring(index, index + nextSize);
+          res.write(chunk);
+
+          // Continue sending the next chunk after a short delay
+          await new Promise((resolve) => setTimeout(resolve, 30));
+          await streamResponse(text, index + nextSize);
+        } else {
+          assistantMessage.content = responseString;
+          // Store the complete message in database
+          const allPhrasesIncluded = challenge.phrases?.every((phrase) =>
+            assistantMessage.content
+              .toLowerCase()
+              .includes(phrase.toLowerCase())
+          );
+
+          const allPhrasesGuessed = challenge.phrases?.every((phrase) =>
+            userMessage.content.toLowerCase().includes(phrase.toLowerCase())
+          );
+
+          const guessingEnabled = !challenge.disable.includes("guessing");
+          const guessed = guessingEnabled && allPhrasesGuessed;
+          if (challenge.type === "phrases" && (allPhrasesIncluded || guessed)) {
+            const successMessage = await concludeTournament(
+              isValidTransaction,
+              challenge,
+              assistantMessage,
+              blockchainService,
+              DatabaseService,
+              tournamentPDA,
+              walletAddress,
+              entryFee,
+              fee_multiplier,
+              signature
+            );
+            assistantMessage.content = successMessage;
+            res.write(successMessage);
+          } else {
+            await DatabaseService.createChat(assistantMessage);
+          }
+
+          return res.end();
+        }
+      };
+
+      // Start streaming the response
+      await streamResponse(responseString);
+      return res.end();
+    } else {
+      await OpenAIService.addMessageToThread(thread.id, prompt);
+    }
 
     const run = await OpenAIService.createRun(
       thread.id,
       challenge.assistant_id,
       challenge.tool_choice
     );
-
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Access-Control-Allow-Origin", "*");
 
     for await (const chunk of run) {
       const event = chunk.event;
@@ -287,15 +384,26 @@ router.post("/submit/:id", solanaAuth, async (req, res) => {
             if (key === "results") {
               return jsonArgs[key];
             } else {
-              const resultString = `**${key
-                .split("_")
-                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(" ")}**: ${jsonArgs[key]}`;
-              return resultString.replace("Response: ", "");
+              const resultString =
+                jsonArgs[key] !== undefined
+                  ? `**${key
+                      .split("_")
+                      .map(
+                        (word) => word.charAt(0).toUpperCase() + word.slice(1)
+                      )
+                      .join(" ")}**: ${jsonArgs[key]}`
+                  : null;
+              return resultString?.replace("Response: ", "");
             }
           })
+          .filter(Boolean)
           .join("\n");
-        results = `### 🚨 Function Called:\n${results}`;
+
+        if (challenge.tools_description) {
+          results = `### 🚨 Function Called:\n${results}`;
+        } else {
+          results = `### 🚨 Function Called: ${functionName}\n${results}`;
+        }
 
         if (required_action.type === "submit_tool_outputs") {
           const tool_outputs = [

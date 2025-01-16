@@ -1,4 +1,4 @@
-import { Character, ModelProviderName, defaultCharacter } from "@ai16z/eliza";
+import { Character, defaultCharacter } from "@elizaos/core";
 
 export const character: Character = {
     ...defaultCharacter,
@@ -213,7 +213,6 @@ export const character: Character = {
     //     "vaguely offensive but also hilarious",
     //     "schizo-autist",
     // ],
-    // people: [],
     // topics: [
     //     // broad topics
     //     "metaphysics",

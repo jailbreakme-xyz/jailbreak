@@ -786,7 +786,8 @@ class BlockchainService {
   async verifyBountyTransaction(
     transactionSignature,
     ownerAddress,
-    fromAddress
+    fromAddress,
+    expectedAmount = 2
   ) {
     try {
       const transaction = await this.connection.getParsedTransaction(
@@ -830,7 +831,7 @@ class BlockchainService {
         0
       );
 
-      if (transferAmount < 2) {
+      if (transferAmount < expectedAmount) {
         console.log(
           "Transaction must transfer at least 2 SOL to owner address"
         );

@@ -71,6 +71,7 @@ import { programRoute } from "./routes/program.js";
 import { dataRoute } from "./routes/data.js";
 import { breakerRoute } from "./routes/breaker.js";
 import { authRoute } from "./routes/auth.js";
+import { submissionRoute } from "./routes/submission.js";
 // TEST:
 // import { testRoute } from "./test/conversation.js";
 
@@ -86,6 +87,8 @@ app.use("/api/program", programRoute);
 app.use("/api/data", dataRoute);
 app.use("/api/breaker", breakerRoute);
 app.use("/api/auth", authRoute);
+app.use("/api/submissions", submissionRoute);
+
 // app.use("/api/json/v1/tournaments", tournamentsAPI);
 // app.use("/api/json/v1/conversations", conversationsAPI);
 

@@ -1,0 +1,97 @@
+.api-creation-modal {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+}
+
+.modal-title {
+  color: #fff !important;
+  font-size: 1.5rem !important;
+  padding: 20px 24px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.api-creation-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px 0;
+}
+
+.form-field {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.form-field .MuiInputLabel-root {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.form-field .MuiOutlinedInput-root {
+  color: #fff;
+}
+
+.form-field .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.form-field:hover .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.form-field.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #0bbf99 !important;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.cancel-button {
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.cancel-button:hover {
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.submit-button {
+  background-color: #0bbf99 !important;
+  color: #fff !important;
+}
+
+.submit-button:hover {
+  background-color: #0eae8d !important;
+}
+
+/* Responsive styles */
+@media (max-width: 600px) {
+  .api-creation-modal {
+    margin: 20px;
+  }
+
+  .modal-title {
+    font-size: 1.2rem !important;
+    padding: 16px 20px !important;
+  }
+
+  .api-creation-form {
+    gap: 16px;
+    padding: 16px 0;
+  }
+
+  .button-container {
+    flex-direction: column-reverse;
+    margin-top: 16px;
+  }
+
+  .button-container button {
+    width: 100%;
+  }
+} 

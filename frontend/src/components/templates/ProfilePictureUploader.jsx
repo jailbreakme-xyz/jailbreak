@@ -5,19 +5,21 @@ import { BiSolidImageAdd } from "react-icons/bi";
 
 const fileTypes = ["JPG", "JPEG", "PNG", "GIF"];
 
-const MemoizedImage = memo(({ src, customFilter }) => (
-  <img
-    src={src}
-    alt="Profile Preview"
-    className="pointer"
-    style={{
-      width: "90px",
-      height: "90px",
-      objectFit: "cover",
-      filter: customFilter ? customFilter : "none",
-    }}
-  />
-));
+const MemoizedImage = memo(
+  ({ src, customFilter, customWidth, customHeight }) => (
+    <img
+      src={src}
+      alt="Profile Preview"
+      className="pointer"
+      style={{
+        width: customWidth ? customWidth : "90px",
+        height: customHeight ? customHeight : "90px",
+        objectFit: "cover",
+        filter: customFilter ? customFilter : "none",
+      }}
+    />
+  )
+);
 
 const ProfilePictureUploader = ({
   onFileChange,
@@ -26,6 +28,8 @@ const ProfilePictureUploader = ({
   customColor,
   customFilter,
   isUploading,
+  customWidth,
+  customHeight,
 }) => {
   const [imagePreview, setImagePreview] = useState(sample);
   const fileUploaderRef = useRef(null);
@@ -41,8 +45,8 @@ const ProfilePictureUploader = ({
   // ));
 
   const CircleContainer = styled("div")({
-    width: "90px",
-    height: "90px",
+    width: customWidth ? customWidth : "90px",
+    height: customHeight ? customHeight : "90px",
     borderRadius: "50%",
     border: `2px dashed ${customColor ? customColor : "#0BBF99"}`,
     display: "flex",
@@ -133,7 +137,12 @@ const ProfilePictureUploader = ({
       >
         {imagePreview ? (
           <>
-            <MemoizedImage src={imagePreview} customFilter={customFilter} />
+            <MemoizedImage
+              src={imagePreview}
+              customFilter={customFilter}
+              customWidth={customWidth}
+              customHeight={customHeight}
+            />
             <Overlay className="pointer">Upload</Overlay>
           </>
         ) : (

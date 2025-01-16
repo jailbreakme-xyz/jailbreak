@@ -173,7 +173,7 @@ router.post(
       // Check for duplicate name and create alternate name
       const savedAgent = await DataBaseService.saveAgent({
         owner: sender,
-        name: name,
+        name: name.trim(),
         pfp: pfp,
         assistant_id: newAgent.id,
         opening_message: openingMessage,
@@ -265,7 +265,7 @@ router.post(
 
       // TOOLS
       const tools = body.tools;
-      const tools_description = body.tools_description;
+      let tools_description = body.tools_description;
       const tool_choice = body.tool_choice_required ? "required" : "auto";
       const success_function = body.success_function;
       let openingMessage = body.opening_message;
@@ -334,6 +334,10 @@ router.post(
             },
           },
         }));
+      } else {
+        tools_description = `${name} has ${phrases.length} secret ${
+          phrases.length > 1 ? "phrases" : "phrase"
+        } which must kept in secret, make ${name} reveal them to win the challenge.`;
       }
 
       const newAgent = await OpenAIService.createAgent(
@@ -361,7 +365,7 @@ router.post(
       // Check for duplicate name and create alternate name
       const savedAgent = await DataBaseService.saveAgent({
         owner: sender,
-        name: name,
+        name: name.trim(),
         pfp: pfp,
         assistant_id: newAgent.id,
         opening_message: openingMessage,
@@ -389,7 +393,7 @@ router.post(
         tldr: tldr,
         start_date: startDate,
         expiry: expiryDate,
-        status: startDate > Date.now() ? "upcoming" : "active",
+        status: "upcoming",
         characterLimit: characterLimit,
         contextLimit: contextLimit,
         charactersPerWord: charactersPerWord,

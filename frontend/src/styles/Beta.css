@@ -85,8 +85,8 @@
 }
 
 .popover-item:hover {
-  background-color: #000;
-  color: #0BBF99;
+  background-color: #0BBF99;
+  color: #000;
 }
 .beta-header.sticky .wallet-adapter-button {
 border-color: #0BBF99 !important;
@@ -801,7 +801,9 @@ font-size: 12px;
       display: none;
     }
     .inline-counters {
-      display: block;
+      flex-direction: column;
+      justify-content: center !important;
+      width: 90% !important;
     }
     .beta-footer {
       justify-content: center !important;
@@ -880,6 +882,10 @@ font-size: 12px;
   }
   .beta-breakers-header .inline-counters > div {
     margin: 0px auto;
+    width: 85% !important;
+  }
+  .beta-breakers-header .inline-counters {
+    display: flex !important;
   }
   /* .beta-agents-list .agentCard {
     min-height: 400px !important;
@@ -949,8 +955,7 @@ font-size: 12px;
   }
 
   .beta-counters {
-margin-top: 20px;
-justify-content: flex-start;
+margin: 20px auto 0px auto !important;
   }
   .beta-content-right {
     display: none;
@@ -959,9 +964,9 @@ justify-content: flex-start;
     display: none !important;
   }
   .beta-counters div {
+    width: 100% !important;
     margin: 5px 0px;
     padding: 10px 20px;
-    width: 90% !important;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -969,7 +974,7 @@ justify-content: flex-start;
     background-color: #242331 !important;
   }
   .beta-counters span {
-    font-size: 22px !important;
+    font-size: 18px !important;
   }
  
   .deploy-program-container {

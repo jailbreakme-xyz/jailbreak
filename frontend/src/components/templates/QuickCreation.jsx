@@ -125,8 +125,8 @@ export default function QuickCreation(props) {
       // pfp: Yup.mixed(),
       name: Yup.string()
         .matches(
-          /^[a-zA-Z0-9_\- ]+$/,
-          "Name can only contain letters, numbers, underscores, hyphens and spaces"
+          /^[a-zA-Z0-9_\-. ]+$/,
+          "Name can only contain letters, numbers, underscores, dots, hyphens and spaces"
         )
         .min(3, "Name must be at least 3 characters")
         .max(16, "Name must be at most 16 characters")
@@ -598,7 +598,7 @@ export default function QuickCreation(props) {
                           sx={{
                             "& .MuiFormHelperText-root": {
                               position: "absolute",
-                              bottom: "-20px",
+                              bottom: "-40px",
                             },
                             marginBottom: "0px",
                           }}

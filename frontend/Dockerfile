@@ -4,6 +4,8 @@ WORKDIR /usr/src/app/frontend/
 
 COPY package*.json ./
 
+RUN rm -rf node_modules
+
 RUN npm install --legacy-peer-deps
 
 COPY . .

@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import DatabaseService from "../services/db/index.js";
 import getSolPriceInUSDT from "../hooks/solPrice.js";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
-
+import { Challenge } from "../models/Models.js";
 dotenv.config();
 
 const router = express.Router();
@@ -63,11 +63,16 @@ router.get("/get-challenge", async (req, res) => {
       verified_owner: 1,
       type: 1,
       owner: 1,
+      tools: 1,
     };
 
     let challenge = await DatabaseService.getChallengeByName(name, projection);
     if (!challenge) {
       return res.status(404).send("Challenge not found");
+    }
+
+    if (challenge.tools_description) {
+      challenge.tools = [];
     }
 
     const solPrice = await getSolPriceInUSDT(initial === "true");
@@ -150,7 +155,11 @@ router.get("/get-challenge", async (req, res) => {
     }
 
     if (chatHistory.length > 0) {
-      if (expiry < now && challenge.status === "active") {
+      if (
+        expiry < now &&
+        challenge.status === "active" &&
+        challenge.type != "transfer"
+      ) {
         await DatabaseService.updateChallenge(challengeId, {
           status: "concluded",
         });

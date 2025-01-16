@@ -57,6 +57,7 @@ const ChallengeSchema = new mongoose.Schema(
     jailx_thread: String,
     tournament_id: String,
     hero: Boolean,
+    framework: Object,
     verified_owner: {
       type: Object,
       default: null,
@@ -186,3 +187,16 @@ const socialBountySchema = new mongoose.Schema(
 );
 
 export const SocialBounty = mongoose.model("SocialBounty", socialBountySchema);
+
+const submissionSchema = new mongoose.Schema(
+  {
+    name: String,
+    description: String,
+    website: String,
+    social: String,
+    date: { type: Date, default: Date.now },
+  },
+  { collection: "submissions" }
+);
+
+export const Submission = mongoose.model("Submission", submissionSchema);

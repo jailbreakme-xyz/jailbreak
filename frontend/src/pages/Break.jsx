@@ -36,6 +36,33 @@ const SOLANA_RPC =
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+function decodeUnicode(str) {
+  try {
+    str = str
+      .replace(/\\u2019/g, "'")
+      .replace(/\\u201c/g, '"')
+      .replace(/\\u201d/g, '"')
+      .replace(/\\"/g, "");
+
+    str = str
+      .replace(/\\ud83c\\udf38/g, "🌸")
+      .replace(/\\ud83c\\udf39/g, "🌹")
+      .replace(/\\ud83c\\udf3a/g, "🌺")
+      .replace(/\\ud83c\\udf3b/g, "🌻")
+      .replace(/\\ud83c\\udf3c/g, "🌼")
+      .replace(/\\ud83e\\udd40/g, "🥀");
+
+    if (str.includes("\\u")) {
+      str = JSON.parse(`"${str.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`);
+    }
+
+    return str;
+  } catch (error) {
+    console.warn("Failed to decode Unicode:", error);
+    return str;
+  }
+}
+
 export function ParsedText({ message }) {
   const processMessage = (message) => {
     const lines = message.split("\n");
@@ -79,7 +106,11 @@ export function ParsedText({ message }) {
           return (
             <Markdown
               key={`${index}`}
+              remarkPlugins={[remarkGfm]}
               components={{
+                p: ({ node, ...props }) => (
+                  <span style={{ whiteSpace: "pre-line" }} {...props} />
+                ),
                 h1: ({ node, ...props }) => (
                   <h1
                     style={{ fontSize: "1.5em", fontWeight: "bold" }}
@@ -108,6 +139,14 @@ export function ParsedText({ message }) {
     </div>
   );
 }
+
+const ensureNewlines = (content) => {
+  // Replace any escaped newlines with actual newlines
+  return content
+    .replace(/\\n/g, "\n") // Replace escaped newlines
+    .replace(/\r\n/g, "\n") // Normalize Windows-style newlines
+    .replace(/\r/g, "\n"); // Replace any remaining carriage returns
+};
 
 export default function Break() {
   const { name } = useParams();
@@ -504,7 +543,10 @@ export default function Break() {
   };
 
   const formatCodeBlocks = (content) => {
-    // Add language identifier to code blocks that don't have one
+    // First ensure newlines are preserved
+    content = ensureNewlines(content);
+
+    // Then handle code blocks
     return content.replace(/```(\s*?)([^:\n]*)\n/, (match, space, lang) => {
       if (!lang) return "```uri\n";
       return match;
@@ -761,15 +803,23 @@ export default function Break() {
                               <div className="message">
                                 <div>
                                   <Markdown
-                                    children={formatCodeBlocks(item.content)}
+                                    children={formatCodeBlocks(
+                                      decodeUnicode(item.content)
+                                    )}
                                     remarkPlugins={[remarkGfm]}
                                     components={{
-                                      p: ({ node, ...props }) => (
-                                        <span
-                                          style={{ whiteSpace: "pre-line" }}
-                                          {...props}
-                                        />
-                                      ),
+                                      p: ({ node, ...props }) => {
+                                        return (
+                                          <span
+                                            style={{
+                                              whiteSpace: "pre-line",
+                                              display: "block",
+                                              marginBottom: "1em",
+                                            }}
+                                            {...props}
+                                          />
+                                        );
+                                      },
                                       code(props) {
                                         const {
                                           children,

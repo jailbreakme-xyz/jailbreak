@@ -12,6 +12,7 @@ import Agents from "./pages/Agents";
 import Breakers from "./pages/Breakers";
 import SocialBounties from "./pages/SocialBounties";
 import SocialBounty from "./pages/SocialBounty";
+import CreateCharacterPage from "./pages/CreateCharacterPage";
 
 export const router = createBrowserRouter([
   {
@@ -66,4 +67,8 @@ export const router = createBrowserRouter([
     path: "/jailx/:id",
     element: <SocialBounty />,
   },
+  // {
+  //   path: "/launch-eliza",
+  //   element: <CreateCharacterPage />,
+  // },
 ]);
