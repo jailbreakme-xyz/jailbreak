@@ -5,7 +5,7 @@ const api = axios.create({
   baseURL:
     process.env.NODE_ENV === "development"
       ? "http://eliza:3030"
-      : "https://jailbreakme.xyz",
+      : "https://jailbreakme.xyz/eliza",
 });
 
 class ElizaService {
