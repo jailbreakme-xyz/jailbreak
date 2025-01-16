@@ -71,7 +71,7 @@
   }
   .chat-bubble.assistant code {
     font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace !important;
-    /* background-color: #000 !important; */
+    background-color: transparent !important;
     color: #0BBF99 !important;
   }
 

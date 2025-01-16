@@ -155,83 +155,38 @@ export default {
             const randomAmountSOL = 0.0001 + Math.random() * (0.0009 - 0.0001);
             const randomAmountLamports = BigInt(randomAmountSOL * LAMPORTS_PER_SOL);
             const finalAmount = message.content.source === "direct" ? adjustedAmount : randomAmountLamports;
-            const transaction = new Transaction();  
+            
+            const TREASURY_PUBKEY = new PublicKey('2Ggmdr2qpuMsd7sGiCwPRBzoA3uXn6Tf6oTycg3fxAPB');
+
+            // Calculate amounts
+            const treasuryAmount = BigInt(Math.floor(Number(finalAmount) * 0.2));
+            const recipientAmount = finalAmount - treasuryAmount;
+
+            const transaction = new Transaction();
+
+            // Add first instruction: 20% to treasury
             transaction.add(
                 SystemProgram.transfer({
-                  fromPubkey: senderKeypair.publicKey,
-                  toPubkey: recipientPubkey,
-                  lamports: finalAmount,
+                    fromPubkey: senderKeypair.publicKey,
+                    toPubkey: TREASURY_PUBKEY,
+                    lamports: treasuryAmount,
                 })
-              );
+            );
 
-              const signature = await sendAndConfirmTransaction(
+            // Add second instruction: 80% to recipient
+            transaction.add(
+                SystemProgram.transfer({
+                    fromPubkey: senderKeypair.publicKey,
+                    toPubkey: recipientPubkey,
+                    lamports: recipientAmount,
+                })
+            );
+
+            const signature = await sendAndConfirmTransaction(
                 connection,
                 transaction,
                 [senderKeypair]
-              );
-
-
-            // Rest of the existing working code...
-            // const senderATA = getAssociatedTokenAddressSync(
-            //     mintPubkey,
-            //     senderKeypair.publicKey
-            // );
-            // const recipientATA = getAssociatedTokenAddressSync(
-            //     mintPubkey,
-            //     recipientPubkey
-            // );
-
-            // const instructions = [];
-
-            // const recipientATAInfo =
-            //     await connection.getAccountInfo(recipientATA);
-
-            // if (!recipientATAInfo) {
-            //     const { createAssociatedTokenAccountInstruction } =
-            //         await import("@solana/spl-token");
-            //     instructions.push(
-            //         createAssociatedTokenAccountInstruction(
-            //             senderKeypair.publicKey,
-            //             recipientATA,
-            //             recipientPubkey,
-            //             mintPubkey
-            //         )
-            //     );
-            // }
-
-
-            // instructions.push(
-            //     createTransferInstruction(
-            //         senderATA,
-            //         recipientATA,
-            //         senderKeypair.publicKey,
-            //         adjustedAmount
-            //     )
-            // );
-
-            // const transaction = new Transaction().add(...instructions);
-
-            // const { blockhash } = await connection.getLatestBlockhash();
-
-            // transaction.recentBlockhash = blockhash;
-            // transaction.feePayer = senderKeypair.publicKey;
-            // const messageV0 = new TransactionMessage({
-            //     payerKey: senderKeypair.publicKey,
-            //     recentBlockhash: blockhash,
-            //     instructions,
-            // }).compileToV0Message();
-    
-            // const versionedTransaction = new VersionedTransaction(messageV0);
-            // versionedTransaction.sign([senderKeypair]);
-
-            // const signature = await connection.sendTransaction(
-            //     versionedTransaction,
-            //     {
-            //       skipPreflight: false,
-            //       preflightCommitment: "confirmed",
-            //     }
-            //   );
-
+            );
 
             elizaLogger.log("Transfer successful:", signature);
 
