@@ -273,6 +273,11 @@ class OpenAIService {
       throw error;
     }
   }
+
+  async retrieveAgent(assistantId) {
+    const agent = await this.openai.beta.assistants.retrieve(assistantId);
+    return agent;
+  }
 }
 
 export default new OpenAIService();

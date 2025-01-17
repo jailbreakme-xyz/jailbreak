@@ -378,89 +378,138 @@ class BlockchainService {
     feeType,
     senderWalletAddress
   ) {
-    try {
-      // Step 1: Fetch transaction details from the network
-      const transactionDetails = await this.connection
-        .getParsedTransaction(signature, {
-          commitment: "confirmed",
-          maxSupportedTransactionVersion: 0,
-        })
-        .catch((err) => {
-          console.error(`RPC error fetching transaction: ${err.message}`);
-          return null;
-        });
+    const MAX_RETRIES = 5;
+    const INITIAL_DELAY_MS = 2000; // Start with 2 seconds delay
 
-      if (!transactionDetails) {
-        console.log("Transaction not found on the network.");
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+      try {
+        // Calculate exponential backoff delay
+        const delayMs = INITIAL_DELAY_MS * Math.pow(2, attempt);
+
+        // Step 1: Fetch transaction details from the network
+        const transactionDetails = await this.connection
+          .getParsedTransaction(signature, {
+            commitment: "confirmed",
+            maxSupportedTransactionVersion: 0,
+          })
+          .catch((err) => {
+            console.error(
+              `RPC error fetching transaction (attempt ${attempt + 1}): ${
+                err.message
+              }`
+            );
+            return null;
+          });
+
+        if (!transactionDetails) {
+          console.log(
+            `Transaction not found on the network (attempt ${attempt + 1})`
+          );
+          if (attempt < MAX_RETRIES - 1) {
+            console.log(`Retrying in ${delayMs}ms...`);
+            await new Promise((resolve) => setTimeout(resolve, delayMs));
+            continue;
+          }
+          return false;
+        }
+
+        // If we found the transaction, proceed with verification
+        const { unsignedTransaction, userWalletAddress, tournamentPDA } =
+          savedTransaction;
+
+        if (userWalletAddress !== senderWalletAddress) {
+          console.log("User wallet address mismatch");
+          throw new Error("User wallet address mismatch");
+        }
+
+        const unsignedTx = Transaction.from(
+          Buffer.from(unsignedTransaction, "base64")
+        );
+
+        // Check if innerInstructions exists and has the expected structure
+        if (
+          !transactionDetails.meta?.innerInstructions?.[0]?.instructions?.[0]
+            ?.parsed?.info
+        ) {
+          if (attempt < MAX_RETRIES - 1) {
+            console.log(
+              `Transaction data not fully confirmed yet (attempt ${
+                attempt + 1
+              }). Retrying in ${delayMs}ms...`
+            );
+            await new Promise((resolve) => setTimeout(resolve, delayMs));
+            continue;
+          }
+          console.log("Transaction structure invalid after all retries");
+          return false;
+        }
+
+        const instructionInfo =
+          transactionDetails.meta.innerInstructions[0].instructions[0].parsed
+            .info;
+        const totalLamportsSent = instructionInfo.lamports;
+        const destination = instructionInfo.destination;
+        const source = instructionInfo.source;
+
+        const userWalletKey = unsignedTx.instructions[0].keys.find(
+          (key) => key.pubkey.toString() === userWalletAddress
+        );
+        const pdaKey = unsignedTx.instructions[0].keys.find(
+          (key) => key.pubkey.toString() === tournamentPDA
+        );
+
+        if (!userWalletKey || !pdaKey) {
+          console.log("User wallet or PDA key not found");
+          return false;
+        }
+
+        if (source.toString() !== userWalletKey.pubkey.toString()) {
+          console.log("Source mismatch");
+          return false;
+        }
+
+        if (destination.toString() !== pdaKey.pubkey.toString()) {
+          console.log("Destination mismatch");
+          return false;
+        }
+
+        const amountReceivedSOL = (
+          totalLamportsSent / LAMPORTS_PER_SOL
+        ).toFixed(6);
+
+        const expectedDifference = amountReceivedSOL * (feeMulPct / 1000);
+        const expectedFee =
+          feeType === 0 ? (entryFee - expectedDifference).toFixed(6) : entryFee;
+
+        console.log("Amount received:", amountReceivedSOL);
+        console.log("Expected Fee:", expectedFee);
+        console.log("Next Entry fee:", entryFee);
+        const tolerance = expectedFee * 0.05;
+        const isWithinTolerance =
+          Math.abs(amountReceivedSOL - expectedFee) <= tolerance;
+
+        if (!isWithinTolerance) {
+          console.log("Amount mismatch");
+          return false;
+        }
+
+        return true; // If we reach here, verification was successful
+      } catch (error) {
+        console.error(
+          `Error verifying transaction signature (attempt ${attempt + 1}):`,
+          error
+        );
+        if (attempt < MAX_RETRIES - 1) {
+          const delayMs = INITIAL_DELAY_MS * Math.pow(2, attempt);
+          console.log(`Retrying in ${delayMs}ms...`);
+          await new Promise((resolve) => setTimeout(resolve, delayMs));
+          continue;
+        }
         return false;
       }
-
-      const { unsignedTransaction, userWalletAddress, tournamentPDA } =
-        savedTransaction;
-
-      if (userWalletAddress !== senderWalletAddress) {
-        console.log("User wallet address mismatch");
-        throw new Error("User wallet address mismatch");
-      }
-
-      const unsignedTx = Transaction.from(
-        Buffer.from(unsignedTransaction, "base64")
-      );
-
-      const instructionInfo =
-        transactionDetails.meta.innerInstructions[0].instructions[0].parsed
-          .info;
-      const totalLamportsSent = instructionInfo.lamports;
-      const destination = instructionInfo.destination;
-      const source = instructionInfo.source;
-
-      const userWalletKey = unsignedTx.instructions[0].keys.find(
-        (key) => key.pubkey.toString() === userWalletAddress
-      );
-      const pdaKey = unsignedTx.instructions[0].keys.find(
-        (key) => key.pubkey.toString() === tournamentPDA
-      );
-
-      if (!userWalletKey || !pdaKey) {
-        console.log("User wallet or PDA key not found");
-        return false;
-      }
-
-      if (source.toString() !== userWalletKey.pubkey.toString()) {
-        console.log("Source mismatch");
-        return false;
-      }
-
-      if (destination.toString() !== pdaKey.pubkey.toString()) {
-        console.log("Destination mismatch");
-        return false;
-      }
-
-      const amountReceivedSOL = (totalLamportsSent / LAMPORTS_PER_SOL).toFixed(
-        6
-      );
-
-      const expectedDifference = amountReceivedSOL * (feeMulPct / 1000);
-      const expectedFee =
-        feeType === 0 ? (entryFee - expectedDifference).toFixed(6) : entryFee;
-
-      console.log("Amount received:", amountReceivedSOL);
-      console.log("Expected Fee:", expectedFee);
-      console.log("Next Entry fee:", entryFee);
-      const tolerance = expectedFee * 0.05;
-      const isWithinTolerance =
-        Math.abs(amountReceivedSOL - expectedFee) <= tolerance;
-
-      if (!isWithinTolerance) {
-        console.log("Amount mismatch");
-        return false;
-      }
-
-      return true;
-    } catch (error) {
-      console.error("Error verifying transaction signature:", error);
-      return false;
     }
+
+    return false; // If we reach here, all retries failed
   }
 
   async fetchUserTokenHoldings(address, limit = 50, shuffle = true) {
