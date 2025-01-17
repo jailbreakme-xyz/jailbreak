@@ -693,10 +693,10 @@ class DataBaseService {
         status: agent.status || "active",
         assistant_id: agent.assistant_id,
         language: "english",
-        disable: [...agent.disable, "guessing"] || [
-          "special_characters",
-          "guessing",
-        ],
+        disable:
+          agent.disable && agent.disable.length
+            ? [...agent.disable, "guessing"]
+            : ["special_characters", "guessing"],
         start_date: agent.start_date || new Date(),
         expiry: agent.expiry || new Date(Date.now() + 24 * 60 * 60 * 1000),
         model: agent.model || "gpt-4o-mini",
@@ -763,11 +763,11 @@ class DataBaseService {
         : baseQuery;
 
       // Handle special case for expiry sorting
-      if (sort === "expiry_desc" && status !== "active") {
-        throw new Error(
-          "Expiry sorting is only available for active challenges"
-        );
-      }
+      // if (sort === "expiry_desc" && status !== "active") {
+      //   throw new Error(
+      //     "Expiry sorting is only available for active challenges"
+      //   );
+      // }
 
       // Define sort configuration
       const sortConfigs = {
