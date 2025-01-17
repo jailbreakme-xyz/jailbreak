@@ -68,19 +68,21 @@ router.post(
       }
 
       let pfp;
+      const timestamp = Date.now();
+      const fileName = `${timestamp}-${name
+        .toLowerCase()
+        .replace(/[^a-zA-Z0-9]/g, "-")}`;
       if (req.file) {
-        // If pfp was sent as a file
-        const timestamp = Date.now();
-        const fileName = `${timestamp}-${name
-          .toLowerCase()
-          .replace(/[^a-zA-Z0-9]/g, "-")}`;
         pfp = await GoogleCloudService.uploadImageBuffer(
           req.file.buffer,
           fileName
         );
       } else {
         // If pfp was sent as a URL
-        pfp = req.body.pfp;
+        pfp = await GoogleCloudService.uploadImageFromUrl(
+          req.body.pfp,
+          fileName
+        );
       }
 
       let openingMessage = body.opening_message;
@@ -231,19 +233,21 @@ router.post(
       }
 
       let pfp;
+      const timestamp = Date.now();
+      const fileName = `${timestamp}-${name
+        .toLowerCase()
+        .replace(/[^a-zA-Z0-9]/g, "-")}`;
       if (req.file) {
-        // If pfp was sent as a file
-        const timestamp = Date.now();
-        const fileName = `${timestamp}-${name
-          .toLowerCase()
-          .replace(/[^a-zA-Z0-9]/g, "-")}`;
         pfp = await GoogleCloudService.uploadImageBuffer(
           req.file.buffer,
           fileName
         );
       } else {
         // If pfp was sent as a URL
-        pfp = req.body.pfp;
+        pfp = await GoogleCloudService.uploadImageFromUrl(
+          req.body.pfp,
+          fileName
+        );
       }
 
       const tournamentId = Number(req.body.tournamentId);
@@ -465,12 +469,14 @@ router.post("/generate-agent", async (req, res) => {
     instructions,
     opening_message
   );
-  const imageUrl = await GoogleCloudService.uploadImageFromUrl(
-    newAgent.imageUrl,
-    newAgent.name.toLowerCase().replace(/[^a-zA-Z0-9]/g, "-")
-  );
 
-  newAgent.imageUrl = imageUrl;
+  // const imageUrl = await GoogleCloudService.uploadImageFromUrl(
+  //   newAgent.imageUrl,
+  //   newAgent.name.toLowerCase().replace(/[^a-zA-Z0-9]/g, "-")
+  // );
+
+  // newAgent.imageUrl = imageUrl;
+
   res.json({ newAgent });
 });
 

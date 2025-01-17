@@ -2,6 +2,7 @@ import { Storage } from "@google-cloud/storage";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
+import sharp from "sharp";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,14 +25,21 @@ class GoogleCloudService {
       const response = await fetch(imageUrl);
       const buffer = await response.arrayBuffer();
 
-      // Create a unique file name with timestamp
-      const timestamp = Date.now();
-      const uniqueFileName = `${timestamp}-${fileName}.png`;
+      // Resize and compress image
+      const resizedBuffer = await sharp(Buffer.from(buffer))
+        .resize(1200, 1200, {
+          fit: "inside",
+          withoutEnlargement: true,
+        })
+        .webp({ quality: 80 }) // Convert to WebP with 80% quality
+        .toBuffer();
+
+      const uniqueFileName = `${fileName}.webp`; // Change extension to .webp
       const file = bucket.file(uniqueFileName);
 
-      await file.save(Buffer.from(buffer), {
+      await file.save(resizedBuffer, {
         metadata: {
-          contentType: "image/png",
+          contentType: "image/webp", // Update content type
         },
       });
 
@@ -47,27 +55,42 @@ class GoogleCloudService {
   async uploadImageBuffer(buffer, fileName) {
     try {
       const bucket = this.storage.bucket(this.bucketName);
-
-      // Extract file extension from original filename or default to png
       const fileExtension = fileName.split(".").pop().toLowerCase();
-      const validExtensions = ["png", "jpg", "jpeg", "gif"];
-      const extension = validExtensions.includes(fileExtension)
-        ? fileExtension
-        : "png";
 
-      // Create a unique file name with timestamp and proper extension
-      const uniqueFileName = `${fileName}.${extension}`;
+      let processedBuffer;
+      let finalExtension;
+      let contentType;
+
+      // Handle different image types
+      if (fileExtension === "gif") {
+        // For GIFs, keep original format but optimize
+        processedBuffer = await sharp(buffer, { animated: true })
+          .gif({ quality: 60 }) // Reduce GIF quality
+          .toBuffer();
+        finalExtension = "gif";
+        contentType = "image/gif";
+      } else {
+        // For all other images, convert to WebP
+        processedBuffer = await sharp(buffer)
+          .resize(1200, 1200, {
+            fit: "inside",
+            withoutEnlargement: true,
+          })
+          .webp({
+            quality: 80, // Adjust quality (0-100)
+            effort: 6, // Compression effort (0-6)
+            nearLossless: true, // Use near-lossless compression
+          })
+          .toBuffer();
+        finalExtension = "webp";
+        contentType = "image/webp";
+      }
+
+      // Create unique filename with new extension
+      const uniqueFileName = `${fileName}.${finalExtension}`;
       const file = bucket.file(uniqueFileName);
 
-      // Set the appropriate content type based on extension
-      const contentType =
-        extension === "gif"
-          ? "image/gif"
-          : extension === "jpg" || extension === "jpeg"
-          ? "image/jpeg"
-          : "image/png";
-
-      await file.save(buffer, {
+      await file.save(processedBuffer, {
         metadata: {
           contentType: contentType,
         },

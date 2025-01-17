@@ -417,7 +417,7 @@ export default function QuickCreation(props) {
       setTimeout(() => {
         setGenerating(message);
         setGenerationProgress(progress);
-      }, (index + 1) * 5000);
+      }, (index + 1) * 3500);
     });
 
     try {
@@ -512,18 +512,15 @@ export default function QuickCreation(props) {
               justifyContent: "center",
             }}
           >
-            {generating && !generationError ? (
-              <RingLoader color="#000" size={14} />
-            ) : (
-              <FaWandMagicSparkles />
-            )}
+            <FaWandMagicSparkles />
+
             {generationError ? (
               <span style={{ marginLeft: "5px" }} className="pointer">
                 {generationError}
               </span>
             ) : (
               <span style={{ margin: "0px 0px 0px 5px" }} className="pointer">
-                {generating ? generating : "Auto Generate (BETA)"}
+                Auto Generate (BETA)
               </span>
             )}
           </button>

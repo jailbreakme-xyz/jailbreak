@@ -77,11 +77,11 @@ export default {
         "PAY",
     ],
     validate: async (runtime: IAgentRuntime, message: Memory) => {
-        elizaLogger.log("Validating transfer from user:", message.userId);
-        // const source = message.content.source;
-        // if (source != "direct") {
-        //     return false;
-        // }
+        elizaLogger.log("Validating transfer request from user:", message.userId);
+        const source = message.content.source;
+        if (source != "direct") {
+            return false;
+        }
         return true;
     },
     description: "Transfer tokens from the agent's wallet to another address",
