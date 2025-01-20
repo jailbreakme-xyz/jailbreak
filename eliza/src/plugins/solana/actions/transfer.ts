@@ -54,14 +54,14 @@ Example response:
 {
     "tokenAddress": "BieefG47jAHCGZBxi2q87RDuHyGZyYC3vAzxpyu8pump",
     "recipient": "9jW8FPr6BSSsemWPV22UUCzSqkVdTp6HTyPqeqyuBbCa",
-    "amount": "1000"
+    "amount": "0.0001"
 }
 \`\`\`
 
 {{recentMessages}}
 
 Given the recent messages, extract the following information about the requested token transfer:
-- Token contract address
+- Token contract address (default to SOL - So11111111111111111111111111111111111111112)
 - Recipient wallet address
 - Amount to transfer
 
