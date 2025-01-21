@@ -11,12 +11,11 @@ import {
   shouldBeConcluded,
   concludeTournament,
 } from "../hooks/concludeTournament.js";
-import JailXService from "../services/llm/jailx.js";
 import { solanaAuth } from "../middleware/solanaAuth.js";
 import { elizaService } from "../services/llm/eliza.js";
 import { mizukiService } from "../services/llm/mizuki.js";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
-
+import useAlcatraz from "../hooks/alcatraz.js";
 const router = express.Router();
 const RPC_ENV = process.env.NODE_ENV === "development" ? "devnet" : "mainnet";
 const solanaRpc = `https://${RPC_ENV}.helius-rpc.com/?api-key=${process.env.RPC_KEY}`;
@@ -130,18 +129,12 @@ router.post("/submit/:id", solanaAuth, async (req, res) => {
       return res.write("DUPLICATE TRANSACTION");
     }
 
-    // let jailxThread = challenge.jailx_thread;
-    // if (!jailxThread) {
-    //   jailxThread = await JailXService.createJailXThread();
-    // }
-
     await DatabaseService.updateChallenge(
       id,
       {
         entryFee: entryFee,
         usd_prize: usd_prize,
         winning_prize: sol_prize,
-        // jailx_thread: jailxThread?.id,
         ...(currentExpiry - now < oneHourInMillis && {
           expiry: new Date(now.getTime() + oneHourInMillis),
         }),
@@ -235,18 +228,16 @@ router.post("/submit/:id", solanaAuth, async (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
 
     if (challenge.framework?.name) {
-      let response, responseString;
+      let response;
       if (challenge.framework.name === "eliza") {
         response = await elizaService.sendMessage(
           challenge.framework.id,
           prompt,
           walletAddress
         );
-        const mergedResponse = response.map((message) => message.text);
-        responseString = mergedResponse.join("\n");
       } else if (challenge.framework.name === "mizuki") {
         response = await mizukiService.sendMessage(prompt);
-        responseString = response.message;
+        response = [{ text: response.message }];
       }
 
       // Helper function to get random chunk size
@@ -254,8 +245,8 @@ router.post("/submit/:id", solanaAuth, async (req, res) => {
         return Math.floor(Math.random() * (max - min + 1)) + min;
       };
 
-      // Function to stream text in chunks
-      const streamResponse = async (text, index = 0) => {
+      // Function to stream a single text in chunks
+      const streamText = async (text, index = 0) => {
         if (index < text.length) {
           const nextSize = getRandomChunkSize(5, 10);
           const chunk = text.substring(index, index + nextSize);
@@ -263,9 +254,53 @@ router.post("/submit/:id", solanaAuth, async (req, res) => {
 
           // Continue sending the next chunk after a short delay
           await new Promise((resolve) => setTimeout(resolve, 30));
-          await streamResponse(text, index + nextSize);
+          await streamText(text, index + nextSize);
+        }
+      };
+
+      // Function to stream array of response objects
+      const streamResponse = async (responses, responseIndex = 0) => {
+        if (responseIndex < responses.length) {
+          const currentResponse = responses[responseIndex];
+
+          // Handle action if present
+          if (currentResponse.action) {
+            const actionHeadline = `### 🎯 ACTION: ${currentResponse.action}\n---`;
+            await streamText(actionHeadline);
+
+            // Add newline after action
+            res.write("\n");
+          }
+
+          // Stream the text content
+          if (currentResponse.text) {
+            await streamText(currentResponse.text);
+
+            // Add newline between messages
+            if (responseIndex < responses.length - 1) {
+              res.write("\n");
+            }
+          }
+
+          // Process next response after a short delay
+          await new Promise((resolve) => setTimeout(resolve, 50));
+          await streamResponse(responses, responseIndex + 1);
         } else {
-          assistantMessage.content = responseString;
+          // All responses have been streamed
+          assistantMessage.content = responses
+            .map((r) => {
+              let content = "";
+              if (r.action) {
+                content += `### 🎯 ACTION: ${r.action}\n---\n`;
+              }
+              if (r.text) {
+                content += r.text;
+              }
+              return content;
+            })
+            .filter(Boolean)
+            .join("\n");
+
           // Store the complete message in database
           const allPhrasesIncluded = challenge.phrases?.every((phrase) =>
             assistantMessage.content
@@ -284,12 +319,11 @@ router.post("/submit/:id", solanaAuth, async (req, res) => {
               isValidTransaction,
               challenge,
               assistantMessage,
+              userMessage,
               blockchainService,
               DatabaseService,
               tournamentPDA,
               walletAddress,
-              entryFee,
-              fee_multiplier,
               signature
             );
             assistantMessage.content = successMessage;
@@ -302,9 +336,8 @@ router.post("/submit/:id", solanaAuth, async (req, res) => {
         }
       };
 
-      // Start streaming the response
-      await streamResponse(responseString);
-      return res.end();
+      // Start streaming the response array
+      return await streamResponse(response);
     } else {
       await OpenAIService.addMessageToThread(thread.id, prompt);
     }
@@ -323,47 +356,22 @@ router.post("/submit/:id", solanaAuth, async (req, res) => {
         res.write(delta);
       } else if (event === "thread.message.completed") {
         if (challenge.type === "phrases" && challenge.phrases?.length > 0) {
-          // TODO: IF THE CHALLENGE COLLECTS SCORES, RANK THE RESPONSE
           const allPhrasesIncluded = challenge.phrases.every((phrase) =>
             assistantMessage.content
               .toLowerCase()
               .includes(phrase.toLowerCase())
           );
 
-          // await JailXService.useJailX(
-          //   jailxThread,
-          //   JSON.stringify([
-          //     {
-          //       role: "system",
-          //       content: challenge.instructions,
-          //     },
-          //     {
-          //       role: "user",
-          //       content: prompt,
-          //     },
-          //     {
-          //       role: "assistant",
-          //       content: assistantMessage.content,
-          //     },
-          //   ])
-          // );
-
-          // const jailxRun = await JailXService.runJailX(
-          //   jailxThread,
-          //   challenge.tool_choice
-          // );
-
           if (allPhrasesIncluded) {
             const successMessage = await concludeTournament(
               isValidTransaction,
               challenge,
               assistantMessage,
+              userMessage,
               blockchainService,
               DatabaseService,
               tournamentPDA,
               walletAddress,
-              entryFee,
-              fee_multiplier,
               signature
             );
             assistantMessage.content = successMessage;
@@ -425,17 +433,22 @@ router.post("/submit/:id", solanaAuth, async (req, res) => {
         };
         assistantMessage.content += results;
 
-        if (shouldBeConcluded(challenge, functionName, jsonArgs)) {
+        const toBeConcluded = shouldBeConcluded(
+          challenge,
+          functionName,
+          jsonArgs
+        );
+
+        if (toBeConcluded) {
           const successMessage = await concludeTournament(
             isValidTransaction,
             challenge,
             assistantMessage,
+            userMessage,
             blockchainService,
             DatabaseService,
             tournamentPDA,
             walletAddress,
-            entryFee,
-            fee_multiplier,
             signature
           );
           res.write(successMessage);

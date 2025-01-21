@@ -64,6 +64,8 @@ router.get("/get-challenge", async (req, res) => {
       type: 1,
       owner: 1,
       tools: 1,
+      framework: 1,
+      use_alcatraz: 1,
     };
 
     let challenge = await DatabaseService.getChallengeByName(name, projection);
@@ -115,6 +117,7 @@ router.get("/get-challenge", async (req, res) => {
       txn: 1,
       date: 1,
       win: 1,
+      alcatraz: 1,
     };
 
     if (!challenge.tools_description) {

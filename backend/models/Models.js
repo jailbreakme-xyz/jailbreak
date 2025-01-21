@@ -58,6 +58,7 @@ const ChallengeSchema = new mongoose.Schema(
     tournament_id: String,
     hero: Boolean,
     framework: Object,
+    use_alcatraz: Boolean,
     verified_owner: {
       type: Object,
       default: null,
@@ -96,6 +97,7 @@ const chatSchema = new mongoose.Schema(
     fee: Number,
     thread_id: String,
     win: Boolean,
+    alcatraz: Boolean,
     date: { type: Date, default: Date.now },
   },
   {

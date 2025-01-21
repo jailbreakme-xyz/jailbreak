@@ -50,6 +50,7 @@ function decodeUnicode(str) {
       .replace(/\\ud83c\\udf3a/g, "🌺")
       .replace(/\\ud83c\\udf3b/g, "🌻")
       .replace(/\\ud83c\\udf3c/g, "🌼")
+      .replace(/\\u2014/g, "-")
       .replace(/\\ud83e\\udd40/g, "🥀");
 
     if (str.includes("\\u")) {
@@ -791,7 +792,11 @@ export default function Break() {
                               >
                                 <img
                                   alt="pfp"
-                                  src={challenge?.pfp}
+                                  src={
+                                    item.alcatraz
+                                      ? "https://storage.googleapis.com/jailbreakme-images/alcatraz.webp"
+                                      : challenge?.pfp
+                                  }
                                   width="40"
                                   height="40"
                                   className="avatar-image"
@@ -803,9 +808,7 @@ export default function Break() {
                               <div className="message">
                                 <div>
                                   <Markdown
-                                    children={formatCodeBlocks(
-                                      decodeUnicode(item.content)
-                                    )}
+                                    children={formatCodeBlocks(item.content)}
                                     remarkPlugins={[remarkGfm]}
                                     components={{
                                       p: ({ node, ...props }) => {

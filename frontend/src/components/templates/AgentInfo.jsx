@@ -94,6 +94,21 @@ export default function AgentInfo({ challenge }) {
             <span className="label">Developer Fee:</span>
             <span className="value">{challenge?.developer_fee}%</span>
           </div>
+          {challenge.use_alcatraz && (
+            <div className="info-item">
+              <FaCaretRight className="item-icon" />
+              <span className="label">Alcatraz:</span>
+              <span className="value">Enabled</span>
+              <a
+                className="info-link pointer"
+                href="/whitepaper"
+                target="_blank"
+                style={{ marginLeft: "5px", color: "#0BBF99" }}
+              >
+                Read more
+              </a>
+            </div>
+          )}
         </div>
       </div>
 
@@ -118,11 +133,13 @@ export default function AgentInfo({ challenge }) {
               {challenge?.charactersPerWord || "Unlimited"}
             </span>
           </div>
-          <div className="info-item">
-            <FaCaretRight className="item-icon" />
-            <span className="label">Context Window:</span>
-            <span className="value">~{challenge?.contextLimit}</span>
-          </div>
+          {!challenge.framework && (
+            <div className="info-item">
+              <FaCaretRight className="item-icon" />
+              <span className="label">Context Window:</span>
+              <span className="value">~{challenge?.contextLimit}</span>
+            </div>
+          )}
           <div className="info-item">
             <FaCaretRight className="item-icon" />
             <span className="label">Dangerous Characters:</span>

@@ -100,7 +100,10 @@ export default function ChatMenu({ challenge, attempts, price, usdPrice }) {
                     width: "80px",
                   }}
                 >
-                  Agent Pool {challenge?.tournamentPDA?.slice(0, 3)}...
+                  {challenge.type === "transfer"
+                    ? "Agent Wallet "
+                    : "Agent Pool "}
+                  {challenge?.tournamentPDA?.slice(0, 3)}...
                   {challenge?.tournamentPDA?.slice(-3)}
                 </a>
               </div>

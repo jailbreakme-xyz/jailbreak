@@ -8,7 +8,6 @@ class OpenAIService {
     this.openai = new OpenAI({
       apiKey: process.env.OPEN_AI_SECRET,
     });
-    this.jailX = process.env.JAILX_ID;
     this.agent_generator = process.env.AGENT_GENERATOR_ID;
     this.agent_generator_thread = process.env.AGENT_GENERATOR_THREAD_ID;
     this.model = "gpt-4o-mini";
@@ -47,7 +46,7 @@ class OpenAIService {
         top_p: 0.7,
         frequency_penalty: 1.0,
         presence_penalty: 1.0,
-        stream: true,
+        stream: false,
         tools: tools,
         tool_choice: tool_choice,
         parallel_tool_calls: false,

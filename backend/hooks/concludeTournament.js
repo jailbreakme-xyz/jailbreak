@@ -1,5 +1,7 @@
 import getSolPriceInUSDT from "./solPrice.js";
-
+import OpenAIService from "../services/llm/openai.js";
+import DatabaseService from "../services/db/index.js";
+import useAlcatraz from "./alcatraz.js";
 function numberWithCommas(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
@@ -8,14 +10,28 @@ async function concludeTournament(
   isValidTransaction,
   challenge,
   assistantMessage,
+  userMessage,
   blockchainService,
   DatabaseService,
   tournamentPDA,
   walletAddress,
-  entryFee,
-  fee_multiplier,
   signature
 ) {
+  // DOUBLE AGENT BOMB:
+  if (challenge.use_alcatraz) {
+    const replacedMessage = await useAlcatraz(
+      challenge,
+      assistantMessage,
+      userMessage
+    );
+    // If not bypassed
+    if (replacedMessage) {
+      assistantMessage.content = replacedMessage.content;
+      await DatabaseService.createChat(assistantMessage);
+      return replacedMessage.content;
+    }
+  }
+
   if (isValidTransaction) {
     const concluded = await blockchainService.concludeTournament(
       tournamentPDA,

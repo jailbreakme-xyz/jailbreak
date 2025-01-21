@@ -85,7 +85,7 @@ classDef sensitive fill:#ffebee,stroke:#ef5350,color:#d32f2f
         <h1 style={styles.title}>
           Enhancing AI Security: Function Calls and the Double Agent Technique
         </h1>
-        <p style={styles.date}>Published at 2025-01-02</p>
+        <p style={styles.date}>Published at 2025-01-21</p>
         <hr style={{ margin: "5px 0px" }} />
         <p>
           This whitepaper explores two innovative approaches to enhance AI
@@ -278,7 +278,7 @@ classDef sensitive fill:#ffebee,stroke:#ef5350,color:#d32f2f
         </section>
 
         <section style={styles.section}>
-          <h2>The Double Agent Technique</h2>
+          <h2>The Double Agent Technique (Alcatraz™)</h2>
           <p>
             Building upon the basic function call security, the Double Agent
             Technique adds an additional layer of protection.
