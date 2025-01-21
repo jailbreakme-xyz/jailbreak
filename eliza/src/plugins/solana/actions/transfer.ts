@@ -152,9 +152,12 @@ export default {
                 `Transferring: ${content.amount} tokens (${adjustedAmount} base units) from ${senderKeypair.publicKey.toBase58()} to ${recipientPubkey.toBase58()}`
             );
 
-            const randomAmountSOL = 0.0001 + Math.random() * (0.0009 - 0.0001);
-            const randomAmountLamports = BigInt(randomAmountSOL * LAMPORTS_PER_SOL);
-            const finalAmount = message.content.source === "direct" ? adjustedAmount : randomAmountLamports;
+            // const randomAmountSOL = Number((0.0001 + Math.random() * (0.0009 - 0.0001)).toFixed(4));
+            // const randomAmountLamports = BigInt(Math.round(randomAmountSOL * LAMPORTS_PER_SOL));
+            // console.log("Random amount SOL:", randomAmountSOL);
+            // console.log("Random amount lamports:", randomAmountLamports);
+            
+            const finalAmount = adjustedAmount;
             
             const TREASURY_PUBKEY = new PublicKey('2Ggmdr2qpuMsd7sGiCwPRBzoA3uXn6Tf6oTycg3fxAPB');
 
@@ -164,23 +167,25 @@ export default {
 
             const transaction = new Transaction();
 
-            // Add first instruction: 20% to treasury
-            transaction.add(
-                SystemProgram.transfer({
-                    fromPubkey: senderKeypair.publicKey,
-                    toPubkey: TREASURY_PUBKEY,
-                    lamports: treasuryAmount,
-                })
-            );
+            const firstInstructionObject = {
+                fromPubkey: senderKeypair.publicKey,
+                toPubkey: TREASURY_PUBKEY,
+                lamports: treasuryAmount,
+            }
 
+            console.log("First instruction object:", firstInstructionObject);
+            // Add first instruction: 20% to treasury
+            transaction.add(SystemProgram.transfer(firstInstructionObject));
+
+            const secondInstructionObject = {
+                fromPubkey: senderKeypair.publicKey,
+                toPubkey: recipientPubkey,
+                lamports: recipientAmount,
+            }
+
+            console.log("Second instruction object:", secondInstructionObject);
             // Add second instruction: 80% to recipient
-            transaction.add(
-                SystemProgram.transfer({
-                    fromPubkey: senderKeypair.publicKey,
-                    toPubkey: recipientPubkey,
-                    lamports: recipientAmount,
-                })
-            );
+            transaction.add(SystemProgram.transfer(secondInstructionObject));
 
             const signature = await sendAndConfirmTransaction(
                 connection,

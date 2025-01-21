@@ -3,7 +3,7 @@ import transferToken from "./actions/transfer.ts";
 
 const walletPlugin: Plugin = {
     name: "wallet-plugin",
-    description: "Wallet Plugin for Eliza",
+    description: "Wallet Plugin for Jailo",
     actions: [
         transferToken
     ],
