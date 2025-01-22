@@ -8,7 +8,7 @@ export const agentValidator = Joi.object({
   fee_multiplier: Joi.number().min(1).max(100).required().positive(),
   tournament_id: Joi.string().pattern(/^\d+$/).required(),
   tournamentPDA: Joi.string().required(),
-  opening_message: Joi.string().min(10).max(130).required(),
+  opening_message: Joi.string().min(10).max(130).default(""),
   pfp: Joi.string().uri().required(),
   assistant_id: Joi.string().required(),
   developer_fee: Joi.number().min(0).max(100).required().positive(),

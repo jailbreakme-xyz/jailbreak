@@ -5,7 +5,7 @@ import Footer from "../components/templates/Footer";
 // Initialize Mermaid
 mermaid.initialize({ startOnLoad: false });
 
-const Whitepaper = () => {
+const Alcatraz = () => {
   // Refs for Mermaid diagrams
   const workflowRef = useRef(null);
   const simpleWorkflowRef = useRef(null);
@@ -524,8 +524,8 @@ classDef sensitive fill:#ffebee,stroke:#ef5350,color:#d32f2f
 // Styles for the component
 const styles = {
   logo: {
-    width: "80px",
-    height: "80px",
+    width: "60px",
+    height: "60px",
     margin: "0px 0px 30px",
     borderRadius: "120px",
     display: "block",
@@ -597,4 +597,4 @@ const styles = {
   },
 };
 
-export default Whitepaper;
+export default Alcatraz;

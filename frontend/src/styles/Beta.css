@@ -95,9 +95,7 @@ body {
     padding-top: 92px; 
 }
 
-.beta-header  .socialIcons {
-    justify-content: flex-end !important;
-}
+
 .separator {
     width: 2px;
     height: 25px;
@@ -1303,6 +1301,9 @@ margin: 20px auto 0px auto !important;
   .swiper-button-prev, .swiper-button-next {
     display: none !important;
   }
+  .beta-header  .socialIcons {
+    justify-content: flex-start !important;
+}
 }
 
 .trending-agents-section {
@@ -2000,4 +2001,10 @@ margin: 20px auto 0px auto !important;
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@media (min-width: 768px) {
+  .beta-header  .socialIcons {
+    justify-content: flex-end !important;
+}
 }

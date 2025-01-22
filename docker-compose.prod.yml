@@ -6,7 +6,3 @@ services:
 
   front-end:
     command: npm run preview
-
-  eliza:
-    volumes:
-      - /eliza/characters:/usr/src/app/eliza/characters

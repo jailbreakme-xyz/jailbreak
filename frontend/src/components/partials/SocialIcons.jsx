@@ -12,14 +12,14 @@ export default function SocialIcons(props) {
         target="_blank"
         className="pointer"
       >
-        <FaXTwitter size={25} className="pointer" />
+        <FaXTwitter size={20} className="pointer" />
       </a>
       <a
         href="https://t.me/jailbreakme_xyz"
         target="_blank"
         className="pointer"
       >
-        <FaTelegramPlane size={25} className="pointer" />
+        <FaTelegramPlane size={20} className="pointer" />
       </a>
       <a
         href="https://solscan.io/account/43m2CSa83AVK6yT7SpZ1KFcScWfxyfid7nQx2KUMWJko"
@@ -29,8 +29,8 @@ export default function SocialIcons(props) {
         <img
           src="/images/solIcon.png"
           alt="Solana"
-          width={25}
-          height={25}
+          width={20}
+          height={20}
           className="pointer"
         />
       </a>
@@ -39,14 +39,14 @@ export default function SocialIcons(props) {
         target="_blank"
         className="pointer"
       >
-        <SiGitbook size={25} className="pointer" />
+        <SiGitbook size={20} className="pointer" />
       </a>
       <a
         href="https://github.com/jailbreakme-xyz"
         target="_blank"
         className="pointer"
       >
-        <SiGithub size={25} className="pointer" />
+        <SiGithub size={20} className="pointer" />
       </a>
       {props.address && <div className="separator"></div>}
       {props.address && (

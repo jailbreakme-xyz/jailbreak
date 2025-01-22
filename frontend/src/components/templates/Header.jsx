@@ -104,17 +104,14 @@ const Header = (props) => {
         />
         <div className="separator"></div>
         <a href={`/agents`} className="beta-header-link pointer">
-          AGENTS
-        </a>
-        <a href="/breakers" className="beta-header-link pointer">
-          BREAKERS
+          Agents
         </a>
         <a
           href={undefined}
           onClick={handleCreateClick}
           className="beta-header-link pointer"
         >
-          CREATE AGENT
+          Launchpad
         </a>
         <Popover
           sx={{ zIndex: "999999999999999" }}
@@ -163,7 +160,13 @@ const Header = (props) => {
           </div>
         </Popover>
         <a href="/jailx" className="beta-header-link pointer">
-          JAILX
+          JailX™
+        </a>
+        <a href="/alcatraz-whitepaper" className="beta-header-link pointer">
+          Alcatraz™
+        </a>
+        <a href="/docs" className="beta-header-link pointer">
+          Docs
         </a>
         <a
           href="https://dexscreener.com/solana/card131dsufcqfky9ciczd4qj5hbazsqlklsekjjmadp"

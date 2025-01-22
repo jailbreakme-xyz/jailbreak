@@ -7,7 +7,7 @@ import {
   FaTimes,
   FaChartLine,
 } from "react-icons/fa";
-import { FaTelegramPlane } from "react-icons/fa";
+import { FaTelegramPlane, FaBook } from "react-icons/fa";
 import { SiGitbook, SiGithub } from "react-icons/si";
 import { FaXTwitter } from "react-icons/fa6";
 import { TiThMenu } from "react-icons/ti";
@@ -29,300 +29,332 @@ const MobileMenu = (props) => {
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
+    // Prevent body scroll when menu is open
+    document.body.style.overflow = !menuOpen ? "hidden" : "unset";
   };
 
   return (
-    <div className={props.absolute ? "absolute mobileMenu" : "mobileMenu"}>
-      <div className="hamburgerIcon" onClick={toggleMenu}>
-        {menuOpen ? <FaTimes size={20} /> : <TiThMenu size={20} />}
-      </div>
+    <div className={`mobileMenu ${props.absolute ? "absolute" : ""}`}>
+      <button
+        className="hamburgerButton"
+        onClick={toggleMenu}
+        aria-label="Toggle Menu"
+      >
+        {menuOpen ? <FaTimes size={24} /> : <TiThMenu size={24} />}
+      </button>
 
-      <div className={`mainMenu ${menuOpen ? "open" : ""}`}>
-        <img
-          src={"/images/darkSlogen.png"}
-          alt="logo"
-          width="200"
-          style={{ marginBottom: "15px" }}
-        />
-        <Link
-          to="/"
-          className="chatMainMenuItem pointer"
-          onClick={() => setMenuOpen(false)}
+      <div
+        className={`menuOverlay ${menuOpen ? "open" : ""}`}
+        onClick={toggleMenu}
+      >
+        <div
+          className={`menuContent ${menuOpen ? "open" : ""}`}
+          onClick={(e) => e.stopPropagation()}
         >
-          <FaHome size={25} /> HOME
-        </Link>
-        <Link
-          to={`/agents`}
-          className="chatMainMenuItem pointer"
-          style={{ textTransform: "uppercase" }}
-        >
-          <GiArtificialIntelligence size={25} /> AGENTS
-        </Link>
+          {/* <img
+            src={"/images/lightSlogen.png"}
+            alt="logo"
+            className="menuLogo"
+          /> */}
 
-        <Link
-          to="/breakers"
-          className="chatMainMenuItem pointer"
-          onClick={() => setMenuOpen(false)}
-        >
-          <GiBreakingChain size={25} /> BREAKERS
-        </Link>
-        <Link
-          href={undefined}
-          className="chatMainMenuItem pointer"
-          onClick={() => {
-            props.handleQuickCreationOpen();
-            setMenuOpen(false);
-          }}
-        >
-          <MdRocketLaunch size={25} /> CREATE AGENT
-        </Link>
-        <Link
-          to="/jailx"
-          className="chatMainMenuItem pointer"
-          onClick={() => setMenuOpen(false)}
-        >
-          <img
-            src="https://storage.googleapis.com/jailbreakme-images/jailxLogo.png"
-            alt="jailx"
-            width="25"
-            style={{ borderRadius: "100px", border: "5px double white" }}
-          />{" "}
-          JAILX
-        </Link>
-        <Link
-          to="/faq"
-          className="chatMainMenuItem pointer"
-          onClick={() => setMenuOpen(false)}
-        >
-          <FaQuestionCircle size={25} /> FAQ
-        </Link>
-        <Link
-          to="https://dexscreener.com/solana/card131dsufcqfky9ciczd4qj5hbazsqlklsekjjmadp"
-          className="chatMainMenuItem pointer"
-          onClick={() => setMenuOpen(false)}
-          target="_blank"
-        >
-          <GiTwoCoins size={25} /> $JAIL TOKEN
-        </Link>
-        {props.address && (
-          <Link
-            to={`/breaker/${props.address}`}
-            className="chatMainMenuItem pointer"
-            onClick={() => setMenuOpen(false)}
-          >
-            <Jdenticon
-              value={props.address}
-              className="pointer"
-              size={"30"}
-              style={{ border: "3px double #0BBF99" }}
-            />{" "}
-            MY PROFILE
-          </Link>
-        )}
-        {!props.hiddenItems?.includes("SOCIAL") && (
-          <div className="chatMainMenuItem chatPageSocialMenu">
-            <span className="">
-              <FaUsers size={25} /> LINKS
-            </span>
-            <hr />
-            <div className="chatPageSocialIcons">
-              <a
-                href="https://twitter.com/jailbreakme_xyz"
-                target="_blank"
-                className="pointer"
-              >
-                <FaXTwitter size={25} className="pointer" />
-              </a>
-              <a
-                href="https://t.me/jailbreakme_xyz"
-                target="_blank"
-                className="pointer"
-              >
-                <FaTelegramPlane size={25} className="pointer" />
-              </a>
-              <a
-                href="https://solscan.io/account/43m2CSa83AVK6yT7SpZ1KFcScWfxyfid7nQx2KUMWJko"
-                target="_blank"
-                className="pointer imgIcon"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <img
-                  src={"/images/solIcon.png"}
-                  alt="Solana"
-                  width={25}
-                  height={25}
-                  className="pointer"
-                />
-              </a>
-              <a
-                href="https://jailbreak.gitbook.io/jailbreakme.xyz"
-                target="_blank"
-                className="pointer"
-              >
-                <SiGitbook size={25} className="pointer" />
-              </a>
-              <a
-                href="https://github.com/jailbreakme-xyz"
-                target="_blank"
-                className="pointer"
-              >
-                <SiGithub size={25} className="pointer" />
-              </a>
-            </div>
-          </div>
-        )}
+          <nav className="menuNav">
+            <Link to="/" onClick={toggleMenu}>
+              <FaHome /> <span>Home</span>
+            </Link>
 
-        {props.component === "break" && (
-          <div className="chatMenu">
-            <div
-              style={{ textAlign: "left", color: "#ccc" }}
-              className="statsWrapper"
+            <Link to="/agents" onClick={toggleMenu}>
+              <GiArtificialIntelligence /> <span>Agents</span>
+            </Link>
+
+            <Link to="/breakers" onClick={toggleMenu}>
+              <GiBreakingChain /> <span>Breakers</span>
+            </Link>
+
+            <Link
+              to="#"
+              onClick={() => {
+                props.handleQuickCreationOpen();
+                toggleMenu();
+              }}
             >
-              <h3 style={{ color: "#ccc" }}>
-                <FaChartLine
-                  style={{
-                    position: "relative",
-                    top: "4px",
-                  }}
-                />{" "}
-                STATS
-              </h3>
-              <hr />
-              {props.challenge && (
-                <div className="stats">
-                  <div className="chatComingSoonMenuItem">
-                    <h4>PRIZE</h4>
-                    <CountUp
-                      start={0}
-                      end={
-                        props.usdPrize
-                          ? props.usdPrize
-                          : numberWithCommas(
-                              (props.prize * props.solPrice).toFixed(2)
-                            )
-                      }
-                      duration={2.75}
-                      decimals={2}
-                      decimal="."
-                      prefix="$"
-                    />
-                  </div>
-                  <div className="chatComingSoonMenuItem">
-                    <h4>Break Attempts</h4>
-                    <CountUp
-                      start={0}
-                      end={props.attempts}
-                      duration={2.75}
-                      decimals={0}
-                      decimal="."
-                    />
-                  </div>
-                  <div className="chatComingSoonMenuItem">
-                    <h4>Message Price</h4>
-                    <CountUp
-                      start={0}
-                      end={props.usdPrice}
-                      duration={2.75}
-                      decimals={2}
-                      decimal="."
-                      prefix="$"
-                    />
-                  </div>
-                  <hr />
-                  <br />
-                  <p
-                    style={{
-                      fontSize: "16px",
-                      fontWeight: "normal",
-                      margin: "8px 0px",
-                    }}
-                  >
-                    <strong>Characters Per Message:</strong> ~
-                    {numberWithCommas(props.challenge.characterLimit)}
-                  </p>
-                  {props.challenge.charactersPerWord && (
-                    <p
-                      style={{
-                        fontSize: "16px",
-                        fontWeight: "normal",
-                        margin: "8px 0px",
-                      }}
-                    >
-                      <strong>Characters Per Word:</strong>{" "}
-                      {props.challenge.charactersPerWord}
-                    </p>
-                  )}
-                  <p
-                    style={{
-                      fontSize: "16px",
-                      fontWeight: "normal",
-                      margin: "8px 0px",
-                    }}
-                  >
-                    <strong>Context Window:</strong> ~
-                    {props.challenge.contextLimit}
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "16px",
-                      fontWeight: "normal",
-                      margin: "8px 0px",
-                    }}
-                  >
-                    <strong>UI Chat Limit:</strong> ~
-                    {props.challenge.chatLimit || "Unlimited"}
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "16px",
-                      fontWeight: "normal",
-                      margin: "8px 0px",
-                    }}
-                  >
-                    <strong>Developer Fee: </strong>
-                    {props.challenge.developer_fee}%
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "16px",
-                      fontWeight: "normal",
-                      margin: "8px 0px",
-                    }}
-                  >
-                    Message fees increase the prize pool.
-                  </p>
-                  {props.challenge?.custom_rules && (
-                    <p
-                      style={{
-                        fontSize: "16px",
-                        fontWeight: "normal",
-                        margin: "8px 0px",
-                      }}
-                    >
-                      {props.challenge?.custom_rules}
-                    </p>
-                  )}
-                  <a
-                    href={`/agent/${props.challenge?.name}`}
-                    target="_blank"
-                    className="pointer"
-                    style={{
-                      color: "#09bf99",
-                      fontSize: "16px",
-                      fontWeight: "normal",
-                    }}
-                  >
-                    Read More →
-                  </a>
-                </div>
-              )}
+              <MdRocketLaunch /> <span>Create Agent</span>
+            </Link>
+
+            <Link to="/jailx" onClick={toggleMenu}>
+              <img
+                src="https://storage.googleapis.com/jailbreakme-images/jailxLogo.png"
+                alt="JailX"
+                className="menuIcon"
+              />
+              <span>JailX™</span>
+            </Link>
+
+            <Link to="/alcatraz-whitepaper" onClick={toggleMenu}>
+              <img
+                src="https://storage.googleapis.com/jailbreakme-images/alcatraz.webp"
+                alt="Alcatraz"
+                className="menuIcon"
+              />
+              <span>Alcatraz™</span>
+            </Link>
+
+            <Link to="/docs" onClick={toggleMenu}>
+              <FaBook /> <span>Docs</span>
+            </Link>
+
+            <Link to="/faq" onClick={toggleMenu}>
+              <FaQuestionCircle /> <span>FAQ</span>
+            </Link>
+
+            <Link
+              to="https://dexscreener.com/solana/card131dsufcqfky9ciczd4qj5hbazsqlklsekjjmadp"
+              target="_blank"
+              onClick={toggleMenu}
+            >
+              <GiTwoCoins /> <span>$JAIL Token</span>
+            </Link>
+
+            {props.address && (
+              <Link to={`/breaker/${props.address}`} onClick={toggleMenu}>
+                <Jdenticon value={props.address} size={24} />
+                <span>My Profile</span>
+              </Link>
+            )}
+          </nav>
+
+          {!props.hiddenItems?.includes("SOCIAL") && (
+            <div className="socialLinks">
+              <div className="socialIcons">
+                <a href="https://twitter.com/jailbreakme_xyz" target="_blank">
+                  <FaXTwitter />
+                </a>
+                <a href="https://t.me/jailbreakme_xyz" target="_blank">
+                  <FaTelegramPlane />
+                </a>
+                <a
+                  href="https://solscan.io/account/43m2CSa83AVK6yT7SpZ1KFcScWfxyfid7nQx2KUMWJko"
+                  target="_blank"
+                >
+                  <img
+                    src="/images/solIcon.png"
+                    alt="Solana"
+                    width={20}
+                    height={20}
+                  />
+                </a>
+                <a
+                  href="https://jailbreak.gitbook.io/jailbreakme.xyz"
+                  target="_blank"
+                >
+                  <SiGitbook />
+                </a>
+                <a href="https://github.com/jailbreakme-xyz" target="_blank">
+                  <SiGithub />
+                </a>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+
+          {props.component === "break" && props.challenge && (
+            <div className="statsSection">
+              <div className="statsList">
+                <div className="statItem">
+                  <label>Prize</label>
+                  <CountUp
+                    start={0}
+                    end={props.usdPrize || props.prize * props.solPrice}
+                    duration={2.75}
+                    decimals={2}
+                    prefix="$"
+                  />
+                </div>
+                <div className="statItem">
+                  <label>Break Attempts</label>
+                  <CountUp start={0} end={props.attempts} duration={2.75} />
+                </div>
+                <div className="statItem">
+                  <label>Message Price</label>
+                  <CountUp
+                    start={0}
+                    end={props.usdPrice}
+                    duration={2.75}
+                    decimals={2}
+                    prefix="$"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
+
+      <style jsx>{`
+        .mobileMenu {
+          position: relative;
+          z-index: 1000;
+        }
+
+        .hamburgerButton {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: rgba(0, 0, 0, 0.8);
+          border: none;
+          color: white;
+          padding: 10px;
+          border-radius: 8px;
+          cursor: pointer;
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          z-index: 1001;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .menuOverlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100vh;
+          background: rgba(0, 0, 0, 0.5);
+          backdrop-filter: blur(5px);
+          opacity: 0;
+          visibility: hidden;
+          transition: all 0.3s ease;
+          z-index: 1000;
+        }
+
+        .menuOverlay.open {
+          opacity: 1;
+          visibility: visible;
+        }
+
+        .menuContent {
+          position: fixed;
+          top: 0;
+          right: -100%;
+          width: 80%;
+          max-width: 400px;
+          height: 95vh !important;
+          background: rgba(18, 18, 18, 0.95);
+          backdrop-filter: blur(10px);
+          padding: 20px 24px 24px;
+          transition: right 0.3s ease;
+          overflow-y: auto;
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .menuContent.open {
+          right: 0;
+        }
+
+        .menuLogo {
+          width: 180px;
+          margin: 0 auto 24px;
+        }
+
+        .menuNav {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+
+        .menuNav a {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          color: white;
+          text-decoration: none;
+          padding: 12px;
+          border-radius: 8px;
+          transition: all 0.2s ease;
+          font-size: 16px;
+        }
+
+        .menuNav a:hover {
+          background: rgba(255, 255, 255, 0.1);
+        }
+
+        .menuIcon {
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          border: 2px solid #0bbf99;
+        }
+
+        .socialLinks {
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          padding-top: 24px;
+        }
+
+        .socialLinks h3 {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 16px;
+          color: #0bbf99;
+        }
+
+        .socialIcons a {
+          color: white;
+          font-size: 24px;
+          transition: color 0.2s ease;
+        }
+
+        .socialIcons a:hover {
+          color: #0bbf99;
+        }
+
+        .statsSection {
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          padding-top: 24px;
+        }
+
+        .statsSection h3 {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 16px;
+          color: #0bbf99;
+        }
+
+        .statsList {
+          display: grid;
+          gap: 16px;
+        }
+
+        .statItem {
+          background: rgba(255, 255, 255, 0.05);
+          padding: 16px;
+          border-radius: 8px;
+          text-align: center;
+        }
+
+        .statItem label {
+          display: block;
+          color: #666;
+          margin-bottom: 8px;
+          font-size: 14px;
+        }
+
+        .closeButton {
+          position: absolute;
+          top: 20px;
+          right: 20px;
+          background: white;
+          border: none;
+          color: black;
+          font-size: 24px;
+          cursor: pointer;
+          padding: 10px;
+          z-index: 1002;
+        }
+      `}</style>
     </div>
   );
 };

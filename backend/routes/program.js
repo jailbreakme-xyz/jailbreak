@@ -162,7 +162,7 @@ router.post(
       const usd_prize = initialSol * solPrice;
       const entry_fee = initialSol / fee_multiplier;
 
-      if (openingMessage.includes(phrases[0])) {
+      if (openingMessage?.includes(phrases[0])) {
         openingMessage = openingMessage.replace(
           phrases[0],
           "*".repeat(phrases[0].length)

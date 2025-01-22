@@ -14,7 +14,7 @@ export const tournamentValidator = Joi.object({
   developer_fee: Joi.number().min(20).max(50).required().positive(),
   winner_payout_pct: Joi.number().min(50).max(80).required().positive(),
   feeType: Joi.number().min(0).max(1).required(),
-  opening_message: Joi.string().min(10).max(130).required(),
+  opening_message: Joi.string().min(10).max(130).default(""),
   pfp: Joi.alternatives().try(Joi.string().uri(), Joi.binary()).required(),
 
   // Tournament specific fields
