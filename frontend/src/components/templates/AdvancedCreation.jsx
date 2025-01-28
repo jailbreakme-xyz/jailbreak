@@ -187,6 +187,7 @@ const AdvancedCreation = (props) => {
       style: "",
       phrases: [""],
       success_function: "",
+      use_alcatraz: false,
     },
     validationSchema: Yup.object({
       // pfp: Yup.mixed(),
@@ -540,6 +541,7 @@ const AdvancedCreation = (props) => {
         start_date: values.start_date,
         title: values.title,
         tldr: values.tldr,
+        use_alcatraz: values.use_alcatraz,
         // advanced: true,
       };
 
@@ -1307,7 +1309,7 @@ const AdvancedCreation = (props) => {
               />
             </Grid>
             <Grid
-              size={{ xs: 12, md: 12, lg: 12 }}
+              size={{ xs: 12, md: 6, lg: 6 }}
               sx={{ marginTop: 2 }}
               spacing={1}
             >
@@ -1329,6 +1331,39 @@ const AdvancedCreation = (props) => {
                 </span>
               </FormGroup>
             </Grid>
+
+            <Grid
+              size={{ xs: 12, md: 6, lg: 6 }}
+              sx={{ marginTop: 2 }}
+              spacing={1}
+            >
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="use_alcatraz"
+                      value={formik.values.use_alcatraz}
+                      sx={{ color: "#0BBF99", fill: "#0BBF99" }}
+                      checked={formik.values.use_alcatraz}
+                      onChange={formik.handleChange}
+                    />
+                  }
+                  label="Use Alcatraz as double agent?"
+                />
+                <span style={{ fontSize: "12px", color: "#0BBF99" }}>
+                  If checked, your agent will be protected by Alcatraz.
+                  <a
+                    className="info-link pointer"
+                    href="/alcatraz-whitepaper"
+                    target="_blank"
+                    style={{ marginLeft: "5px", color: "#0BBF99" }}
+                  >
+                    Read more
+                  </a>
+                </span>
+              </FormGroup>
+            </Grid>
+
             <Grid size={{ xs: 12, md: 12, lg: 12 }}>
               <h3>🎯 Tournament Type</h3>
               <Tabs

@@ -144,58 +144,83 @@ class BlockchainService {
   }
 
   // Get tournament data
-  async getTournamentData(tournamentPDA) {
-    try {
-      // Fetch the account info
-      const accountInfo = await this.connection.getAccountInfo(
-        new PublicKey(tournamentPDA)
-      );
-      if (!accountInfo) {
-        return false;
+  async getTournamentData(tournamentPDA, maxRetries = 3, initialDelay = 1000) {
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        // Fetch the account info
+        const accountInfo = await this.connection.getAccountInfo(
+          new PublicKey(tournamentPDA)
+        );
+
+        if (!accountInfo) {
+          if (attempt === maxRetries - 1) return false;
+          const delay = initialDelay * Math.pow(2, attempt);
+          console.log(
+            `Account not found, retrying in ${delay}ms... (Attempt ${
+              attempt + 1
+            }/${maxRetries})`
+          );
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          continue;
+        }
+
+        const data = Buffer.from(accountInfo.data);
+        // Read authority (32 bytes after 8-byte discriminator)
+        const authority = new PublicKey(data.subarray(8, 40));
+
+        // Read state (1 byte)
+        const state = data.readUInt8(40);
+
+        // Read fee type (1 byte)
+        const fee_type = data.readUInt8(41);
+
+        // Read entry fee (8 bytes)
+        const entryFee = data.readBigUInt64LE(42);
+
+        // Read fee multiplier percentage times 10 (1 byte)
+        const fee_mul_pct_x10 = data.readUInt8(50);
+
+        // Read winner payout percentage (1 byte)
+        const winner_payout_pct = data.readUInt8(51);
+
+        // Read royalty payout percentage (1 byte)
+        const royalty_payout_pct = data.readUInt8(52);
+
+        // Read tournament_id (8 bytes)
+        const tournament_id = data.readBigUInt64LE(53);
+
+        const programBalance = await this.getAccountBalance(tournamentPDA);
+        return {
+          authority: authority.toString(),
+          state,
+          entryFee: Number(entryFee) / LAMPORTS_PER_SOL,
+          feeMulPct: fee_mul_pct_x10,
+          winnerPayoutPct: winner_payout_pct,
+          feeType: fee_type,
+          royaltyPayoutPct: royalty_payout_pct,
+          programBalance: programBalance / LAMPORTS_PER_SOL,
+          total_lamports: programBalance,
+          tournamentId: Number(tournament_id),
+        };
+      } catch (error) {
+        const delay = initialDelay * Math.pow(2, attempt);
+        console.error(
+          `Error fetching tournament data (Attempt ${
+            attempt + 1
+          }/${maxRetries}):`,
+          error
+        );
+
+        if (attempt === maxRetries - 1) {
+          console.error("Max retries reached, giving up");
+          return false;
+        }
+
+        console.log(`Retrying in ${delay}ms...`);
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
-
-      const data = Buffer.from(accountInfo.data);
-      // Read authority (32 bytes after 8-byte discriminator)
-      const authority = new PublicKey(data.subarray(8, 40));
-
-      // Read state (1 byte)
-      const state = data.readUInt8(40);
-
-      // Read fee type (1 byte)
-      const fee_type = data.readUInt8(41);
-
-      // Read entry fee (8 bytes)
-      const entryFee = data.readBigUInt64LE(42);
-
-      // Read fee multiplier percentage times 10 (1 byte)
-      const fee_mul_pct_x10 = data.readUInt8(50);
-
-      // Read winner payout percentage (1 byte)
-      const winner_payout_pct = data.readUInt8(51);
-
-      // Read royalty payout percentage (1 byte)
-      const royalty_payout_pct = data.readUInt8(52);
-
-      // Read tournament_id (8 bytes)
-      const tournament_id = data.readBigUInt64LE(53);
-
-      const programBalance = await this.getAccountBalance(tournamentPDA);
-      return {
-        authority: authority.toString(),
-        state,
-        entryFee: Number(entryFee) / LAMPORTS_PER_SOL,
-        feeMulPct: fee_mul_pct_x10,
-        winnerPayoutPct: winner_payout_pct,
-        feeType: fee_type,
-        royaltyPayoutPct: royalty_payout_pct,
-        programBalance: programBalance / LAMPORTS_PER_SOL,
-        total_lamports: programBalance,
-        tournamentId: Number(tournament_id),
-      };
-    } catch (error) {
-      console.error("Error fetching tournament data:", error);
-      return false;
     }
+    return false;
   }
 
   //   Conclude Tournament

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaChevronCircleRight } from "react-icons/fa";
 import Jdenticon from "react-jdenticon";
@@ -8,6 +8,9 @@ import QuickCreation from "./QuickCreation";
 import AdvancedModal from "./AdvancedModal";
 import { useWallet } from "@solana/wallet-adapter-react";
 import AgentCardAlt from "./AgentCardAlt";
+import QuickPromptCreation from "./QuickPromptCreation";
+import "../../styles/components/Hero.css";
+
 const Hero = ({
   data,
   handleQuickCreationOpen,
@@ -17,6 +20,23 @@ const Hero = ({
 }) => {
   const { publicKey, connected } = useWallet();
   const [advancedModalOpen, setAdvancedModalOpen] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(1); // Start with middle card
+
+  useEffect(() => {
+    if (data?.heroChallenges?.length === 3) {
+      const interval = setInterval(() => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % 3);
+      }, 4000);
+
+      return () => clearInterval(interval);
+    }
+  }, [data?.heroChallenges]);
+
+  const getPositionClass = (index) => {
+    const positions = ["left", "center", "right"];
+    const offset = (index - currentIndex + 3) % 3;
+    return positions[offset];
+  };
 
   const handleAdvancedModalOpen = () => {
     setAdvancedModalOpen(true);
@@ -31,18 +51,18 @@ const Hero = ({
     <div className="beta-content">
       <div className="beta-content-left">
         <h1>JailbreakMe</h1>
-        <hr style={{ width: "100%", margin: "0px" }} />
+        <hr style={{ width: "100%", margin: "0px 0px 15px 0px" }} />
         <p>
-          The first open-source decentralized app where organizations test their
-          AI models and agents while users earn rewards for jailbreaking them.
+          The first open-source AI security platform where users earn bounties
+          for breaking AI agents.
         </p>
-        {/* <Counters data={data} /> */}
         <InlineCounters data={data} />
+        {/* <Counters data={data} /> */}
 
         {/* <p style={{ fontWeight: "bold", fontStyle: "italic" }}>
           TOP WINNERS 🔥
         </p> */}
-        <div
+        {/* <div
           id="heroTopWinners"
           style={{
             display: "flex",
@@ -91,8 +111,8 @@ const Hero = ({
                 />
               </div>
             ))}
-        </div>
-        <div className="hero-buttons">
+        </div> */}
+        {/* <div className="hero-buttons">
           <button
             className="styledBtn pointer launch-agent-btn"
             onClick={handleQuickCreationOpen}
@@ -118,7 +138,10 @@ const Hero = ({
               START BREAKING <FaChevronCircleRight className="pointer" />
             </button>
           </Link>
-        </div>
+        </div> */}
+
+        <QuickPromptCreation isUploading={isUploading} />
+
         <QuickCreation
           isUploading={isUploading}
           open={quickCreationOpen}
@@ -137,57 +160,26 @@ const Hero = ({
           handleAdvancedModalClose={handleAdvancedModalClose}
           handleAdvancedModalOpen={handleAdvancedModalOpen}
         />
-        {/* <h3 style={{ margin: "5px" }}>Top Winners 🔥</h3>
-        <div
-          id="heroTopWinners"
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "start",
-            alignItems: "center",
-            columnGap: "25px",
-            padding: "20px 0px 0px",
-          }}
-        >
-          {data?.topChatters &&
-            data?.topChatters?.slice(0, 6)?.map((breaker, index) => (
+      </div>
+      <div
+        className="beta-content-right"
+        style={{ width: data?.heroChallenges?.length === 3 ? "40%" : "330px" }}
+      >
+        {data?.heroChallenges?.length === 3 ? (
+          <div className="cards-stack-container">
+            {data.heroChallenges.map((challenge, index) => (
               <div
-                key={index}
-                className="pointer"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.location.href = `/breaker/${breaker?.address}`;
-                }}
-                style={{
-                  display: "grid",
-                  placeItems: "center",
-                }}
+                key={challenge?._id || index}
+                className={`stack-card stack-card-${getPositionClass(index)}`}
               >
-                <Jdenticon value={breaker?.address} size={"40"} />
-                <p className="beta-breaker-address pointer">
-                  {breaker?.address?.slice(0, 2)}...
-                  {breaker?.address?.slice(-2)}
-                </p>
-                <CountUp
-                  end={breaker?.totalUsdPrize?.toFixed(0)}
-                  prefix="$"
-                  start={0}
-                  duration={2.75}
-                  decimals={0}
-                  decimal="."
-                />
+                <AgentCardAlt agent={challenge || {}} />
               </div>
             ))}
-        </div> */}
-      </div>
-      <div className="beta-content-right">
-        {data?.activeChallenge && (
-          <div
-            className="fade-in-section"
-            key={data.activeChallenge.id || Math.random()}
-          >
-            <AgentCardAlt agent={data?.activeChallenge} />
           </div>
+        ) : (
+          data?.activeChallenge && (
+            <AgentCardAlt agent={data?.activeChallenge} />
+          )
         )}
       </div>
     </div>

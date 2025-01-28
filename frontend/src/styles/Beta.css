@@ -194,10 +194,13 @@ padding: 5px;
   font-size: 44px;
 }
 .inline-counters {
-  margin: 0px 0px 20px !important;
+  margin: 0px 0px 10px !important;
 }
 .inline-counters > div {
-  background-color: #000 !important;
+  background-color: rgba(11, 191, 153, 0.1) !important;
+  color: #0bbf99 !important;
+  border: 1px solid #0bbf99 !important;
+
   letter-spacing: 0.5px !important;
 }
 .beta-breakers-header .inline-counters > div {
@@ -208,7 +211,7 @@ padding: 5px;
   border: 1px solid #0BBF99;
 } */
 .beta-content-left p {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     line-height: 1.5;
     margin: 10px 0px 15px;
     /* color: #0BBF99; */
@@ -953,7 +956,7 @@ font-size: 12px;
   }
 
   .beta-counters {
-margin: 20px auto 0px auto !important;
+margin: 20px auto 10px auto !important;
   }
   .beta-content-right {
     display: none;

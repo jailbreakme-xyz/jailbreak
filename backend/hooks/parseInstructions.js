@@ -18,6 +18,15 @@ export function parseInstructions(data) {
     });
   }
 
+  // Tools
+  if (data.Tools && Array.isArray(data.Tools.tools)) {
+    markdown += "## Tools\n";
+    data.Tools.tools.forEach((tool, index) => {
+      markdown += `${index + 1}. **${tool}**\n`;
+    });
+    markdown += "\n";
+  }
+
   // Language Rule
   if (data.LanguageRule && data.LanguageRule.rule) {
     markdown += "## Language Rule\n";
@@ -80,6 +89,14 @@ export function parseInstructions(data) {
         }
       });
     }
+  }
+
+  // Conclusion
+  if (data.Conclusion && Array.isArray(data.Conclusion.conclusion)) {
+    markdown += "## Conclusion\n";
+    data.Conclusion.conclusion.forEach((conclusion) => {
+      markdown += `\n\n${conclusion}`;
+    });
   }
 
   return markdown;

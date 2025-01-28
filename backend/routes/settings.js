@@ -3,6 +3,14 @@ import DatabaseService from "../services/db/index.js";
 import getSolPriceInUSDT from "../hooks/solPrice.js";
 const router = express.Router();
 
+const shuffleArray = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+};
+
 router.get("/", async (req, res) => {
   try {
     const pages = await DatabaseService.getPages({});
@@ -121,6 +129,7 @@ router.get("/", async (req, res) => {
       topChatters: topBreakersAndChatters.topChatters,
       latestChallenges: latestChallenges.slice(0, 10),
       trendingAgents: topChallengesByVolume,
+      heroChallenges: heroChallenges,
     };
 
     res.send(response);

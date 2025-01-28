@@ -1,6 +1,7 @@
 import express from "express";
 import BlockchainService from "../../backend/services/blockchain/index.js";
 import DataBaseService from "../../backend/services/db/index.js";
+import OpenAIService from "../../backend/services/llm/openai.js";
 import dotenv from "dotenv";
 import { createHash } from "crypto";
 import crypto from "crypto";
@@ -37,6 +38,11 @@ const upload = multer({
 
 const hashString = (str) => {
   return createHash("sha256").update(str, "utf-8").digest("hex");
+};
+
+const sanitizeString = (str) => {
+  // Replace any character that isn't alphanumeric, underscore, or hyphen with empty string
+  return str.replace(/[^a-zA-Z0-9_-]/g, "");
 };
 
 router.post("/get-transaction", solanaAuth, async (req, res) => {
@@ -401,4 +407,122 @@ router.get("/get-transfer-transaction/:id", solanaAuth, async (req, res) => {
     token: req.user.token,
   });
 });
+
+router.post("/create-agent-from-prompt", solanaAuth, async (req, res) => {
+  try {
+    const deploymentData = await DataBaseService.getOnePage({
+      name: "deployment-data",
+    });
+
+    const user = req.user;
+
+    const creation_fee = deploymentData.content.deploymentData.creation_fee;
+    const owner_address = deploymentData.content.deploymentData.owner_address;
+
+    const programId = deploymentData.content.deploymentData.program_id;
+    const defaultWinnerPayoutPct =
+      deploymentData.content.deploymentData.default_winner_payout;
+    const defaultFeeType =
+      deploymentData.content.deploymentData.default_fee_type;
+    const royalty_payout_pct = deploymentData.content.deploymentData.owner_fee;
+
+    const randomString = Math.random().toString(36).substring(2, 15);
+    const tournamentId = BigInt("0x" + sha256(randomString).substring(0, 16));
+
+    const body = JSON.parse(req.body.data);
+    const sender = user.walletAddress;
+    const initialSol = body.initial_pool_size;
+    const feeMulPct = body.fee_multiplier * 10;
+    const feeType = body.fee_type;
+    const prompt = body.prompt;
+
+    const { agent, imageUrl } = await OpenAIService.generateAgentFromPrompt(
+      prompt
+    );
+    if (!agent) {
+      return res.status(400).json({ error: "Failed to generate agent" });
+    }
+
+    const sanitizedTools = agent.tools.map((tool) => ({
+      name: sanitizeString(tool.name),
+      description: tool.description,
+      instruction: tool.instruction,
+    }));
+
+    const tournament = {
+      name: agent.name,
+      title: agent.title,
+      tldr: agent.tldr,
+      pfp: imageUrl,
+      instructions: agent.instructions,
+      developer_fee: 100 - defaultWinnerPayoutPct,
+      opening_message: agent.task,
+      tournament_type: "tool_calls",
+      phrases: [],
+      success_function: sanitizeString(agent.success_function),
+      tools: sanitizedTools,
+      tools_description: agent.tools_description,
+      tool_choice_required: false,
+      disable: [],
+      characterLimit: 500,
+      contextLimit: 1,
+      charactersPerWord: null,
+      start_date: new Date(),
+      expiry: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      constant_message_price: feeType === 1,
+      initial_pool_size: initialSol,
+      fee_multiplier: body.fee_multiplier,
+    };
+
+    const error = validateTournament({
+      tournament,
+      sender,
+      winner_payout_pct: defaultWinnerPayoutPct,
+      feeType: feeType,
+      pfp: imageUrl,
+    });
+
+    if (error) {
+      return res.status(400).json({ error: error });
+    }
+
+    const blockchainService = new BlockchainService(solanaRpc, programId);
+
+    const result = await blockchainService.initializeAndStartTournament(
+      sender,
+      new PublicKey(programId),
+      initialSol,
+      feeMulPct,
+      defaultWinnerPayoutPct,
+      agent.instructions,
+      feeType,
+      royalty_payout_pct,
+      tournamentId,
+      false,
+      creation_fee,
+      owner_address
+    );
+
+    if (!result) {
+      return res.status(500).json({
+        error: "Failed to initialize and start tournament",
+      });
+    }
+
+    return res.json({
+      serializedTransaction: result.serializedTransaction,
+      tournamentPDA: result.tournamentPDA,
+      tournamentId: tournamentId.toString(),
+      token: user.token,
+      tournament: tournament,
+    });
+  } catch (error) {
+    console.error("Tournament initialization error:", error);
+    return res.status(500).json({
+      error: "Failed to initialize tournament",
+      details: error.message,
+    });
+  }
+});
+
 export { router as transactionsRoute };

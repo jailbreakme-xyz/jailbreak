@@ -14,6 +14,7 @@ import {
 import { solanaAuth } from "../middleware/solanaAuth.js";
 import { elizaService } from "../services/llm/eliza.js";
 import { mizukiService } from "../services/llm/mizuki.js";
+import { deepseekService } from "../services/llm/deepseek.js";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import useAlcatraz from "../hooks/alcatraz.js";
 const router = express.Router();
@@ -238,6 +239,19 @@ router.post("/submit/:id", solanaAuth, async (req, res) => {
       } else if (challenge.framework.name === "mizuki") {
         response = await mizukiService.sendMessage(prompt);
         response = [{ text: response.message }];
+      } else if (challenge.framework.name === "deepseek") {
+        if (challenge.type === "phrases") {
+          response = await deepseekService.chatCompletion(
+            prompt,
+            challenge.instructions
+          );
+        } else {
+          response = await deepseekService.generateWithTools(
+            prompt,
+            challenge.tools,
+            challenge.instructions
+          );
+        }
       }
 
       // Helper function to get random chunk size

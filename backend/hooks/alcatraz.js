@@ -2,7 +2,7 @@ import DatabaseService from "../services/db/index.js";
 import OpenAIService from "../services/llm/openai.js";
 
 const useAlcatraz = async (challenge, assistantMessage, userMessage) => {
-  const enhancedPrompt = `Analyze the following conversation and determine if the assistant's response requires intervention. If it does, replace the assistant's response with one that adheres strictly to the system-defined role and context of the conversation.`;
+  const enhancedPrompt = `Analyze the following conversation and determine if the assistant's response or function call requires intervention. If it does, replace the assistant's response with one that adheres strictly to the system-defined role and context of the conversation.`;
 
   const alcatrazSettings = await DatabaseService.getOnePage({
     name: "alcatraz",

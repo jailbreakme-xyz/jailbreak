@@ -198,14 +198,14 @@ const MobileMenu = (props) => {
           position: fixed;
           top: 20px;
           right: 20px;
-          background: rgba(0, 0, 0, 0.8);
+          background: rgba(11, 191, 153, 0.1);
           border: none;
-          color: white;
+          color: #0bbf99;
           padding: 10px;
           border-radius: 8px;
           cursor: pointer;
           backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(11, 191, 153, 0.1);
           z-index: 1001;
           display: flex;
           align-items: center;

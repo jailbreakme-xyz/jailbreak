@@ -49,4 +49,6 @@ export const tournamentValidator = Joi.object({
   // Metadata
   title: Joi.string().required().min(3).max(30),
   tldr: Joi.string().required().allow(null),
+
+  useDefaultRules: Joi.boolean().allow(null),
 });

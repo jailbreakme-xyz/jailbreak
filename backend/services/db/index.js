@@ -729,7 +729,7 @@ class DataBaseService {
         fail_function: agent.fail_function || null,
         tool_choice: agent.tool_choice || "none",
         tools: agent.tools || [],
-        use_alcatraz: true,
+        use_alcatraz: agent.use_alcatraz || true,
       });
       return savedAgent;
     } catch (error) {

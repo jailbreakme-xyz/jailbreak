@@ -10,6 +10,8 @@ import { Popover } from "@mui/material";
 import logo from "../../assets/logo.png";
 import lightSlogen from "../../assets/lightSlogen.png";
 import APICreationModal from "./APICreationModal";
+import PromptCreationModal from "./PromptCreationModal";
+import LaunchOptionsModal from "./modals/LaunchOptionsModal";
 
 const Header = (props) => {
   const { publicKey, connected, connect } = useWallet();
@@ -19,7 +21,8 @@ const Header = (props) => {
   const [isSticky, setIsSticky] = useState(false);
   const [elizaCreationOpen, setElizaCreationOpen] = useState(false);
   const [apiCreationOpen, setAPICreationOpen] = useState(false);
-
+  const [promptCreationOpen, setPromptCreationOpen] = useState(false);
+  const [launchOptionsOpen, setLaunchOptionsOpen] = useState(false);
   const handleQuickCreationOpen = () => {
     setQuickCreationOpen(true);
   };
@@ -66,6 +69,11 @@ const Header = (props) => {
     setAPICreationOpen(true);
   };
 
+  const handlePromptCreate = () => {
+    handlePopoverClose();
+    setPromptCreationOpen(true);
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       setIsSticky(window.scrollY > 0);
@@ -108,12 +116,12 @@ const Header = (props) => {
         </a>
         <a
           href={undefined}
-          onClick={handleCreateClick}
+          onClick={() => setLaunchOptionsOpen(true)}
           className="beta-header-link pointer"
         >
           Launchpad
         </a>
-        <Popover
+        {/* <Popover
           sx={{ zIndex: "999999999999999" }}
           open={Boolean(anchorEl)}
           anchorEl={anchorEl}
@@ -130,7 +138,7 @@ const Header = (props) => {
             paper: {
               style: {
                 color: "#0bbf99",
-                background: "rgba(0, 0, 0, 0.5)",
+                background: "rgba(0, 0, 0, 0.8)",
                 backdropFilter: "blur(10px)",
                 boxShadow:
                   "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
@@ -139,6 +147,10 @@ const Header = (props) => {
           }}
         >
           <div>
+            <div onClick={handlePromptCreate} className="popover-item pointer">
+              Prompt Creation (BETA)
+            </div>
+
             <div onClick={handleQuickCreate} className="popover-item pointer">
               Quick Creation
             </div>
@@ -158,7 +170,7 @@ const Header = (props) => {
               Create Eliza Character (Coming Soon)
             </div>
           </div>
-        </Popover>
+        </Popover> */}
         <a href="/jailx" className="beta-header-link pointer">
           JailX™
         </a>
@@ -240,6 +252,18 @@ const Header = (props) => {
         <APICreationModal
           open={apiCreationOpen}
           onClose={() => setAPICreationOpen(false)}
+        />
+        <PromptCreationModal
+          open={promptCreationOpen}
+          onClose={() => setPromptCreationOpen(false)}
+        />
+        <LaunchOptionsModal
+          open={launchOptionsOpen}
+          onClose={() => setLaunchOptionsOpen(false)}
+          setQuickCreationOpen={setQuickCreationOpen}
+          setAdvancedModalOpen={setAdvancedModalOpen}
+          setAPICreationOpen={setAPICreationOpen}
+          setPromptCreationOpen={setPromptCreationOpen}
         />
       </div>
     </div>

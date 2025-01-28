@@ -225,11 +225,17 @@ router.post(
       const sender = user.walletAddress;
 
       const body = JSON.parse(req.body.data);
-      const name = body.name;
+      let name = body.name;
+      const useDefaultRules = body.useDefaultRules;
 
       const existingAgent = await DataBaseService.getChallengeByName(name);
       if (existingAgent) {
-        return res.status(400).json({ error: "Agent name already exists" });
+        console.log("Agent name already exists");
+        if (useDefaultRules) {
+          name = generateUsername("_", 0, 8);
+        } else {
+          return res.status(400).json({ error: "Agent name already exists" });
+        }
       }
 
       let pfp;
@@ -250,9 +256,16 @@ router.post(
         );
       }
 
+      const rules = await DataBaseService.getOnePage({
+        name: "default-prompt",
+      });
+      const defaultRules = parseInstructions(rules.content.rules);
+
       const tournamentId = Number(req.body.tournamentId);
       const tournamentPDA = req.body.tournamentPDA;
-      const systemPrompt = body.instructions;
+      const systemPrompt = useDefaultRules
+        ? `${body.instructions}\n\n${defaultRules}`
+        : body.instructions;
       const phrases = body.phrases;
 
       const title = body.title;
@@ -280,17 +293,25 @@ router.post(
         tournamentPDA
       );
 
+      if (!tournamentData) {
+        console.log("Tournament not found");
+        return res.status(400).json({ error: "Tournament not found" });
+      }
+
       if (tournamentData.authority !== sender) {
+        console.log("You are not the authority of this tournament.");
         return res
           .status(400)
           .json({ error: "You are not the authority of this tournament." });
       }
 
       if (tournamentData.tournamentId !== tournamentId) {
+        console.log("Tournament ID does not match.");
         return res.status(400).json({ error: "Tournament ID does not match." });
       }
 
       if (tournamentData.state !== 1) {
+        console.log("Tournament is not active.");
         return res.status(400).json({ error: "Tournament is not active." });
       }
 
@@ -314,6 +335,7 @@ router.post(
       });
 
       if (error) {
+        console.log("Validation error:", error.message);
         return res.status(400).json({ error: error.message });
       }
 
@@ -354,7 +376,7 @@ router.post(
       const usd_prize = initialSol * solPrice;
       const entry_fee = initialSol / fee_multiplier;
 
-      if (openingMessage.includes(phrases[0])) {
+      if (openingMessage?.includes(phrases[0])) {
         openingMessage = openingMessage.replace(
           phrases[0],
           "*".repeat(phrases[0].length)
@@ -390,14 +412,14 @@ router.post(
         tools: functions?.length > 0 ? functions.map((f) => f.function) : [],
         tool_choice: tool_choice,
         success_function: success_function,
-        tools_description: tools_description,
+        tools_description: useDefaultRules ? null : tools_description,
         disable: disable,
         type: tournament_type === "phrases" ? "phrases" : "tool_calls",
         title: title,
         tldr: tldr,
         start_date: startDate,
         expiry: expiryDate,
-        status: "upcoming",
+        status: startDate > new Date() ? "upcoming" : "active",
         characterLimit: characterLimit,
         contextLimit: contextLimit,
         charactersPerWord: charactersPerWord,

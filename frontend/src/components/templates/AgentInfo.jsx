@@ -101,7 +101,7 @@ export default function AgentInfo({ challenge }) {
               <span className="value">Enabled</span>
               <a
                 className="info-link pointer"
-                href="/whitepaper"
+                href="/alcatraz-whitepaper"
                 target="_blank"
                 style={{ marginLeft: "5px", color: "#0BBF99" }}
               >
