@@ -259,11 +259,11 @@ const QuickPromptCreation = (props) => {
           onClose={() => setError(null)}
           message={error}
         />
-        <SuccessModal
+        {/* <SuccessModal
           open={showSuccess}
           message="Your agent has been created!"
           agent={createdAgent}
-        />
+        /> */}
       </Box>
 
       <Box
@@ -357,7 +357,11 @@ const QuickPromptCreation = (props) => {
         onClose={() => setError(null)}
         message={error}
       />
-      <SuccessModal open={showSuccess} message="Your agent has been created!" />
+      <SuccessModal
+        open={showSuccess}
+        message="Your agent has been created!"
+        agent={createdAgent}
+      />
       <LaunchOptionsModal
         open={showLaunchOptions}
         onClose={() => setShowLaunchOptions(false)}
