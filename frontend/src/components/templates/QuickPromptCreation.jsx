@@ -50,6 +50,12 @@ const QuickPromptCreation = (props) => {
     setError(null);
 
     try {
+      if (!connected || !publicKey) {
+        setError("Please connect your wallet to launch an agent.");
+        setLoading(false);
+        return;
+      }
+
       const connection = new Connection(SOLANA_RPC, "confirmed");
 
       // Default values for other fields
@@ -132,6 +138,7 @@ const QuickPromptCreation = (props) => {
       console.error("Error creating agent:", error);
       setError(error.message || "Failed to create agent");
       setLoadingLabel(null);
+      setLoading(false);
     }
   };
 
@@ -228,6 +235,8 @@ const QuickPromptCreation = (props) => {
         >
           {loading ? (
             <CircularProgress size={24} color="inherit" />
+          ) : connected && publicKey ? (
+            "Launch 🚀"
           ) : (
             "Launch 🚀"
           )}
