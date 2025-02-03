@@ -101,7 +101,7 @@ const chatSchema = new mongoose.Schema(
     date: { type: Date, default: Date.now },
   },
   {
-    collection: process.env.NODE_ENV === "development" ? "chats_test" : "chats",
+    collection: process.env.NODE_ENV === "development" ? "chats" : "chats",
   }
 );
 
@@ -118,6 +118,11 @@ const breakerSchema = new mongoose.Schema(
       date: Date,
     },
     date_created: { type: Date, default: Date.now },
+    api_key: String,
+    api_rate_limit: {
+      count: Number,
+      date: Date,
+    },
   },
   { collection: "breakers" }
 );

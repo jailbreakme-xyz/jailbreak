@@ -1,6 +1,7 @@
 import express from "express";
 import { validateSubmission } from "../validators/submissionValidator.js";
 import DatabaseService from "../services/db/index.js";
+import { solanaAuth } from "../middleware/solanaAuth.js";
 
 const router = express.Router();
 
@@ -27,6 +28,26 @@ router.post("/create", async (req, res) => {
       validationErrors: error.details, // Will be present if it's a Joi validation error
     });
   }
+});
+
+router.post("/request-api-key", solanaAuth, async (req, res) => {
+  const user = req.user;
+  const sender = user.walletAddress;
+  const cfIp = req.headers["cf-connecting-ip"];
+
+  const result = await DatabaseService.createApiKey(sender, cfIp);
+
+  if (result.error) {
+    return res.status(result.code).json({
+      success: false,
+      error: result.message,
+    });
+  }
+
+  res.json({
+    success: true,
+    apiKey: result.apiKey,
+  });
 });
 
 export { router as submissionRoute };

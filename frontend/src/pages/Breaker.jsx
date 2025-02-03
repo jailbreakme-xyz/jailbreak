@@ -40,6 +40,7 @@ import { FaSadCry } from "react-icons/fa";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import { useParams, useNavigate } from "react-router-dom";
+import ApiKeyModal from "../components/templates/modals/ApiKeyModal";
 
 export default function Breaker() {
   const { address } = useParams();
@@ -62,6 +63,7 @@ export default function Breaker() {
   const [advancedModalOpen, setAdvancedModalOpen] = useState(false);
   const [advancedModalAgent, setAdvancedModalAgent] = useState(null);
   const [editError, setEditError] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     fetchBreakerData();
@@ -260,9 +262,9 @@ export default function Breaker() {
                     justifyContent: { xs: "flex-start", md: "center" },
                     gap: 2,
                     p: { xs: 2, sm: 3 },
-                    bgcolor: "#1F1F2E",
+                    bgcolor: "rgba(255, 255, 255, 0.05)",
                     borderRadius: "12px",
-                    border: "1px solid rgba(255, 255, 255, 0.05)",
+                    border: "1px solid #0BBF99",
                     // height: "100%",
                     minHeight: { xs: "auto", md: "150px" },
                   }}
@@ -346,8 +348,8 @@ export default function Breaker() {
                         sx={{
                           height: "100%",
                           width: "100%",
-                          bgcolor: "#1F1F2E",
-                          border: "1px solid rgba(255, 255, 255, 0.05)",
+                          bgcolor: "rgba(255, 255, 255, 0.05)",
+                          border: "1px solid #0BBF99",
                           borderRadius: "12px",
                           transition: "transform 0.2s",
                           display: "flex",
@@ -401,6 +403,15 @@ export default function Breaker() {
                 </Grid>
               </Grid>
             </Grid>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-start",
+                padding: "20px 0px 0px",
+              }}
+            >
+              <ApiKeyModal isOpen={isOpen} setIsOpen={setIsOpen} />
+            </Box>
           </Paper>
 
           {/* Tabs */}
@@ -484,10 +495,10 @@ export default function Breaker() {
                         bgcolor:
                           activeChallenge === conversation.name
                             ? "#262636"
-                            : "#1F1F2E",
+                            : "rgba(255, 255, 255, 0.05)",
                         borderRadius: "12px",
                         transition: "all 0.3s ease",
-                        border: "1px solid rgba(255, 255, 255, 0.05)",
+                        border: "1px solid #0BBF99",
                         minWidth: { xs: "fit-content", sm: "fit-content" },
                         flex: "0 0 auto",
                         "&:hover": {
@@ -530,9 +541,9 @@ export default function Breaker() {
                 <Paper
                   sx={{
                     p: 3,
-                    bgcolor: "#1F1F2E",
+                    bgcolor: "rgba(255, 255, 255, 0.05)",
                     borderRadius: "12px",
-                    border: "1px solid rgba(255, 255, 255, 0.05)",
+                    border: "1px solid #0BBF99",
                   }}
                 >
                   {activeConversation.conversations?.map((message, index) => (
@@ -549,7 +560,7 @@ export default function Breaker() {
                       <Avatar
                         sx={{
                           border: "2px solid #0BBF99",
-                          backgroundColor: "#1F1F2E",
+                          backgroundColor: "rgba(255, 255, 255, 0.05)",
                         }}
                       >
                         {message.role === "user" ? (
@@ -568,7 +579,7 @@ export default function Breaker() {
                           p: 2,
                           maxWidth: "70%",
                           bgcolor:
-                            message.role === "user" ? "#262636" : "#1A1A2E",
+                            message.role === "user" ? "#262636" : "black",
                           borderRadius: "12px",
                           color: "#E0E0E0",
                         }}

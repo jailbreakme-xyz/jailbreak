@@ -222,7 +222,7 @@ const QuickPromptCreation = (props) => {
             },
             color: "black",
             height: "50px",
-            minWidth: { xs: "100%", sm: "150px" },
+            minWidth: { xs: "100%", sm: "120px" },
             width: { xs: "100%", sm: "auto" },
             whiteSpace: "nowrap",
             borderRadius: {

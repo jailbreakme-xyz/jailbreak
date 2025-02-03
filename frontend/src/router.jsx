@@ -14,11 +14,16 @@ import SocialBounties from "./pages/SocialBounties";
 import SocialBounty from "./pages/SocialBounty";
 import CreateCharacterPage from "./pages/CreateCharacterPage";
 import Create from "./pages/Create";
+import Swagger from "./pages/Swagger";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+  },
+  {
+    path: "/swagger",
+    element: <Swagger />,
   },
   {
     path: "/break/:name",

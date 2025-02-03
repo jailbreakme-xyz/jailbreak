@@ -2,6 +2,7 @@
 
 * {
   cursor: url("data:image/svg+xml,%3Csvg stroke='currentColor' fill='%23ccc' stroke-width='2' viewBox='0 0 24 24' stroke-linecap='round' stroke-linejoin='round' height='32' width='32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='m4 4 7.07 17 2.51-7.39L21 11.07z'%3E%3C/path%3E%3C/svg%3E"), auto;
+  font-family: "Poppins", sans-serif !important;
 }
 
 .pointer,.pointer svg, .pointer path, .wallet-adapter-button, .wallet-adapter-modal-button-close, .wallet-adapter-button, .file-upload-container label, .file-upload-container label div, .file-upload-container svg, .file-upload-container input, .file-upload-container path, .file-upload-container span, .pointer span {

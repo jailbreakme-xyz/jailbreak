@@ -9,6 +9,7 @@ import {
 } from "../../models/Models.js";
 import dotenv from "dotenv";
 import { agentValidator } from "../../validators/agentValidator.js";
+import crypto from "crypto";
 
 dotenv.config();
 
@@ -938,6 +939,52 @@ class DataBaseService {
 
   async createSubmission(submission) {
     return await Submission.create(submission);
+  }
+
+  async createApiKey(address, cfIp) {
+    try {
+      // Check if breaker exists with either address or CF IP
+      const existingBreaker = await Breaker.findOne({
+        $or: [{ address }, { cf_ip: cfIp }],
+      });
+
+      // If breaker exists and has API key, return error
+      if (existingBreaker?.api_key) {
+        return {
+          error: true,
+          code: 404,
+          message: `API key already exists for this address or IP - to request a new key, please contact developers at dev@jailbreakme.xyz`,
+        };
+      }
+
+      // Generate new API key
+      const apiKey = crypto.randomBytes(32).toString("hex");
+
+      // Update existing breaker or create new one
+      if (existingBreaker) {
+        existingBreaker.api_key = apiKey;
+        await existingBreaker.save();
+      } else {
+        await Breaker.create({
+          address,
+          cf_ip: cfIp,
+          api_key: apiKey,
+          date_created: new Date(),
+          api_rate_limit: {
+            count: 0,
+            date: new Date(),
+          },
+        });
+      }
+
+      return {
+        error: false,
+        apiKey,
+      };
+    } catch (error) {
+      console.error("Database Service Error:", error);
+      throw error;
+    }
   }
 }
 

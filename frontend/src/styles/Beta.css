@@ -2011,3 +2011,10 @@ margin: 20px auto 10px auto !important;
     justify-content: flex-end !important;
 }
 }
+
+code {
+  cursor: auto;
+}
+.api-section button, .api-section button svg, .api-section button svg path {
+  cursor: pointer;
+}

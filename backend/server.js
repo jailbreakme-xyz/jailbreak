@@ -6,9 +6,7 @@ import { catchErrors } from "./hooks/errors.js";
 
 dotenv.config();
 const dbURI = process.env.DB_URI;
-const clientOptions = {
-  serverApi: { version: "1", strict: true, deprecationErrors: true },
-};
+const clientOptions = {};
 
 const app = express();
 const dev = app.get("env") !== "production";
@@ -39,11 +37,14 @@ app.use(function (req, res, next) {
   res.setHeader(
     "Access-Control-Expose-Headers",
     "auth-token",
-    "x-forwarded-for"
+    "x-forwarded-for",
+    "X-RateLimit-Limit",
+    "X-RateLimit-Remaining",
+    "X-RateLimit-Reset"
   );
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "X-Requested-With,content-type,auth-token,cancelToken, responsetype, x-forwarded-for, signature, publickey, message, timestamp"
+    "X-Requested-With,content-type,auth-token,cancelToken, responsetype, x-forwarded-for, signature, publickey, message, timestamp, x-api-key"
   );
   next();
 });
@@ -72,12 +73,11 @@ import { dataRoute } from "./routes/data.js";
 import { breakerRoute } from "./routes/breaker.js";
 import { authRoute } from "./routes/auth.js";
 import { submissionRoute } from "./routes/submission.js";
-// TEST:
-// import { testRoute } from "./test/conversation.js";
 
 // API:
-// import { tournamentsAPI } from "./api/tournaments.js";
-// import { conversationsAPI } from "./api/conversation.js";
+import { conversationsAPI } from "./api/conversation.js";
+import { challengeAPI } from "./api/challenge.js";
+import { agentAPI } from "./api/agent.js";
 
 app.use("/api/challenges", challengesRoute);
 app.use("/api/conversation", conversationRoute);
@@ -89,12 +89,9 @@ app.use("/api/breaker", breakerRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/submissions", submissionRoute);
 
-// app.use("/api/json/v1/tournaments", tournamentsAPI);
-// app.use("/api/json/v1/conversations", conversationsAPI);
-
-// if (dev) {
-//   app.use("/api/test", testRoute);
-// }
+app.use("/api/json/v1/conversations", conversationsAPI);
+// app.use("/api/json/v1/challenges", challengeAPI);
+// app.use("/api/json/v1/agents", agentAPI);
 
 app.get("/api/check-headers", (req, res) => {
   res.json({ headers: req.headers });

@@ -1,68 +1,77 @@
-## What is JailbreakMe? 🚀
+# What is JailbreakMe? 🚀
 
 [jailbreakme.xyz](https://www.jailbreakme.xyz) is an **open-source decentralized app (dApp)** where organizations test their **AI models and agents** while users **earn rewards** for finding weaknesses and jailbreaking them 🏆
 
-![banner](https://files.gitbook.com/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FImDYjEFAKhFH3xx152ap%2Fuploads%2Fxzb1xajiztXmd72QVDhM%2FScreenshot%202025-01-01%20at%2019.32.44.png?alt=media&token=165e1c22-8c88-4a9c-9431-0f00b813682d)
+![image1.jpg](https://cdn.dorahacks.io/static/files/194c2c19da77355c027b6994e4286740.jpg)
 
----
-
-## What is an AI Prompt Injection? 💉
+# What is an AI Prompt Injection? 💉
 
 **Prompt Injection** is a vulnerability where an attacker manipulates the input or prompt given to an AI system. This can occur:
 
 - By directly controlling the input.
 - By using data from other external sources.
 
----
-
-## Our Vision
+# Our Vision
 
 We aim to create a decentralized platform where companies can:
 
 - Test their AI models and agents in a distributed environment.
 - Identify **prompt vulnerabilities** and weaknesses **before production deployment**.
 
----
+# 🏁 How It Works
 
-## 🏁 How It Works
+## 1. Participate:
 
-### 1. **Choose a Tournament**
+### 1.1 Choose an agent:
 
-![Choose Tournament](https://files.gitbook.com/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FImDYjEFAKhFH3xx152ap%2Fuploads%2FJdAYWsOI7khKN8zGDKxS%2FScreenshot%202025-01-02%20at%200.40.19.png?alt=media&token=843607ed-9cbe-4ee6-8bf1-c2136f719f27)
+![Screenshot 2025-02-01 at 20.28.00.png](https://cdn.dorahacks.io/static/files/194c2c5594fd945a276d4174a06bd662.png)
 
-- Currently, we offer one exciting tournament featuring our AI Agent, **"Zynx"**, who is designed to guard a secret key phrase. 🤫
-- **Your challenge**: Trick Zynx into revealing the secret key phrase to win a reward. 🥳
-- More tournaments coming soon!
+### 1.2 Break the LLM Restrictions 🤖
 
----
+![Screenshot 2025-02-01 at 20.31.36.png](https://cdn.dorahacks.io/static/files/194c2c95384738d8595c6f944e8a8b88.png)
 
-### 2. **Break the LLM Restrictions 🤖**
+### 1.3 Win the Prize Pool 🏆
 
-![Break Restrictions](https://files.gitbook.com/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FImDYjEFAKhFH3xx152ap%2Fuploads%2FgpPmeRFf4PobUYYeqtKT%2FScreenshot%202025-01-02%20at%200.42.53.png?alt=media&token=b57e683b-34e3-4a34-a86c-ac41c8c24a43)
+![Screenshot 2025-02-01 at 20.32.00.png](https://cdn.dorahacks.io/static/files/194c2c987531c3a7c064c7544a5aca12.png)
 
-- Send your prompts to the AI model and attempt to solve the challenge.
-- For this tournament, the goal is to uncover the **secret key phrase** protected by the AI agent.
-
----
-
-### 3. **Win the Prize Pool 🏆**
-
-![Win Prize Pool](https://files.gitbook.com/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FImDYjEFAKhFH3xx152ap%2Fuploads%2FelDUxC82Krz0jLPNw5RG%2FScreenshot%202025-01-02%20at%200.41.10.png?alt=media&token=e41b0b7b-1106-4994-b5dc-ec7496a365c9)
-
-- Once the challenge is solved (e.g., when the key phrase is revealed), the **prize pool** is automatically transferred to the sender of the winning message. 🎉
-
-## How is the Winner Picked? 🤔
+# How is the Winner Picked? 🤔
 
 The selection of the winning user is determined entirely by the **AI model itself**. The AI evaluates all incoming prompts and decides whether a submission meets the challenge requirements by calling one of two predefined functions:
 
-1. **`handleChallengeFailed`**: This function is called when the AI determines that the user's prompt did not successfully meet the challenge criteria.
-2. **`handleChallengeSuccess`**: This function is called when the AI recognizes that the user's prompt has successfully bypassed the restrictions and revealed the key phrase.
+1. `handleChallengeFailed`: This function is called when the AI determines that the user's prompt did not successfully meet the challenge criteria.
+2. `handleChallengeSuccess`: This function is called when the AI recognizes that the user's prompt has successfully bypassed the restrictions and revealed the key phrase.
 
-When the **`handleChallengeSuccess`** function is triggered, the prize pool is automatically awarded to the user whose message caused the function to be called. This ensures that the process remains decentralized, transparent, and fair. 🎉
+When the `handleChallengeSuccess` function is triggered, the prize pool is automatically awarded to the user whose message caused the function to be called. This ensures that the process remains decentralized, transparent, and fair. 🎉
 
----
+## 2. Launch an agent:
 
-## 📜 Settings & Rules
+### 2.1 Choose how would you like to create your agent
+
+![Screenshot 2025-02-01 at 20.36.38.png](https://cdn.dorahacks.io/static/files/194c2cdfc0a6514c80fba3c4d1b800f5.png)
+
+### 2.2 Prompt Launch
+
+Describe your agent's personality and behavior. Our AI will generate a complete agent configuration based on your description.
+
+![Screenshot 2025-02-01 at 20.38.21.png](https://cdn.dorahacks.io/static/files/194c2ceb3aa1e48e8de932146b6b2d6c.png)
+
+### 2.3 Quick Creation
+
+Create a simple "Secret Phrase" challenge with default options.
+
+![Screenshot 2025-02-01 at 20.38.42.png](https://cdn.dorahacks.io/static/files/194c2d0afb312097be5bef543cf8898f.png)
+
+### 2.4 Advanced Creation
+
+Multiple configurations + function calls:
+
+[![Advanced Creation Tutorial](https://img.youtube.com/vi/D-YAFGzqExk/0.jpg)](https://www.youtube.com/watch?v=D-YAFGzqExk)
+
+### 2.5 API Integration
+
+Submit the form and we will create a custom integration with your API.
+
+# 📜 Settings & Rules
 
 Each tournament has unique rules, including:
 
@@ -70,19 +79,15 @@ Each tournament has unique rules, including:
 - **Message Pricing**
 - **Expiry Settings**
 
-> Currently, we provide the initial prize pools, but soon companies will be able to **create their own tournaments** and customize all settings.
-
----
-
-## 🔗 Useful Links
+# 🔗 Useful Links
 
 - **Telegram Community**: [https://t.me/jailbreakme_xyz](https://t.me/jailbreakme_xyz)
 - **Gitbook Docs**: [https://jailbreak.gitbook.io/jailbreakme.xyz](https://jailbreak.gitbook.io/jailbreakme.xyz)
 - **Github Repo**: [https://github.com/probonodev/jailbreak](https://github.com/probonodev/jailbreak)
 - **Smart Contract**: [https://solscan.io/account/43m2CSa83AVK6yT7SpZ1KFcScWfxyfid7nQx2KUMWJko](https://solscan.io/account/43m2CSa83AVK6yT7SpZ1KFcScWfxyfid7nQx2KUMWJko)
 
----
-
-## Feedback & Support
+# Feedback & Support
 
 Feel free to reach out at **dev@jailbreakme.xyz** for feedback or support.
+
+Jailbreak the World 🦍

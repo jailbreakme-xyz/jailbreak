@@ -4,11 +4,16 @@ import "../../styles/Beta.css";
 import { useWallet } from "@solana/wallet-adapter-react";
 import QuickCreation from "./QuickCreation";
 import AdvancedModal from "./AdvancedModal";
+import APICreationModal from "./APICreationModal";
+import PromptCreationModal from "./PromptCreationModal";
 
 const Footer = (props) => {
   const { publicKey, connected, connect } = useWallet();
   const [advancedModalOpen, setAdvancedModalOpen] = useState(false);
   const [quickCreationOpen, setQuickCreationOpen] = useState(false);
+  const [apiCreationOpen, setAPICreationOpen] = useState(false);
+  const [promptCreationOpen, setPromptCreationOpen] = useState(false);
+  const [launchOptionsOpen, setLaunchOptionsOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleQuickCreationOpen = () => {
@@ -99,17 +104,20 @@ const Footer = (props) => {
             <a href="/breakers" className="footer-link pointer">
               Breakers
             </a>
-            <a href="/jailx" className="footer-link pointer">
-              JailX
-            </a>
             <a href="/jail-tokens" className="footer-link pointer">
               $JAIL
             </a>
           </div>
           <div className="footer-links-group">
             <h4>Resources</h4>
+            <a href="/alcatraz-whitepaper" className="footer-link pointer">
+              Alcatraz™
+            </a>
+            <a href="/jailx" className="footer-link pointer">
+              JailX™
+            </a>
             <a
-              href="https://jailbreak.gitbook.io/jailbreakme.xyz"
+              href="/docs"
               target="_blank"
               rel="noopener noreferrer"
               className="footer-link pointer"
@@ -124,6 +132,13 @@ const Footer = (props) => {
             <h4>Launchpad</h4>
             <a
               href={undefined}
+              onClick={() => setPromptCreationOpen(true)}
+              className="footer-link pointer"
+            >
+              Prompt Creation (BETA)
+            </a>
+            <a
+              href={undefined}
               onClick={handleQuickCreate}
               className="footer-link pointer"
             >
@@ -135,6 +150,13 @@ const Footer = (props) => {
               className="footer-link pointer"
             >
               Advanced Creation
+            </a>
+            <a
+              href={undefined}
+              onClick={() => setAPICreationOpen(true)}
+              className="footer-link pointer"
+            >
+              API Integration
             </a>
           </div>
         </div>
@@ -160,6 +182,14 @@ const Footer = (props) => {
         publicKey={publicKey}
         handleAdvancedModalClose={handleAdvancedModalClose}
         handleAdvancedModalOpen={handleAdvancedModalOpen}
+      />
+      <APICreationModal
+        open={apiCreationOpen}
+        onClose={() => setAPICreationOpen(false)}
+      />
+      <PromptCreationModal
+        open={promptCreationOpen}
+        onClose={() => setPromptCreationOpen(false)}
       />
     </div>
   );

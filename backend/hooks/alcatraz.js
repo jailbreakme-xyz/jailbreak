@@ -55,6 +55,8 @@ const useAlcatraz = async (challenge, assistantMessage, userMessage) => {
   const alcatrazDecisionName = alcatrazDecision.name;
   const alcatrazDecisionArguments = JSON.parse(alcatrazDecision.arguments);
 
+  console.log(alcatrazDecisionName);
+  console.log(alcatrazDecisionArguments);
   if (alcatrazDecisionName === "alcatraz_intervention") {
     const {
       alcatraz_message,

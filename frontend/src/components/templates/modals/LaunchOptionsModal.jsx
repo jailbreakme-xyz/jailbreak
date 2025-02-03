@@ -28,26 +28,30 @@ const LaunchOption = ({ title, description, onClick, disabled = false }) => (
       mb: 2,
     }}
   >
-    <Typography
+    <h3
       className={disabled ? "disabled" : "pointer"}
-      variant="h6"
-      sx={{
+      style={{
         color: "#0BBF99",
-        // mb: 1,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        margin: "2px 0px",
       }}
     >
       {title}{" "}
       {disabled && <span style={{ marginLeft: "8px" }}>(Coming Soon)</span>}
-    </Typography>
-    <Typography
+    </h3>
+    <p
       className={disabled ? "disabled" : "pointer"}
-      sx={{ color: "#fff", opacity: 0.8, textAlign: "center" }}
+      style={{
+        color: "#fff",
+        opacity: 0.8,
+        textAlign: "center",
+        margin: "2px 0px",
+      }}
     >
       {description}
-    </Typography>
+    </p>
   </Box>
 );
 
@@ -130,12 +134,9 @@ const LaunchOptionsModal = ({
           <ImCross size={16} />
         </IconButton>
 
-        <Typography
-          variant="h5"
-          sx={{ color: "#0BBF99", mb: 3, mt: 1, textAlign: "center" }}
-        >
+        <h2 style={{ color: "#0BBF99", mb: 3, mt: 1, textAlign: "center" }}>
           Create an Agent
-        </Typography>
+        </h2>
 
         {options.map((option, index) => (
           <LaunchOption key={index} {...option} />
