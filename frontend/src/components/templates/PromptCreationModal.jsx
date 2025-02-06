@@ -23,16 +23,19 @@ import ErrorModal from "./modals/ErrorModal";
 import axios from "axios";
 import { Connection, Transaction } from "@solana/web3.js";
 import SuccessModal from "./modals/SuccessModal";
-
+import { useAuthenticatedRequest } from "../../hooks/useAuthenticatedRequest";
+import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 const SOLANA_RPC =
   process.env.NODE_ENV === "development"
     ? "https://brande-ffqoic-fast-devnet.helius-rpc.com"
     : "https://rosette-xbrug1-fast-mainnet.helius-rpc.com";
 
 const PromptCreationModal = ({ open, onClose }) => {
-  const { sendTransaction, publicKey } = useWallet();
-  const [loading, setLoading] = useState(false);
+  const { sendTransaction, publicKey, connected } = useWallet();
+  const { setVisible } = useWalletModal();
   const [error, setError] = useState(null);
+  const { createAuthenticatedRequest } = useAuthenticatedRequest(setError);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     prompt: "",
     initial_pool_size: 0.5,
@@ -60,37 +63,29 @@ const PromptCreationModal = ({ open, onClose }) => {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
+  const handleCreation = async () => {
     try {
       const connection = new Connection(SOLANA_RPC, "confirmed");
-      // First create the transaction
-      const createTxResponse = await fetch(
+
+      // First authenticate and get token if not already authenticated
+      await createAuthenticatedRequest("/api/auth/verify-token", {
+        method: "GET",
+      });
+
+      setLoading(true);
+      // Now proceed with agent creation
+      const txResult = await createAuthenticatedRequest(
         "/api/transactions/create-agent-from-prompt",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({
-            data: JSON.stringify(formData),
-          }),
+        },
+        {
+          data: JSON.stringify(formData),
         }
       );
 
-      const txResult = await createTxResponse.json();
-
-      if (!createTxResponse.ok) {
-        throw new Error(txResult.error || "Failed to create transaction");
-      }
-
       setLoadingLabel("Waiting for transaction confirmation...");
 
-      // Sign the transaction
       const transaction = Transaction.from(
         Buffer.from(txResult.serializedTransaction, "base64")
       );
@@ -117,23 +112,21 @@ const PromptCreationModal = ({ open, onClose }) => {
       _formData.append("tournamentId", txResult.tournamentId);
       _formData.append("tournamentPDA", txResult.tournamentPDA);
 
-      const agentResponse = await axios.post(
+      const agentResponse = await createAuthenticatedRequest(
         "/api/program/advanced-start-tournament",
-        _formData,
         {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+          method: "POST",
+        },
+        _formData
       );
 
-      if (!agentResponse.data.savedAgent) {
+      if (!agentResponse.savedAgent) {
         throw new Error("Failed to create agent");
       }
+
       setLoading(false);
       setLoadingLabel(null);
-      setCreatedAgent(agentResponse.data.savedAgent);
+      setCreatedAgent(agentResponse.savedAgent);
       setShowSuccess(true);
       onClose();
     } catch (error) {
@@ -141,7 +134,24 @@ const PromptCreationModal = ({ open, onClose }) => {
       setError(error.message || "Failed to create agent");
       setLoading(false);
       setLoadingLabel(null);
-    } finally {
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+
+    try {
+      if (!connected || !publicKey) {
+        setVisible(true);
+        setLoading(false);
+        return;
+      }
+
+      await handleCreation();
+    } catch (error) {
+      console.error("Error creating agent:", error);
+      setError(error.message || "Failed to create agent");
       setLoading(false);
     }
   };
@@ -365,6 +375,7 @@ const PromptCreationModal = ({ open, onClose }) => {
       />
       <SuccessModal
         open={showSuccess}
+        onClose={() => setShowSuccess(false)}
         message="Your agent has been created!"
         agent={createdAgent}
       />

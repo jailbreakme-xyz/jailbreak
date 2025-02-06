@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { TextField, Button, Box, CircularProgress, Chip } from "@mui/material";
 import { useWallet } from "@solana/wallet-adapter-react";
+import {
+  WalletMultiButton,
+  useWalletModal,
+} from "@solana/wallet-adapter-react-ui";
 import { Connection, Transaction } from "@solana/web3.js";
 import { toast } from "react-hot-toast";
 import LoadingModal from "./modals/LoadingModal";
@@ -12,6 +16,7 @@ import QuickCreation from "./QuickCreation";
 import AdvancedModal from "./AdvancedModal";
 import APICreationModal from "./APICreationModal";
 import PromptCreationModal from "./PromptCreationModal";
+import { useAuthenticatedRequest } from "../../hooks/useAuthenticatedRequest";
 
 const SOLANA_RPC =
   process.env.NODE_ENV === "development"
@@ -27,8 +32,10 @@ const SUGGESTIONS = [
 
 const QuickPromptCreation = (props) => {
   const { sendTransaction, publicKey, connected } = useWallet();
-  const [loading, setLoading] = useState(false);
+  const { setVisible } = useWalletModal();
   const [error, setError] = useState(null);
+  const { createAuthenticatedRequest } = useAuthenticatedRequest(setError);
+  const [loading, setLoading] = useState(false);
   const [prompt, setPrompt] = useState("");
   const [loadingLabel, setLoadingLabel] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -43,20 +50,15 @@ const QuickPromptCreation = (props) => {
     setPrompt(suggestion);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!prompt.trim()) return;
-    setLoading(true);
-    setError(null);
-
+  const handleCreation = async () => {
     try {
-      if (!connected || !publicKey) {
-        setError("Please connect your wallet to launch an agent.");
-        setLoading(false);
-        return;
-      }
-
       const connection = new Connection(SOLANA_RPC, "confirmed");
+
+      await createAuthenticatedRequest("/api/auth/verify-token", {
+        method: "GET",
+      });
+
+      setLoading(true);
 
       // Default values for other fields
       const formData = {
@@ -66,25 +68,15 @@ const QuickPromptCreation = (props) => {
         fee_type: 1,
       };
 
-      const createTxResponse = await fetch(
+      const txResult = await createAuthenticatedRequest(
         "/api/transactions/create-agent-from-prompt",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({
-            data: JSON.stringify(formData),
-          }),
+        },
+        {
+          data: JSON.stringify(formData),
         }
       );
-
-      const txResult = await createTxResponse.json();
-
-      if (!createTxResponse.ok) {
-        throw new Error(txResult.error || "Failed to create transaction");
-      }
 
       setLoadingLabel("Waiting for transaction confirmation...");
 
@@ -113,22 +105,19 @@ const QuickPromptCreation = (props) => {
       _formData.append("tournamentId", txResult.tournamentId);
       _formData.append("tournamentPDA", txResult.tournamentPDA);
 
-      const agentResponse = await axios.post(
+      const agentResponse = await createAuthenticatedRequest(
         "/api/program/advanced-start-tournament",
-        _formData,
         {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+          method: "POST",
+        },
+        _formData
       );
 
-      if (!agentResponse.data.savedAgent) {
+      if (!agentResponse.savedAgent) {
         throw new Error("Failed to create agent");
       }
 
-      setCreatedAgent(agentResponse.data.savedAgent);
+      setCreatedAgent(agentResponse.savedAgent);
       setLoading(false);
       setLoadingLabel(null);
       setShowSuccess(true);
@@ -139,6 +128,24 @@ const QuickPromptCreation = (props) => {
       setError(error.message || "Failed to create agent");
       setLoadingLabel(null);
       setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!prompt.trim()) return;
+    setError(null);
+
+    if (!connected || !publicKey) {
+      setVisible(true);
+      return;
+    }
+
+    try {
+      await handleCreation();
+    } catch (error) {
+      console.error("Error creating agent:", error);
+      setError(error.message || "Failed to create agent");
     }
   };
 
@@ -210,6 +217,7 @@ const QuickPromptCreation = (props) => {
             backgroundColor: "rgba(11, 191, 153, 0.1)",
           }}
         />
+
         <Button
           type="submit"
           variant="contained"
@@ -259,11 +267,6 @@ const QuickPromptCreation = (props) => {
           onClose={() => setError(null)}
           message={error}
         />
-        {/* <SuccessModal
-          open={showSuccess}
-          message="Your agent has been created!"
-          agent={createdAgent}
-        /> */}
       </Box>
 
       <Box
@@ -359,6 +362,7 @@ const QuickPromptCreation = (props) => {
       />
       <SuccessModal
         open={showSuccess}
+        onClose={() => setShowSuccess(false)}
         message="Your agent has been created!"
         agent={createdAgent}
       />

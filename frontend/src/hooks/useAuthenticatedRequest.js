@@ -6,87 +6,90 @@ import bs58 from "bs58";
 export const useAuthenticatedRequest = (setErrorCallback) => {
   const { publicKey, wallet, connected } = useWallet();
 
+  const getNewToken = async () => {
+    if (!connected || !publicKey || !wallet) {
+      throw new Error("Wallet not connected");
+    }
+
+    const timestamp = Date.now().toString();
+    const message = `Authenticate with your wallet: ${timestamp}`;
+    const encodedMessage = new TextEncoder().encode(message);
+    const signature = await wallet.adapter.signMessage(encodedMessage);
+
+    const response = await axios.post("/api/auth/create-token", null, {
+      headers: {
+        signature: bs58.encode(signature),
+        publickey: publicKey.toString(),
+        message: message,
+        timestamp: timestamp,
+      },
+    });
+
+    if (response.data.token) {
+      localStorage.setItem("token", response.data.token);
+      return response.data.token;
+    }
+    throw new Error("Failed to get token");
+  };
+
   const createAuthenticatedRequest = useCallback(
     async (endpoint, options = {}, formData) => {
-      // First try using stored JWT
-      const storedToken = localStorage.getItem("token");
+      try {
+        // First try using stored JWT
+        let token = localStorage.getItem("token");
 
-      let config = {
-        url: endpoint,
-        method: options.method || "GET",
-        headers: {
-          ...options.headers,
-        },
-      };
+        // If no token exists, get a new one
+        if (!token) {
+          token = await getNewToken();
+        }
 
-      // Add FormData configuration if provided
-      if (formData instanceof FormData) {
-        config = {
-          ...config,
-          data: formData,
+        let config = {
+          url: endpoint,
+          method: options.method || "GET",
           headers: {
-            ...config.headers,
-            "Content-Type": "multipart/form-data",
+            ...options.headers,
+            Authorization: `Bearer ${token}`,
           },
         };
-      } else if (options.method === "POST") {
-        // If it's a POST request but not FormData, add the data to config
-        config.data = formData;
-      }
 
-      if (storedToken) {
-        try {
-          const verifyResponse = await axios.get("/api/auth/verify-token", {
+        // Add FormData configuration if provided
+        if (formData instanceof FormData) {
+          config = {
+            ...config,
+            data: formData,
             headers: {
-              Authorization: `Bearer ${storedToken}`,
-              address: publicKey?.toString(),
+              ...config.headers,
+              "Content-Type": "multipart/form-data",
             },
-          });
+          };
+        } else if (options.method === "POST") {
+          config.data = formData;
+        }
 
-          if (verifyResponse.status === 200) {
-            config.headers.Authorization = `Bearer ${storedToken}`;
-            const response = await axios(config);
-            return response.data;
-          }
+        try {
+          const response = await axios(config);
+          return response.data;
         } catch (error) {
-          localStorage.removeItem("token");
+          if (error.response?.status === 401) {
+            // Token might be invalid, try to get a new one
+            localStorage.removeItem("token");
+            token = await getNewToken();
+
+            // Retry the request with new token
+            config.headers.Authorization = `Bearer ${token}`;
+            const retryResponse = await axios(config);
+            return retryResponse.data;
+          }
+          throw error;
         }
-      }
-
-      if (!connected || !publicKey || !wallet) {
-        throw new Error("Wallet not connected");
-      }
-
-      try {
-        const message = `Authenticate with your wallet: ${Date.now()}`;
-        const encodedMessage = new TextEncoder().encode(message);
-        const signature = await wallet.adapter.signMessage(encodedMessage);
-
-        config.headers = {
-          ...config.headers,
-          signature: bs58.encode(signature),
-          publickey: publicKey.toString(),
-          message: message,
-          timestamp: Date.now().toString(),
-        };
-
-        const response = await axios(config);
-
-        // Store the new token if it's in the response
-        if (response.data.token) {
-          localStorage.setItem("token", response.data.token);
-        }
-
-        return response.data;
       } catch (error) {
-        console.error("Authentication error:", error);
         if (setErrorCallback) {
-          setErrorCallback(error.response?.data?.error || error.message);
+          setErrorCallback(error.message);
         }
         throw error;
       }
     },
-    [publicKey, wallet, connected, setErrorCallback]
+    [publicKey, wallet, connected]
   );
 
   return { createAuthenticatedRequest };

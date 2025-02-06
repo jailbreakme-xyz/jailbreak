@@ -145,12 +145,16 @@ class OpenAIService {
 
     // const fullPrompt = `A portrait profile picture of ${details.join(", ")}`;
 
+    const prefix =
+      "A highly detailed character illustration in a [specific style, e.g., '70s retro, cyberpunk, anime, comic book'] style, featuring a vibrant color palette, expressive facial details, and dynamic lighting. The character should have a distinct personality, with well-defined clothing textures, accessories, and background elements that complement the theme. The artwork should maintain a cohesive aesthetic with a balance of realism and stylization.";
+    const fullPrompt = `${prefix}\n${prompt}`;
+
     try {
       // Try DALL-E 3 first
       try {
         const response = await this.openai.images.generate({
           model: "dall-e-3",
-          prompt: prompt,
+          prompt: fullPrompt,
           n: 1,
           size: "1024x1024",
           quality: "standard",
@@ -165,7 +169,7 @@ class OpenAIService {
         // Fallback to DALL-E 2
         const response = await this.openai.images.generate({
           model: "dall-e-2",
-          prompt: prompt,
+          prompt: fullPrompt,
           n: 1,
           size: "512x512",
           quality: "standard",

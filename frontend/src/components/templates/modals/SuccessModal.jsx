@@ -16,6 +16,7 @@ const fadeIn = keyframes`
 
 const SuccessModal = ({
   open,
+  onClose,
   message = "Agent created successfully!",
   agent,
 }) => {
@@ -32,6 +33,20 @@ const SuccessModal = ({
         zIndex: "100000000000000000000000000000000000001",
       }}
     >
+      <span
+        onClick={onClose}
+        style={{
+          cursor: "pointer",
+          color: "red",
+          position: "absolute",
+          top: "20px",
+          right: "20px",
+          fontSize: "20px",
+          fontWeight: "bold",
+        }}
+      >
+        X
+      </span>
       <DialogContent
         sx={{
           backgroundColor: "#000000",
