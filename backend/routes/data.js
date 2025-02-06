@@ -7,6 +7,8 @@ import { solanaAuth } from "../middleware/solanaAuth.js";
 import { Connection, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import BlockchainService from "../services/blockchain/index.js";
 import { validateBounty } from "../validators/bountyValidator.js";
+import { agentsData } from "../data/agents_data.js";
+
 const router = express.Router();
 
 const upload = multer({
@@ -301,5 +303,29 @@ router.post(
     }
   }
 );
+
+router.get("/agents-data", async (req, res) => {
+  const query = req.query.search?.toLowerCase() || "";
+  const limit = parseInt(req.query.limit) || 100;
+
+  let filteredAgents;
+  if (!query) {
+    // Return top 100 agents when no search query
+    filteredAgents = agentsData.slice(0, limit);
+  } else {
+    // Search in both agentName and twitterUsernames
+    filteredAgents = agentsData
+      .filter(
+        (agent) =>
+          agent.agentName.toLowerCase().includes(query) ||
+          agent.twitterUsernames.some((username) =>
+            username.toLowerCase().includes(query)
+          )
+      )
+      .slice(0, limit);
+  }
+
+  res.json(filteredAgents);
+});
 
 export { router as dataRoute };

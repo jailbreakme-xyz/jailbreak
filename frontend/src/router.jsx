@@ -15,7 +15,7 @@ import SocialBounty from "./pages/SocialBounty";
 import CreateCharacterPage from "./pages/CreateCharacterPage";
 import Create from "./pages/Create";
 import Swagger from "./pages/Swagger";
-
+import ReverseAgent from "./pages/ReverseAgent";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -24,6 +24,10 @@ export const router = createBrowserRouter([
   {
     path: "/swagger",
     element: <Swagger />,
+  },
+  {
+    path: "/reverse-agent",
+    element: <ReverseAgent />,
   },
   {
     path: "/break/:name",

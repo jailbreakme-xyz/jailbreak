@@ -51,3 +51,6 @@ next-env.d.ts
 /services/llm/characters
 /services/llm/logs
 /recovered.json
+
+/services/llm/reverse_agent_prompt.txt
+/services/llm/reverse_eliza_prompt.txt

@@ -2,6 +2,11 @@ import OpenAI from "openai";
 import dotenv from "dotenv";
 import { zodResponseFormat } from "openai/helpers/zod";
 import { z } from "zod";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
@@ -13,6 +18,14 @@ class OpenAIService {
     this.agent_generator = process.env.AGENT_GENERATOR_ID;
     this.agent_generator_thread = process.env.AGENT_GENERATOR_THREAD_ID;
     this.model = "gpt-4o-mini";
+    this.reverse_agent_prompt = fs.readFileSync(
+      path.join(__dirname, "reverse_agent_prompt.txt"),
+      "utf8"
+    );
+    this.reverse_eliza_prompt = fs.readFileSync(
+      path.join(__dirname, "reverse_eliza_prompt.txt"),
+      "utf8"
+    );
     this.finish_reasons = [
       {
         name: "length",
@@ -282,6 +295,116 @@ class OpenAIService {
   async retrieveAgent(assistantId) {
     const agent = await this.openai.beta.assistants.retrieve(assistantId);
     return agent;
+  }
+
+  async reverseEngineerAgent(prompt) {
+    const system_prompt = this.reverse_agent_prompt;
+    const suffix = `Context for instruction creation: ${prompt}
+
+    Format your response in detailed, hierarchical bullet points under each section. Focus on specific, actionable instructions that ensure consistent, high-quality agent behavior. Include examples where relevant and provide clear implementation guidelines. Avoid ambiguity and ensure each instruction is concrete and measurable.
+
+    Remember to:
+    - Be extremely specific and detailed in each section
+    - Provide examples for complex instructions
+    - Include edge cases and exception handling
+    - Ensure instructions are implementable and testable
+    - Maintain internal consistency across all sections
+    - Consider scalability and adaptability
+    - Focus on practical application rather than theoretical concepts`;
+
+    const messages = [
+      {
+        role: "system",
+        content: `${system_prompt}\n${suffix}`,
+      },
+      {
+        role: "user",
+        content: prompt,
+      },
+    ];
+
+    const response = await this.openai.chat.completions.create({
+      model: "o3-mini",
+      // model: "gpt-4o-mini",
+      messages: messages,
+      max_completion_tokens: 1024 * 10,
+      stream: true,
+      // temperature: 0.7,
+    });
+
+    return response;
+    // return response.choices[0].message.content;
+  }
+
+  async reverseEngineerElizaCharacter(prompt) {
+    const system_prompt = this.reverse_eliza_prompt;
+    const suffix = `Context for character creation: ${prompt}
+
+    Critical Requirements:
+    - Ensure all arrays contain multiple, diverse elements
+    - Maintain perfect consistency across all sections
+    - Create a cohesive, believable character personality
+    - Include specific, actionable details
+    - Balance professional and personal traits
+    - Consider cultural and social context
+    - Ensure scalability for character growth
+    - Match tone and style to target audience
+    - Provide implementation-ready specifications
+    - Follow exact schema structure`;
+
+    const messages = [
+      {
+        role: "system",
+        content: `${system_prompt}\n${suffix}`,
+      },
+      {
+        role: "user",
+        content: prompt,
+      },
+    ];
+
+    const messageSchema = z
+      .object({
+        user: z.string(),
+        content: z.object({
+          text: z.string(),
+        }),
+      })
+      .strict();
+
+    const agentSchema = z
+      .object({
+        name: z.string(),
+        clients: z.array(z.enum(["direct", "twitter"])),
+        settings: z.object({
+          model: z.enum(["gpt-4o-mini", "gpt-4o"]),
+          voice: z.enum(["en_US-hfc_male-medium", "en_US-hfc_female-medium"]),
+        }),
+        bio: z.array(z.string()),
+        lore: z.array(z.string()),
+        knowledge: z.array(z.string()),
+        postExamples: z.array(z.string()),
+        topics: z.array(z.string()),
+        adjectives: z.array(z.string()),
+        style: z.object({
+          all: z.array(z.string()),
+          chat: z.array(z.string()),
+          post: z.array(z.string()),
+        }),
+        messageExamples: z.array(messageSchema),
+      })
+      .strict();
+
+    const responseFormat = zodResponseFormat(agentSchema, "Agent");
+
+    const response = await this.openai.beta.chat.completions.parse({
+      model: "gpt-4o-mini",
+      messages: messages,
+      max_tokens: 1024 * 3,
+      response_format: responseFormat,
+    });
+
+    return JSON.parse(response.choices[0].message.content);
   }
 
   async generateAgentFromPrompt(prompt) {

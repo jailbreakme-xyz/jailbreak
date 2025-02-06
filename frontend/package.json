@@ -24,7 +24,6 @@
     "@solana/wallet-adapter-react": "^0.15.35",
     "@solana/wallet-adapter-react-ui": "^0.9.35",
     "@solana/web3.js": "^1.95.8",
-    "@uiw/react-json-view": "^2.0.0-alpha.30",
     "axios": "^1.6.7",
     "bs58": "^6.0.0",
     "buffer": "^6.0.3",
