@@ -327,6 +327,9 @@ export default function AgentSelect({ onSelect }) {
           <div className="autocomplete-container" ref={wrapperRef}>
             <MdEngineering className="engineer-icon" />
             <h3 className="title">Reverse Engineer an Agent</h3>
+            {/* <p className="description">
+              Reverse engineer an agent based on the agent top tweets
+            </p> */}
             <span className="powered-by">
               Integrated with{" "}
               <a
@@ -480,9 +483,9 @@ export default function AgentSelect({ onSelect }) {
                     }}
                   >
                     <p>
-                      Run a reverse engineering process
+                      Reverse engineer an agent based
                       <br />
-                      to generate an agent
+                      on the agent top tweets
                     </p>
                   </div>
                 )}

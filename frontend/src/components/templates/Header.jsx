@@ -12,7 +12,8 @@ import lightSlogen from "../../assets/lightSlogen.png";
 import APICreationModal from "./APICreationModal";
 import PromptCreationModal from "./PromptCreationModal";
 import LaunchOptionsModal from "./modals/LaunchOptionsModal";
-
+import { IoChevronDown } from "react-icons/io5";
+import "../../styles/Header.css";
 const Header = (props) => {
   const { publicKey, connected, connect } = useWallet();
   const [advancedModalOpen, setAdvancedModalOpen] = useState(false);
@@ -41,7 +42,7 @@ const Header = (props) => {
     setAdvancedModalOpen(true);
   };
 
-  const handleCreateClick = (event) => {
+  const handlePopoverOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -121,61 +122,14 @@ const Header = (props) => {
         >
           Launchpad
         </a>
-        {/* <Popover
-          sx={{ zIndex: "999999999999999" }}
-          open={Boolean(anchorEl)}
-          anchorEl={anchorEl}
-          onClose={handlePopoverClose}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "center",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "center",
-          }}
-          slotProps={{
-            paper: {
-              style: {
-                color: "#0bbf99",
-                background: "rgba(0, 0, 0, 0.8)",
-                backdropFilter: "blur(10px)",
-                boxShadow:
-                  "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-              },
-            },
-          }}
+        <a
+          className="beta-header-link pointer projects-button"
+          onClick={handlePopoverOpen}
         >
-          <div>
-            <div onClick={handlePromptCreate} className="popover-item pointer">
-              Prompt Creation (BETA)
-            </div>
-
-            <div onClick={handleQuickCreate} className="popover-item pointer">
-              Quick Creation
-            </div>
-            <div
-              onClick={handleAdvancedCreate}
-              className="popover-item pointer"
-            >
-              Advanced Creation
-            </div>
-            <div onClick={handleAPICreate} className="popover-item pointer">
-              Integrate an API
-            </div>
-            <div
-              onClick={handleElizaCreation}
-              className="popover-item disabled"
-            >
-              Create Eliza Character (Coming Soon)
-            </div>
-          </div>
-        </Popover> */}
-        <a href="/jailx" className="beta-header-link pointer">
-          JailX™
-        </a>
-        <a href="/alcatraz-whitepaper" className="beta-header-link pointer">
-          Alcatraz™
+          Projects
+          <IoChevronDown
+            className={`chevron-icon ${Boolean(anchorEl) ? "rotate" : ""}`}
+          />
         </a>
         <a href="/docs" className="beta-header-link pointer">
           Docs
@@ -266,6 +220,43 @@ const Header = (props) => {
           setPromptCreationOpen={setPromptCreationOpen}
         />
       </div>
+      <Popover
+        sx={{ zIndex: "999999999999999" }}
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={handlePopoverClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        slotProps={{
+          paper: {
+            style: {
+              color: "#0bbf99",
+              background: "rgba(0, 0, 0, 0.8)",
+              backdropFilter: "blur(10px)",
+              boxShadow:
+                "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+            },
+          },
+        }}
+      >
+        <div className="popover-content">
+          <a href="/jailx" className="beta-header-link pointer">
+            JailX™
+          </a>
+          <a href="/alcatraz-whitepaper" className="beta-header-link pointer">
+            Alcatraz™
+          </a>
+          <a href="/reverse-agent" className="beta-header-link pointer">
+            Reverse Engineer an AI Agent
+          </a>
+        </div>
+      </Popover>
     </div>
   );
 };

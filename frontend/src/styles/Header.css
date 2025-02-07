@@ -1,0 +1,30 @@
+.projects-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.chevron-icon {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.2s ease;
+}
+
+.chevron-icon.rotate {
+  transform: rotate(180deg);
+}
+
+.popover-content {
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+}
+
+.popover-content .beta-header-link {
+  padding: 8px;
+  transition: opacity 0.2s ease;
+}
+
+.popover-content .beta-header-link:hover {
+  opacity: 0.8;
+} 

@@ -18,7 +18,7 @@ import {
   GiArtificialIntelligence,
 } from "react-icons/gi";
 import Jdenticon from "react-jdenticon";
-import { MdRocketLaunch } from "react-icons/md";
+import { MdRocketLaunch, MdEngineering } from "react-icons/md";
 
 function numberWithCommas(x) {
   return x?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -96,6 +96,10 @@ const MobileMenu = (props) => {
                 className="menuIcon"
               />
               <span>Alcatraz™</span>
+            </Link>
+
+            <Link to="/reverse-agent" onClick={toggleMenu}>
+              <MdEngineering /> <span>Reverse Engineer an AI Agent</span>
             </Link>
 
             <Link to="/docs" onClick={toggleMenu}>
