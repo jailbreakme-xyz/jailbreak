@@ -51,4 +51,5 @@ export const tournamentValidator = Joi.object({
   tldr: Joi.string().required().allow(null),
 
   useDefaultRules: Joi.boolean().allow(null),
+  use_alcatraz: Joi.boolean().allow(null),
 });
