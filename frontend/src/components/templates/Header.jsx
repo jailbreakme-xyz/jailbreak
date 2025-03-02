@@ -252,9 +252,6 @@ const Header = (props) => {
           <a href="/alcatraz-whitepaper" className="beta-header-link pointer">
             Alcatraz™
           </a>
-          <a href="/reverse-agent" className="beta-header-link pointer">
-            Reverse Engineer an AI Agent
-          </a>
         </div>
       </Popover>
     </div>

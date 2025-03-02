@@ -98,10 +98,6 @@ const MobileMenu = (props) => {
               <span>Alcatraz™</span>
             </Link>
 
-            <Link to="/reverse-agent" onClick={toggleMenu}>
-              <MdEngineering /> <span>Reverse Engineer an AI Agent</span>
-            </Link>
-
             <Link to="/docs" onClick={toggleMenu}>
               <FaBook /> <span>Docs</span>
             </Link>
