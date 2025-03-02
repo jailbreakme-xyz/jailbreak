@@ -133,13 +133,12 @@ export default function AgentInfo({ challenge }) {
               {challenge?.charactersPerWord || "Unlimited"}
             </span>
           </div>
-          {!challenge.framework && (
-            <div className="info-item">
-              <FaCaretRight className="item-icon" />
-              <span className="label">Context Window:</span>
-              <span className="value">~{challenge?.contextLimit}</span>
-            </div>
-          )}
+          <div className="info-item">
+            <FaCaretRight className="item-icon" />
+            <span className="label">Context Window:</span>
+            <span className="value">~{challenge?.contextLimit}</span>
+          </div>
+
           <div className="info-item">
             <FaCaretRight className="item-icon" />
             <span className="label">Dangerous Characters:</span>

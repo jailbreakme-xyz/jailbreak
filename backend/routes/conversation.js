@@ -14,7 +14,7 @@ import {
 import { solanaAuth } from "../middleware/solanaAuth.js";
 import { elizaService } from "../services/llm/eliza.js";
 import { mizukiService } from "../services/llm/mizuki.js";
-import { deepseekService } from "../services/llm/deepseek.js";
+import ExternalLLM from "../services/llm/external.js";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import useAlcatraz from "../hooks/alcatraz.js";
 const router = express.Router();
@@ -239,18 +239,39 @@ router.post("/submit/:id", solanaAuth, async (req, res) => {
       } else if (challenge.framework.name === "mizuki") {
         response = await mizukiService.sendMessage(prompt);
         response = [{ text: response.message }];
-      } else if (challenge.framework.name === "deepseek") {
+      } else if (challenge.framework.name === "grok") {
+        const externalLLM = new ExternalLLM(
+          process.env.GROK_BASE_URL,
+          process.env.GROK_API_KEY
+        );
         if (challenge.type === "phrases") {
-          response = await deepseekService.chatCompletion(
+          response = await externalLLM.chatCompletion(
             prompt,
             challenge.instructions
           );
         } else {
-          response = await deepseekService.generateWithTools(
+          response = await externalLLM.generateWithTools(
             prompt,
             challenge.tools,
-            challenge.instructions
+            challenge.instructions,
+            challenge.tool_choice,
+            challenge.model
           );
+
+          if (response.tool_calls) {
+            response = [
+              {
+                action: response.tool_calls[0].function.name,
+                text: response.content,
+              },
+            ];
+          } else {
+            response = [
+              {
+                text: response.content,
+              },
+            ];
+          }
         }
       }
 

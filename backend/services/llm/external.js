@@ -1,21 +1,16 @@
-import axios from "axios";
+import OpenAI from "openai";
 
-class DeepSeekService {
-  constructor() {
-    this.api = axios.create({
-      baseURL: "https://api.deepseek.com",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${process.env.DEEPSEEK_API_KEY}`,
-      },
-      maxBodyLength: Infinity,
+class ExternalLLM {
+  constructor(base_url, api_key) {
+    this.openai = new OpenAI({
+      baseURL: base_url,
+      apiKey: api_key,
     });
   }
 
   async generateCompletion({
     messages,
-    model = "deepseek-chat",
+    model,
     maxTokens = 2048,
     temperature = 1,
     stream = false,
@@ -23,7 +18,7 @@ class DeepSeekService {
     toolChoice = "none",
   }) {
     try {
-      const response = await this.api.post("/chat/completions", {
+      const response = await this.openai.chat.completions.create({
         messages,
         model,
         frequency_penalty: 0,
@@ -43,10 +38,11 @@ class DeepSeekService {
         top_logprobs: null,
       });
 
-      return response.data;
+      return response;
     } catch (error) {
+      console.log("error:", error);
       console.error(
-        "DeepSeek API Error:",
+        "External LLM API Error:",
         error.response?.data || error.message
       );
       throw new Error(
@@ -91,7 +87,7 @@ class DeepSeekService {
     return response;
   }
 
-  async generateWithTools(prompt, tools, systemPrompt) {
+  async generateWithTools(prompt, tools, systemPrompt, toolChoice, model) {
     const messages = [
       {
         role: "system",
@@ -103,15 +99,20 @@ class DeepSeekService {
       },
     ];
 
+    const formattedTools = tools.map((tool) => ({
+      type: "function",
+      function: tool,
+    }));
+
     const response = await this.generateCompletion({
       messages,
-      tools,
-      toolChoice: "auto",
+      tools: formattedTools,
+      toolChoice,
+      model,
     });
 
     return response.choices[0]?.message;
   }
 }
 
-// Export singleton instance
-export const deepseekService = new DeepSeekService();
+export default ExternalLLM;
