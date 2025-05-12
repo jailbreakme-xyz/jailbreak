@@ -24,6 +24,7 @@ app.use(function (req, res, next) {
     "http://localhost:3000",
     "http://localhost:8001",
     "https://jailbreakme.xyz",
+    "https://jailbreak-tools.jailbreakme.xyz",
   ];
 
   const origin = req.headers.origin;
