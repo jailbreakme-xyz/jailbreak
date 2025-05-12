@@ -1,0 +1,159 @@
+{
+    "schema_version": "v1",
+    "name": "jailbreak-tools-advanced",
+    "description": "Advanced tools for jailbreak detection and semantic search using vector embeddings",
+    "tools": [
+        {
+            "name": "detectJailbreak",
+            "description": "Checks if a prompt resembles a jailbreak using regex patterns and semantic analysis",
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "prompt": {
+                        "type": "string",
+                        "description": "The prompt text to analyze for jailbreak patterns"
+                    }
+                },
+                "required": [
+                    "prompt"
+                ]
+            },
+            "output_schema": {
+                "type": "object",
+                "properties": {
+                    "classification": {
+                        "type": "string",
+                        "description": "Classification result (safe/unsafe/unknown)"
+                    },
+                    "score": {
+                        "type": "number",
+                        "description": "Confidence score between 0-1"
+                    },
+                    "matched_patterns": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "List of pattern names that matched"
+                    },
+                    "similar_prompts": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "prompt": {
+                                    "type": "string"
+                                },
+                                "similarity": {
+                                    "type": "number"
+                                },
+                                "label": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "description": "Similar jailbreak prompts found by vector search"
+                    }
+                }
+            }
+        },
+        {
+            "name": "simulateResponse",
+            "description": "Simulates an uncensored model response with semantic risk analysis",
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "prompt": {
+                        "type": "string",
+                        "description": "The prompt to generate a simulated response for"
+                    }
+                },
+                "required": [
+                    "prompt"
+                ]
+            },
+            "output_schema": {
+                "type": "object",
+                "properties": {
+                    "response": {
+                        "type": "string",
+                        "description": "The simulated model response"
+                    },
+                    "risk_score": {
+                        "type": "number",
+                        "description": "Risk assessment score between 0-1"
+                    },
+                    "similar_prompts": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "prompt": {
+                                    "type": "string"
+                                },
+                                "similarity": {
+                                    "type": "number"
+                                }
+                            }
+                        },
+                        "description": "Previous similar prompts with their responses"
+                    }
+                }
+            }
+        },
+        {
+            "name": "vectorSearch",
+            "description": "Searches user prompts using semantic vector search",
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "The search query to find semantically similar prompts"
+                    },
+                    "challenge_filter": {
+                        "type": "string",
+                        "description": "Optional: Filter results by challenge name"
+                    },
+                    "win_filter": {
+                        "type": "boolean",
+                        "description": "Optional: Filter results by win status"
+                    },
+                    "limit": {
+                        "type": "number",
+                        "description": "Optional: Maximum number of results to return (default: 5)"
+                    }
+                },
+                "required": [
+                    "query"
+                ]
+            },
+            "output_schema": {
+                "type": "object",
+                "properties": {
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "content": {
+                                    "type": "string"
+                                },
+                                "challenge": {
+                                    "type": "string"
+                                },
+                                "score": {
+                                    "type": "number"
+                                },
+                                "metadata": {
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "description": "Similar prompts found by vector search"
+                    }
+                }
+            }
+        }
+    ]
+}

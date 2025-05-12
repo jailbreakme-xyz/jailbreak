@@ -207,3 +207,49 @@ const submissionSchema = new mongoose.Schema(
 );
 
 export const Submission = mongoose.model("Submission", submissionSchema);
+
+const embeddedChatSchema = new mongoose.Schema(
+  {
+    original_chat_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Chat",
+      required: true,
+    },
+    challenge: {
+      type: String,
+      ref: "Challenge",
+      required: true,
+    },
+    content: {
+      type: String,
+      required: true,
+    },
+    embedding: {
+      type: [Number],
+      required: true,
+    },
+    address: {
+      type: String,
+      required: true,
+    },
+    metadata: {
+      model: String,
+      thread_id: String,
+      win: Boolean,
+      alcatraz: Boolean,
+      date: Date,
+    },
+    created_at: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  {
+    collection:
+      process.env.NODE_ENV === "development"
+        ? "embedded_chats_test"
+        : "embedded_chats",
+  }
+);
+
+export const EmbeddedChat = mongoose.model("EmbeddedChat", embeddedChatSchema);

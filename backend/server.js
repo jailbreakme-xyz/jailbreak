@@ -73,7 +73,7 @@ import { dataRoute } from "./routes/data.js";
 import { breakerRoute } from "./routes/breaker.js";
 import { authRoute } from "./routes/auth.js";
 import { submissionRoute } from "./routes/submission.js";
-
+import { mcpRoute } from "./routes/mcp.js";
 // API:
 import { conversationsAPI } from "./api/conversation.js";
 import { challengeAPI } from "./api/challenge.js";
@@ -88,7 +88,7 @@ app.use("/api/data", dataRoute);
 app.use("/api/breaker", breakerRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/submissions", submissionRoute);
-
+app.use("/api/mcp", mcpRoute);
 app.use("/api/json/v1/conversations", conversationsAPI);
 // app.use("/api/json/v1/challenges", challengeAPI);
 // app.use("/api/json/v1/agents", agentAPI);
