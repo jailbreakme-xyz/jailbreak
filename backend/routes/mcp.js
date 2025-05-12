@@ -51,6 +51,14 @@ function createResponse(id, result = null, error = null) {
   return response;
 }
 
+router.get("/health", (req, res) => {
+  res.json({
+    status: "ok",
+    version: "1.0.0",
+    timestamp: new Date().toISOString(),
+  });
+});
+
 // MCP endpoint to get capabilities
 router.get("/capabilities.json", (req, res) => {
   res.json(capabilities);
