@@ -105,7 +105,7 @@ async function detectJailbreak({ prompt }) {
   let classification = "unknown";
   if (score < 0.3) {
     classification = "safe";
-  } else if (score >= 0.5) {
+  } else if (score >= 0.45) {
     classification = "unsafe";
   }
 
