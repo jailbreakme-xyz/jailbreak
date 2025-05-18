@@ -40,13 +40,13 @@ const MainMenu = (props) => {
         <Link target="_blank" to="/faq" className="chatMainMenuItem pointer">
           <FaQuestionCircle size={25} /> <span>FAQ</span>
         </Link>
-        {/* <Link
-          to="https://dexscreener.com/solana/card131dsufcqfky9ciczd4qj5hbazsqlklsekjjmadp"
+        <Link
+          // to="https://dexscreener.com/solana/card131dsufcqfky9ciczd4qj5hbazsqlklsekjjmadp"
           className="chatMainMenuItem pointer"
           target="_blank"
         >
           <GiTwoCoins size={25} /> <span>$JAIL TOKENS</span>
-        </Link> */}
+        </Link>
         {!props.hiddenItems?.includes("SOCIAL") && (
           <div className="chatMainMenuItem chatPageSocialMenu">
             <span className="">

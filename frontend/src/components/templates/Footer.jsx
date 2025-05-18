@@ -104,9 +104,9 @@ const Footer = (props) => {
             <a href="/breakers" className="footer-link pointer">
               Breakers
             </a>
-            {/* <a href="/jail-tokens" className="footer-link pointer">
+            <a href="/jail-tokens" className="footer-link pointer">
               $JAIL
-            </a> */}
+            </a>
           </div>
           <div className="footer-links-group">
             <h4>Resources</h4>

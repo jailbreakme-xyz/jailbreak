@@ -38,7 +38,7 @@ const JailTokensSection = ({ data, loading }) => {
             <a
               className="pointer"
               style={{ color: "#007BFF" }}
-              href="https://dexscreener.com/solana/card131dsufcqfky9ciczd4qj5hbazsqlklsekjjmadp"
+              href="https://dexscreener.com/solana/3bwe561z8w4aX2DiB55EjLAbngzMKGy1GZMCyRFbocPn"
               target="_blank"
             >
               {data?.address}
