@@ -134,13 +134,13 @@ const Header = (props) => {
         <a href="/docs" className="beta-header-link pointer">
           Docs
         </a>
-        <a
+        {/* <a
           href="https://dexscreener.com/solana/3bwe561z8w4aX2DiB55EjLAbngzMKGy1GZMCyRFbocPn"
           className="beta-header-link pointer"
           target="_blank"
         >
           $JAIL
-        </a>
+        </a> */}
       </div>
       <div className="beta-header-right desktop">
         <SocialIcons

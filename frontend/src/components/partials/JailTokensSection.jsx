@@ -33,7 +33,7 @@ const JailTokensSection = ({ data, loading }) => {
           <h1 style={styles.title}>
             $JAIL Tokens: The Future of the JailbreakMe Ecosystem
           </h1>
-          <span style={styles.address}>
+          {/* <span style={styles.address}>
             Token Address:{" "}
             <a
               className="pointer"
@@ -43,7 +43,7 @@ const JailTokensSection = ({ data, loading }) => {
             >
               {data?.address}
             </a>
-          </span>
+          </span> */}
           <hr />
           {/* Overview Section */}
           <section style={styles.section}>

@@ -106,13 +106,13 @@ const MobileMenu = (props) => {
               <FaQuestionCircle /> <span>FAQ</span>
             </Link>
 
-            <Link
+            {/* <Link
               to="https://dexscreener.com/solana/3bwe561z8w4aX2DiB55EjLAbngzMKGy1GZMCyRFbocPn"
               target="_blank"
               onClick={toggleMenu}
             >
               <GiTwoCoins /> <span>$JAIL Token</span>
-            </Link>
+            </Link> */}
 
             {props.address && (
               <Link to={`/breaker/${props.address}`} onClick={toggleMenu}>
