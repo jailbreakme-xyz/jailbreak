@@ -2281,6 +2281,7 @@ font-size: 18px;
   font-weight: 600;
   transition: all 0.3s ease;
   box-sizing: border-box;
+  cursor: pointer;
 }
 
 .announcement-bar:hover {
@@ -2296,6 +2297,7 @@ font-size: 18px;
 
 .announcement-text {
   letter-spacing: 0.3px;
+  cursor: pointer;
 }
 
 .announcement-text strong {
@@ -2306,6 +2308,7 @@ font-size: 18px;
 .announcement-arrow {
   font-size: 16px;
   transition: transform 0.3s ease;
+  cursor: pointer;
 }
 
 .announcement-bar:hover .announcement-arrow {
