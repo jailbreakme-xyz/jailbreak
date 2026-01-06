@@ -75,7 +75,7 @@ const ChallengeSchema = new mongoose.Schema(
   },
   {
     collection:
-      process.env.NODE_ENV === "development" ? "challenges_test" : "challenges",
+      process.env.NODE_ENV === "development" ? "challenges" : "challenges",
   }
 );
 

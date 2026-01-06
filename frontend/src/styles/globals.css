@@ -92,7 +92,8 @@ body {
   padding: 0px;
   text-align: center;
   font-family: "Poppins", sans-serif;
-  color: #ccc
+  color: #ccc;
+  margin-top: 10px;
 }
 .challengeTitle {
 text-align: left;
@@ -1351,6 +1352,9 @@ height: 40px;
     margin: 0; /* Remove margin when arrows are hidden */
     padding: 0 10px; /* Adjust padding for smaller screens */
   }
+  .main {
+    margin-top: 30px;
+  }
 }
 
 
@@ -2257,6 +2261,84 @@ font-size: 18px;
   }
   body {
     padding-top: 82px !important;
+  }
+}
+
+/* Announcement Bar */
+.announcement-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 20px;
+  background: linear-gradient(90deg, #14F195 0%, #9945FF 50%, #14F195 100%);
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+  color: #000;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.announcement-bar:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(20, 241, 149, 0.3);
+}
+
+.announcement-icon {
+  font-size: 18px;
+  animation: bounce-subtle 2s ease-in-out infinite;
+}
+
+.announcement-text {
+  letter-spacing: 0.3px;
+}
+
+.announcement-text strong {
+  color: #000;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.announcement-arrow {
+  font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+.announcement-bar:hover .announcement-arrow {
+  transform: translateX(4px);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes bounce-subtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@media (max-width: 1024px) {
+  .announcement-bar {
+    font-size: 12px;
+    padding: 8px 15px;
+    gap: 8px;
+  }
+  
+  .announcement-icon {
+    font-size: 14px;
   }
 }
 

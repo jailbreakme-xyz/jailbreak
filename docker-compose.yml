@@ -1,6 +1,24 @@
 version: "3"
 
 services:
+  mongodb:
+    build:
+      context: ./mongo-init
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ./backend/backup:/backup
+    networks:
+      - node-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   back-end:
     build:
       context: backend
@@ -12,6 +30,11 @@ services:
     ports:
       - "8001:8001"
     command: npm start
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/jailbreak
 
   front-end:
     build:
@@ -84,5 +107,6 @@ services:
 networks:
   node-network:
     driver: bridge
-# volumes:
-#   postgres_data:
+
+volumes:
+  mongodb_data:

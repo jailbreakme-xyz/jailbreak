@@ -54,3 +54,4 @@ next-env.d.ts
 
 /services/llm/reverse_agent_prompt.txt
 /services/llm/reverse_eliza_prompt.txt
+backup/

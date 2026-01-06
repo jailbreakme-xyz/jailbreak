@@ -27,4 +27,130 @@
 
 .popover-content .beta-header-link:hover {
   opacity: 0.8;
-} 
+}
+
+/* Announcement Bar */
+.announcement-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 20px;
+  background: linear-gradient(90deg, #14F195 0%, #9945FF 50%, #14F195 100%);
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+  color: #000;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  cursor: pointer;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 99999999999;
+}
+
+/* Push the header down when announcement bar is present */
+.beta-header {
+  top: 40px !important;
+}
+
+/* Adjust body padding to account for both bars */
+body {
+  padding-top: 120px !important;
+}
+
+.announcement-bar:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(20, 241, 149, 0.3);
+}
+
+.announcement-icon {
+  font-size: 18px;
+  animation: bounce-subtle 2s ease-in-out infinite;
+}
+
+.announcement-text {
+  letter-spacing: 0.3px;
+}
+
+.announcement-text strong {
+  color: #000;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.announcement-arrow {
+  font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+.announcement-bar:hover .announcement-arrow {
+  transform: translateX(4px);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes bounce-subtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@media (max-width: 1024px) {
+  .announcement-bar {
+    font-size: 11px;
+    padding: 8px 10px;
+    gap: 6px;
+    height: 36px;
+    box-sizing: border-box;
+  }
+  
+  .announcement-icon {
+    font-size: 14px;
+  }
+
+  .announcement-text {
+    text-align: center;
+  }
+
+  /* Adjust header position on mobile */
+  .beta-header {
+    top: 36px !important;
+  }
+
+  /* Ensure mobile header content is properly aligned */
+  .beta-header .mobile {
+    align-items: center !important;
+  }
+
+  .beta-mobile-header-left {
+    display: flex !important;
+    align-items: center !important;
+    padding: 10px !important;
+  }
+
+  .beta-mobile-header-right {
+    display: flex !important;
+    align-items: center !important;
+    padding: 10px !important;
+    z-index: 9999999999;
+  }
+
+  body {
+    padding-top: 110px !important;
+  }
+}

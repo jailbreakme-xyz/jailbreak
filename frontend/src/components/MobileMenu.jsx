@@ -195,9 +195,7 @@ const MobileMenu = (props) => {
         }
 
         .hamburgerButton {
-          position: fixed;
-          top: 20px;
-          right: 20px;
+          position: relative;
           background: rgba(11, 191, 153, 0.1);
           border: none;
           color: #0bbf99;
@@ -214,11 +212,11 @@ const MobileMenu = (props) => {
 
         .menuOverlay {
           position: fixed;
-          top: 0;
+          top: 20px;
           left: 0;
           width: 100%;
           height: 100vh;
-          background: rgba(0, 0, 0, 0.5);
+          background: rgba(36, 36, 36, 0.5);
           backdrop-filter: blur(5px);
           opacity: 0;
           visibility: hidden;
@@ -238,7 +236,7 @@ const MobileMenu = (props) => {
           width: 80%;
           max-width: 400px;
           height: 95vh !important;
-          background: rgba(18, 18, 18, 0.95);
+          background: rgba(18, 18, 18, 0.69);
           backdrop-filter: blur(10px);
           padding: 20px 24px 24px;
           transition: right 0.3s ease;
@@ -247,6 +245,7 @@ const MobileMenu = (props) => {
           flex-direction: column;
           gap: 24px;
           -webkit-overflow-scrolling: touch;
+          border-radius: 20px 0px 0px 20px !important;
         }
 
         .menuContent.open {
